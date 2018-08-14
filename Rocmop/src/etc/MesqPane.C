@@ -48,16 +48,16 @@ namespace Mesquite{
 
     int temp = 0;
     int *cptr = NULL;
-    uint offset = 0;
-    for(uint i=0; i<conn.size(); ++i){
+    unsigned int offset = 0;
+    for(unsigned int i=0; i<conn.size(); ++i){
       if(_verb>1){
 	cout << "Connectivity " << i <<" has name " << conn[i]->name() << endl;
 	cout << "offset = " << offset << endl;
       }
       cptr = conn[i]->pointer();
-      uint nj = _with_ghost ? (uint)conn[i]->size_of_elements() : 
-	(uint)conn[i]->size_of_real_elements();
-      for(uint j = 0; j< nj; ++j){
+      unsigned int nj = _with_ghost ? (unsigned int)conn[i]->size_of_elements() : 
+	(unsigned int)conn[i]->size_of_real_elements();
+      for(unsigned int j = 0; j< nj; ++j){
 	temp = cptr[offset+4*j];
 	cptr[offset+4*j] = cptr[offset+4*j+2];
 	cptr[offset+4*j+2] = temp;
@@ -156,7 +156,7 @@ namespace Mesquite{
   bool MesqPane::vertex_is_fixed(VertexHandle vertex, MsqError & err){
     if(_verb>1)
       cout << "MesqPane::vertex_is_fixed" << endl;
-    uint node_id = (char*)vertex - (char*)NULL;
+    unsigned int node_id = (char*)vertex - (char*)NULL;
     COM_assertion_msg(node_id <= _is_border.size(),
 		      "Invalid vertex for MesqPane::vertex_is_fixed()");
     return _is_border[node_id-1];
@@ -169,7 +169,7 @@ namespace Mesquite{
     if(_verb)
       cout << "MesqPane::vertices_are_on_boundary" << endl;
     for (size_t i = 0; i < num_vtx; ++i){
-      uint node_id = (((char*)vert_array[i]) - (char*)NULL);
+      unsigned int node_id = (((char*)vert_array[i]) - (char*)NULL);
       if (_is_border[node_id-1]){
 	on_bnd[i] = true;
 	if(_verb>1)
@@ -339,7 +339,7 @@ namespace Mesquite{
     _dc->incident_elements(node_id,elist);    
     if(sizeof_elem_array > elist.size())
       sizeof_elem_array = elist.size();
-    for(uint i = 0; i < sizeof_elem_array; i++){
+    for(unsigned int i = 0; i < sizeof_elem_array; i++){
       elem_array[i] = ((char*)NULL+elist[i]);
     }
     if(_verb)
@@ -385,7 +385,7 @@ namespace Mesquite{
 			 "Not enough space in arg. csr_data");	
 
       // Loop through vertices of current element
-      for( uint j = 0 ; j < nodes_in_elem; ++j){
+      for( unsigned int j = 0 ; j < nodes_in_elem; ++j){
 	int node_id = ((char*)elist[j] - (char*)NULL);		        	
 	std::cout << node_id << " ";
 	pos = itop_map.find(node_id);
@@ -420,7 +420,7 @@ namespace Mesquite{
     offsets[0] = 0;
 
     Element_node_enumerator *ene;
-    for(uint i = 0; i < num_elems; ++i){
+    for(unsigned int i = 0; i < num_elems; ++i){
 
       elem_id = ((char*)element[i] - (char*)NULL);
       if(_verb>1){

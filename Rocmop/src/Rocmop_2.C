@@ -2201,7 +2201,7 @@ void Rocmop::perturb_stationary(){
       if(fgpn_bnd_ptr[j]){
 	_dcs[i]->incident_elements(j+1,elist);
 	qual_b_perturb_ptr[j] = 0.0;
-	for(uint k=0, nk=elist.size(); k<nk; ++k){
+	for(unsigned int k=0, nk=elist.size(); k<nk; ++k){
 	  Element_node_enumerator ene(allpanes[i],k+1);
 	  Angle_Metric_3 am;
 	  am.initialize(ene);

@@ -89,16 +89,16 @@ namespace Mesquite{
 
     int temp = 0;
     int *cptr = NULL;
-    uint offset = 0;
-    for(uint i=0; i<conn.size(); ++i){
+    unsigned int offset = 0;
+    for(unsigned int i=0; i<conn.size(); ++i){
       if(_verb>1){
 	cout << "MOP> Connectivity " << i <<" has name " << conn[i]->name() << endl;
 	cout << "MOP> offset = " << offset << endl;
       }
       cptr = conn[i]->pointer();
-      uint nj = _with_ghost ? (uint)conn[i]->size_of_elements() : 
-	(uint)conn[i]->size_of_real_elements();
-      for(uint j = 0; j< nj; ++j){
+      unsigned int nj = _with_ghost ? (unsigned int)conn[i]->size_of_elements() : 
+	(unsigned int)conn[i]->size_of_real_elements();
+      for(unsigned int j = 0; j< nj; ++j){
 	temp = cptr[offset+4*j];
 	cptr[offset+4*j] = cptr[offset+4*j+2];
 	cptr[offset+4*j+2] = temp;
@@ -205,7 +205,7 @@ namespace Mesquite{
   bool MesqPane::vertex_is_fixed(VertexHandle vertex, MsqError & err){
     if(_verb>1)
       cout << "MOP> MesqPane::vertex_is_fixed" << endl;
-    uint node_id = (char*)vertex - (char*)NULL;
+    unsigned int node_id = (char*)vertex - (char*)NULL;
     COM_assertion_msg(node_id <= _is_border.size(),
 		      "Invalid vertex for MesqPane::vertex_is_fixed()");
     return _is_border[node_id-1];
@@ -218,7 +218,7 @@ namespace Mesquite{
     if(_verb)
       cout << "MOP> MesqPane::vertices_are_on_boundary" << endl;
     for (size_t i = 0; i < num_vtx; ++i){
-      uint node_id = (((char*)vert_array[i]) - (char*)NULL);
+      unsigned int node_id = (((char*)vert_array[i]) - (char*)NULL);
       if (_is_border[node_id-1]){
 	on_bnd[i] = true;
 	if(_verb>1)
@@ -388,7 +388,7 @@ namespace Mesquite{
     _dc->incident_elements(node_id,elist);    
     if(sizeof_elem_array > elist.size())
       sizeof_elem_array = elist.size();
-    for(uint i = 0; i < sizeof_elem_array; i++){
+    for(unsigned int i = 0; i < sizeof_elem_array; i++){
       elem_array[i] = ((char*)NULL+elist[i]);
     }
     if(_verb)
@@ -411,7 +411,7 @@ namespace Mesquite{
     if(_verb)
       cout << "MOP> MesqPane::get_vertex_use_count" << endl;
     size_t count = 0;
-    for(uint i=0; i< num_handles; ++i){
+    for(unsigned int i=0; i< num_handles; ++i){
       int e_id = ((char*)handle_array[i] - (char*)NULL);		        
       Element_node_enumerator ene(_pane,e_id);
       count += (size_t)ene.size_of_nodes();
@@ -448,7 +448,7 @@ namespace Mesquite{
 			 "Not enough space in arg. csr_data");	
 
       // Loop through vertices of current element
-      for( uint j = 0 ; j < nodes_in_elem; ++j){
+      for( unsigned int j = 0 ; j < nodes_in_elem; ++j){
 	int node_id = ((char*)elist[j] - (char*)NULL);		        	
 	pos = itop_map.find(node_id);
 	// current vertex isn't in vert_handles, add it
@@ -552,10 +552,10 @@ namespace Mesquite{
       temp->resize(nsize*length);
       new_tag.ndata = (void *)temp;
 
-      for(uint i=0; i<length*esize; ++i)
+      for(unsigned int i=0; i<length*esize; ++i)
 	(*static_cast<std::vector<char>*>(new_tag.edata))[i] 
 	  = ((char *)default_value)[i];
-      for(uint i=0; i<length*nsize; ++i)      
+      for(unsigned int i=0; i<length*nsize; ++i)      
 	(*((std::vector<char>*)new_tag.ndata))[i] 
 	  = ((char *)default_value)[i];
       break;
@@ -572,10 +572,10 @@ namespace Mesquite{
       temp->resize(nsize*length);
       new_tag.ndata = (void *) temp;
 
-      for(uint i=0; i<esize*length; ++i)
+      for(unsigned int i=0; i<esize*length; ++i)
 	(*((std::vector<bool>*)new_tag.edata))[i] 
 	  = ((bool *)default_value)[i];
-      for(uint i=0; i<nsize*length; ++i)
+      for(unsigned int i=0; i<nsize*length; ++i)
 	(*((std::vector<bool>*)new_tag.ndata))[i] 
 	  = ((bool *)default_value)[i];
       break;
@@ -592,10 +592,10 @@ namespace Mesquite{
       temp->resize(nsize*length);     
       new_tag.ndata = (void *) temp;
 
-      for(uint i=0; i<esize*length; ++i)
+      for(unsigned int i=0; i<esize*length; ++i)
 	(*((std::vector<int>*)new_tag.edata))[i] 
 	  = ((int *)default_value)[i];
-      for(uint i=0; i<nsize*length; ++i)
+      for(unsigned int i=0; i<nsize*length; ++i)
 	(*((std::vector<int>*)new_tag.ndata))[i] 
 	  = ((int *)default_value)[i];
       break;
@@ -612,10 +612,10 @@ namespace Mesquite{
       temp->resize(nsize*length);
       new_tag.ndata = (void *) temp;
 
-      for(uint i=0; i<esize*length; ++i)
+      for(unsigned int i=0; i<esize*length; ++i)
 	(*((std::vector<double>*)new_tag.edata))[i] 
 	  = ((double *)default_value)[i];
-      for(uint i=0; i<nsize*length; ++i)
+      for(unsigned int i=0; i<nsize*length; ++i)
 	(*((std::vector<double>*)new_tag.ndata))[i] 
 	  = ((double *)default_value)[i];
       break;
@@ -632,10 +632,10 @@ namespace Mesquite{
       temp->resize(nsize*length);      
       new_tag.ndata = (void *) temp;
 
-      for(uint i=0; i<esize*length; ++i)
+      for(unsigned int i=0; i<esize*length; ++i)
 	(*((std::vector<void*>*)new_tag.edata))[i] 
 	  = ((void* *)default_value)[i];
-      for(uint i=0; i<nsize*length; ++i)
+      for(unsigned int i=0; i<nsize*length; ++i)
 	(*((std::vector<void*>*)new_tag.ndata))[i] 
 	  = ((void* *)default_value)[i];
       break;
@@ -784,7 +784,7 @@ namespace Mesquite{
     switch ((*tag).type){
     case BYTE : {
       std::vector<char>* v = (std::vector<char>*)(*tag).edata;
-      uint tsize = ne*(*tag).size;
+      unsigned int tsize = ne*(*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
@@ -792,20 +792,20 @@ namespace Mesquite{
 	v->reserve(tsize);
 	v->resize(tsize);
 	for(int i=0; i < ne; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i*(*tag).size+j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((char*)elem_array[i]-(char*)NULL); 
-	for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int j=0; j< (*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((char*)tag_data)[i*(*tag).size+j];
       }
       break;
     }
     case BOOL :{
       std::vector<bool>* v = (std::vector<bool>*)(*tag).edata;
-      uint tsize = ne*(*tag).size;
+      unsigned int tsize = ne*(*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
@@ -813,20 +813,20 @@ namespace Mesquite{
 	v->reserve(tsize);
 	v->resize(tsize);
 	for(int i=0; i < ne; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i*(*tag).size+j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((bool*)elem_array[i]-(bool*)NULL); 
-	for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int j=0; j< (*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((bool*)tag_data)[i*(*tag).size+j];
       }
       break;
     }
     case INT :{
       std::vector<int>* v = (std::vector<int>*)(*tag).edata;
-      uint tsize = ne*(*tag).size;
+      unsigned int tsize = ne*(*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
@@ -834,20 +834,20 @@ namespace Mesquite{
 	v->reserve(tsize);
 	v->resize(tsize);
 	for(int i=0; i < ne; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i*(*tag).size+j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((int*)elem_array[i]-(int*)NULL); 
-	for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int j=0; j< (*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((int*)tag_data)[i*(*tag).size+j];
       }
       break;
     }
     case DOUBLE :{
       std::vector<double>* v = (std::vector<double>*)(*tag).edata;
-      uint tsize = ne*(*tag).size;
+      unsigned int tsize = ne*(*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
@@ -855,20 +855,20 @@ namespace Mesquite{
 	v->reserve(tsize);
 	v->resize(tsize);
 	for(int i=0; i < ne; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i*(*tag).size+j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((double*)elem_array[i]-(double*)NULL); 
-	for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int j=0; j< (*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((double*)tag_data)[i*(*tag).size+j];
       }
       break;
     }
     case HANDLE : {
       std::vector<void*>* v = (std::vector<void*>*)(*tag).edata;
-      uint tsize = ne*(*tag).size;
+      unsigned int tsize = ne*(*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
@@ -876,13 +876,13 @@ namespace Mesquite{
 	v->reserve(tsize);
 	v->resize(tsize);
 	for(int i=0; i < ne; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i*(*tag).size+j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((void**)elem_array[i]-(void**)NULL); 
-	for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int j=0; j< (*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((void**)tag_data)[i*(*tag).size+j];
       }
       break;
@@ -912,110 +912,110 @@ namespace Mesquite{
     if(_verb)
       cout << "MOP> MesqPane::tag_set_vertex_data" << endl;
     tagStruct* tag = (tagStruct*)handle;
-    uint nn = 1 + (_with_ghost ? _pane->size_of_nodes() :
+    unsigned int nn = 1 + (_with_ghost ? _pane->size_of_nodes() :
 		   _pane->size_of_real_nodes());
     switch ((*tag).type){
     case BYTE : {
       std::vector<char>* v = (std::vector<char>*)(*tag).ndata;
-      uint tsize = (nn)* (*tag).size;
+      unsigned int tsize = (nn)* (*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
 			  "Invalid TagHandle received from Mesquite");
 	v->reserve(tsize);
 	v->resize(tsize);
-	for(uint i=0; i < nn; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int i=0; i < nn; ++i){
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i * (*tag).size +j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((char*)node_array[i]-(char*)NULL); 
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((char*)tag_data)[i*(*tag).size+j];
       }
       break;
     }
     case BOOL :{
       std::vector<bool>* v = (std::vector<bool>*)(*tag).ndata;
-      uint tsize = (nn)* (*tag).size;
+      unsigned int tsize = (nn)* (*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
 			  "Invalid TagHandle received from Mesquite");
 	v->reserve(tsize);
 	v->resize(tsize);
-	for(uint i=0; i < nn; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int i=0; i < nn; ++i){
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i * (*tag).size +j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((bool*)node_array[i]-(bool*)NULL); 
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((bool*)tag_data)[i*(*tag).size+j];
       }
       break;
     }
     case INT :{
       std::vector<int>* v = (std::vector<int>*)(*tag).ndata;
-      uint tsize = (nn)* (*tag).size;
+      unsigned int tsize = (nn)* (*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
 			  "Invalid TagHandle received from Mesquite");
 	v->reserve(tsize);
 	v->resize(tsize);
-	for(uint i=0; i < nn; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int i=0; i < nn; ++i){
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i * (*tag).size +j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((int*)node_array[i]-(int*)NULL); 
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((int*)tag_data)[i*(*tag).size+j];
       }
       break;
     }
     case DOUBLE :{
       std::vector<double>* v = (std::vector<double>*)(*tag).ndata;
-      uint tsize = (nn)* (*tag).size;
+      unsigned int tsize = (nn)* (*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
 			  "Invalid TagHandle received from Mesquite");
 	v->reserve(tsize);
 	v->resize(tsize);
-	for(uint i=0; i < nn; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int i=0; i < nn; ++i){
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i * (*tag).size +j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((double*)node_array[i]-(double*)NULL); 
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((double*)tag_data)[i*(*tag).size+j];
       }
       break;
     }
     case HANDLE : {
       std::vector<void*>* v = (std::vector<void*>*)(*tag).ndata;
-      uint tsize = (nn)* (*tag).size;
+      unsigned int tsize = (nn)* (*tag).size;
       if (v->size() != tsize){
 	// This tag isn't used yet... should only have default value
 	COM_assertion_msg(v->size() == (*tag).size,
 			  "Invalid TagHandle received from Mesquite");
 	v->reserve(tsize);
 	v->resize(tsize);
-	for(uint i=0; i < nn; ++i){
-	  for(uint j=0; j< (*tag).size; ++j)
+	for(unsigned int i=0; i < nn; ++i){
+	  for(unsigned int j=0; j< (*tag).size; ++j)
 	    (*v)[i * (*tag).size +j]=(*v)[j];
 	}
       }
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((void**)node_array[i]-(void**)NULL); 
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  (*v)[eid * (*tag).size +j]=((void**)tag_data)[i*(*tag).size+j];
       }
       break;
@@ -1044,45 +1044,45 @@ namespace Mesquite{
     tagStruct* tag = (tagStruct*)handle;
     switch ((*tag).type){
     case BYTE : {
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((char*)elem_array[i]-(char*)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((char*)tag_data)[i * (*tag).size +j] 
 	    = ((char*)((*tag).edata))[eid*(*tag).size+j];
       }
       break;
     }
     case BOOL :{
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((bool*)elem_array[i]-(bool*)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((bool*)tag_data)[i * (*tag).size +j] 
 	    = ((bool*)((*tag).edata))[eid*(*tag).size+j];
       }
       break;
     }
     case INT :{
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((int*)elem_array[i]-(int*)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((int*)tag_data)[i * (*tag).size +j] 
 	    = ((int*)((*tag).edata))[eid*(*tag).size+j];
       }
       break;
     }
     case DOUBLE :{
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((double*)elem_array[i]-(double*)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((double*)tag_data)[i * (*tag).size +j] 
 	    = ((double*)((*tag).edata))[eid*(*tag).size+j];
       }
       break;
     }
     case HANDLE : {
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int eid = ((void**)elem_array[i]-(void**)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((void**)tag_data)[i * (*tag).size +j] 
 	    = ((void**)((*tag).edata))[eid*(*tag).size+j];
       }
@@ -1111,45 +1111,45 @@ namespace Mesquite{
     tagStruct* tag = (tagStruct*)handle;
     switch ((*tag).type){
     case BYTE : {
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int vid = ((char*)node_array[i]-(char*)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((char*)tag_data)[i * (*tag).size +j] 
 	    = ((char*)((*tag).ndata))[vid*(*tag).size+j];
       }
       break;
     }
     case BOOL :{
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int vid = ((bool*)node_array[i]-(bool*)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((bool*)tag_data)[i * (*tag).size +j] 
 	    = ((bool*)((*tag).ndata))[vid*(*tag).size+j];
       }
       break;
     }
     case INT :{
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int vid = ((int*)node_array[i]-(int*)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((int*)tag_data)[i * (*tag).size +j] 
 	    = ((int*)((*tag).ndata))[vid*(*tag).size+j];
       }
       break;
     }
     case DOUBLE :{
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int vid = ((double*)node_array[i]-(double*)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((double*)tag_data)[i * (*tag).size +j] 
 	    = ((double*)((*tag).ndata))[vid*(*tag).size+j];
       }
       break;
     }
     case HANDLE : {
-      for(uint i=0; i<num_elems; ++i){
+      for(unsigned int i=0; i<num_elems; ++i){
 	int vid = ((void**)node_array[i]-(void**)NULL); 	
-	for(uint j=0; j<(*tag).size; ++j)
+	for(unsigned int j=0; j<(*tag).size; ++j)
 	  ((void**)tag_data)[i * (*tag).size +j] 
 	    = ((void**)((*tag).ndata))[vid*(*tag).size+j];
       }

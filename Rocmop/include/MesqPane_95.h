@@ -523,7 +523,7 @@ class MyEntityIterator : public Mesquite::EntityIterator{
 public:
   
   //! Constructor
-  MyEntityIterator(uint size){ _cur = 1; _size = size;}
+  MyEntityIterator(unsigned int size){ _cur = 1; _size = size;}
 
   //! Destructor
   virtual ~MyEntityIterator()
@@ -559,8 +559,8 @@ public:
     else return 1;
   }
 private:
-  uint  _cur; // The current node's position.
-  uint  _size;// The size of the element array
+  unsigned int  _cur; // The current node's position.
+  unsigned int  _size;// The size of the element array
 };
 
 MESQUITE_END_NAMESPACE
