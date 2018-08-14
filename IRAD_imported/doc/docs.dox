@@ -1,0 +1,11 @@
+/// \namespace IRAD
+/// \ingroup irad_group
+/// \brief IllinoisRocstar Application Development
+/// 
+/// The IRAD toolkit provides several application development
+/// support capabilities which help with the rapid development
+/// of serial and parallel applications with uniform _look and feel_
+/// and facilities which allow the developed applications to 
+/// integrate into the IllinoisRocstar software development
+/// environment.
+///

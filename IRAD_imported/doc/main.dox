@@ -1,0 +1,81 @@
+/// 
+/// @page irad_main IllinoisRocstar Application Development
+/// @section  irad_basics IRAD Basics
+/// @subsection intro_irad Introduction
+/// 
+/// This is the main documentation page for IllinoisRocstar's IRAD Toolkit
+/// 
+/// IRAD is a utility toolkit that provides highly reusable software application
+/// development facilities. Applications using %IRAD have available the
+/// software constructs for creating a software suite 
+/// that can be readily integrated into IllinoisRocstar's software 
+/// development environment. IRAD itself provides a suite of utilities 
+/// that are useful for developing serial and parallel applications in the 
+/// Unix environment.
+///
+/// Some of the utilities provided by the toolkit are:
+/// * Profiling - Instrumentation based profiling at the function level
+///   supporting parallel applications and using PAPI (when available).
+/// * MPI Wrapper - Object oriented, templated convenience classes for 
+///   MPI parallel applications. Includes mechanisms for communicating 
+///   complex, user-defined types with Pack/UnPack.
+/// * Command Line Handling - Convenience class for command line 
+///   interfacing.  Automatically generates usage and help messages.
+/// * Unix System Tools - Utilities that interact with the Unix 
+///   system, including TCP Client/Server wrapper classes, filesystem
+///   inspection and navigation, runtime loading of dynamic objects,
+///   and a stream object for Unix file descriptors.
+/// * Application Templates - Uses much of the above functionality
+///   to provide a shell of a serial or MPI parallel application
+///   which can be populated for rapid application development of
+///   integratible applications with built-in user interfaces,
+///   testing, and profiling.
+///
+/// Featuring also:
+/// * Base CMake files 
+/// * Base CTest files
+/// * Example/Model Documentation
+/// * Built-in support for unit testing
+/// * No TPL dependencies
+/// 
+/// \subsection install_irad Installation
+///
+/// IRAD uses the CMake build system. CMake is a system for
+/// configuration and building that generates platform indpendent
+/// build files (e.g. Makefiles) for software packages.  
+///
+/// \subsubsection getting_irad Get IRAD
+/// 
+/// Get IRAD from the IR repository:
+///
+///     svn co ${IRREPO}/IRAD/trunk IRAD
+///
+/// \subsubsection environ_irad Set Up Your Build Environment
+///
+/// Create a directory in which to build IRAD:
+///
+///     mkdir build_irad
+///     cd build_irad
+///
+/// Tell CMake where you want to install IRAD:
+///
+///     CMAKE_INSTALL_PREFIX=/the/path/to/IRAD/Installation
+///
+/// If you have third party software tools installed in non-standard locations
+/// then you need to let CMake know where to find those packages:
+///
+///     CMAKE_PREFIX_PATH=/third_party_install/path1:/third_party_install/path2
+///
+/// \subsubsection cmake_irad Makefile Generation
+///
+/// Invoke cmake to generate your makefiles:
+///
+///     cmake ../IRAD
+///
+/// \subsubsection install_irad Build and Install IRAD
+/// 
+/// Build and install the IRAD package with:
+///
+///     make
+///     make install
+///
