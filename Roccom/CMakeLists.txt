@@ -45,7 +45,7 @@ ELSE()
   add_definitions( -DSTATIC_LINK )
 ENDIF()
 target_link_libraries(Roccom ${DL_LIB} ${MPI_CXX_LIBRARIES})
-target_link_libraries(Roccomf ${MPI_Fortran_LIBRARIES})
+target_link_libraries(Roccomf Roccom ${MPI_Fortran_LIBRARIES})
 
 IF(MPI_LINK_FLAGS)
   SET_TARGET_PROPERTIES(Roccom PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
