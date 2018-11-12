@@ -59,7 +59,6 @@ ELSE()
   add_library(Rocmop STATIC ${LIB_SRCS})
   add_definitions( -DSTATIC_LINK )
 ENDIF()
-add_dependencies(Rocmop MSQ_MV)
 target_link_libraries(Rocmop Rocsurf Rocmap Rocblas Rocout Rocin Roccom mesquite_95 m ${MPI_CXX_LIBRARIES})
 
 #set (UTIL_SRCS util/chkPconnGRecv.cc util/RocMeshData.cc)
