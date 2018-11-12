@@ -19,8 +19,6 @@ find_library(JPEG_LIB jpeg)
 find_path(HDF4_INC hdf.h HINTS /usr/include/hdf)
 find_library(BLOCKSOLVE_LIBRARY blocksolve95)
 find_path(BLOCKSOLVE_INC blocksolve95.h)
-find_library(METIS_LIB metis)
-find_path(METIS_INC metis.h)
 
 #INCLUDE(CTest)
 find_path(ROCCOM_INC roccom.h HINTS ../../Roccom/include) 
@@ -40,7 +38,7 @@ set_source_files_properties(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "-fPIC" )
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include_directories(${ROCCOM_INC} ${ROCMAN_INC} ${HDF4_INC} ${METIS_INC})
+include_directories(${ROCCOM_INC} ${ROCMAN_INC} ${HDF4_INC})
 add_definitions(-DUSE_HDF=1)
 
 IF(NOT BUILD_STATIC)
@@ -53,6 +51,6 @@ target_link_libraries(Rocfrac Rocout Rocin Roccomf Roccom)
 
 ADD_EXECUTABLE(rfracprep ${PREP_SRCS})
 set_property(TARGET rfracprep PROPERTY LINKER_LANGUAGE Fortran)
-TARGET_LINK_LIBRARIES(rfracprep Rocout Rocin Roccomf Roccom ${METIS_LIB} ${HDF5_LIB})
+TARGET_LINK_LIBRARIES(rfracprep Rocout Rocin Roccomf Roccom metis ${HDF5_LIB})
 
 INSTALL(TARGETS Rocfrac rfracprep RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)

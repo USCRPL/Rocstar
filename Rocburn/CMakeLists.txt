@@ -17,8 +17,6 @@ find_library(JPEG_LIB jpeg)
 find_path(HDF4_INC hdf.h HINTS /usr/include/hdf)
 find_library(BLOCKSOLVE_LIBRARY blocksolve95)
 find_path(BLOCKSOLVE_INC blocksolve95.h)
-find_library(METIS_LIB metis)
-find_path(METIS_INC metis.h)
 
 #INCLUDE(CTest)
 find_path(ROCCOM_INC roccom.h HINTS ../../Roccom/include) 
@@ -38,7 +36,7 @@ set_source_files_properties(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "-fPIC ${MPI_Fo
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include_directories(${ROCCOM_INC} ${ROCMAN_INC} ${HDF4_INC} ${METIS_INC})
+include_directories(${ROCCOM_INC} ${ROCMAN_INC} ${HDF4_INC})
 add_definitions(-DUSE_HDF=1)
 
 IF(NOT BUILD_STATIC)
@@ -47,7 +45,7 @@ ELSE()
   add_library(Rocburn STATIC ${LIB_SRCS})
   add_definitions( -DSTATIC_LINK )
 ENDIF()
-target_link_libraries(Rocburn Rocout Rocin Roccomf Roccom ${MPI_Fortran_LIBRARIES})
+target_link_libraries(Rocburn Rocout Rocin Roccomf Roccom metis ${MPI_Fortran_LIBRARIES})
 SET_TARGET_PROPERTIES(Rocburn PROPERTIES LINK_FLAGS "${MPI_Fortran_LINK_FLAGS}")
 
 INSTALL(TARGETS Rocburn RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
