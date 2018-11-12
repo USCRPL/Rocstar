@@ -66,10 +66,12 @@ INSTALL(FILES ${INC_FILES} DESTINATION include)
 INSTALL(TARGETS IRAD checkresults testresults profane runtest diffdatafiles RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 
 # Add target to build the documentation
-option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" OFF)
+
+FIND_PACKAGE(Doxygen)
+option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
+
 IF(BUILD_DOCUMENTATION)
 
-  FIND_PACKAGE(Doxygen)
   IF(NOT DOXYGEN_FOUND)
     MESSAGE(FATAL_ERROR "Doxygen is needed to build the documentation.")
   ENDIF()
@@ -88,4 +90,6 @@ IF(BUILD_DOCUMENTATION)
 
   ADD_CUSTOM_TARGET( docs DEPENDS ${documentation} )
   INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc DESTINATION share/IRAD )
+else()
+  message(STATUS "IRAD: not building Doxygen documentation")
 ENDIF()
