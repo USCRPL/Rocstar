@@ -63,7 +63,7 @@ void load_modules() {
   COM_LOAD_MODULE_STATIC_DYNAMIC(Rocout, "OUT");
 }
 
-static int rank = 0;
+static int mpi_rank = 0;
 
 void print_usage( int argc, char *argv[]) {
   if ( argc <= 2) {
@@ -211,7 +211,7 @@ void read_control_file( const char *fname, Control_parameter &cp) {
     is.getline( buf, 255); 
   }
 
-  if ( rank==0) std::cout << " speed is " << cp.speed << std::endl;
+  if ( mpi_rank==0) std::cout << " speed is " << cp.speed << std::endl;
 }
 
 void init_parameters( const Control_parameter &cntr_param) {
@@ -220,75 +220,75 @@ void init_parameters( const Control_parameter &cntr_param) {
   if ( !cntr_param.method.empty()) {
     COM_call_function( PROP_set_option, "method", cntr_param.method.c_str());
 
-    if ( rank==0) std::cout << "Set propagation method to " << cntr_param.method << std::endl;
+    if ( mpi_rank==0) std::cout << "Set propagation method to " << cntr_param.method << std::endl;
   }
 
   if ( !cntr_param.wavefrontal.empty()) {
     COM_call_function( PROP_set_option, "wavefrontal", cntr_param.wavefrontal.c_str());
-    if ( rank==0) std::cout << "Set wavefrontal to " << cntr_param.wavefrontal << std::endl;
+    if ( mpi_rank==0) std::cout << "Set wavefrontal to " << cntr_param.wavefrontal << std::endl;
   }
 
   if ( !cntr_param.normaldif.empty()) {
     COM_call_function( PROP_set_option, "normaldif", cntr_param.normaldif.c_str());
-    if ( rank==0) std::cout << "Set normaldif to " << cntr_param.normaldif << std::endl;
+    if ( mpi_rank==0) std::cout << "Set normaldif to " << cntr_param.normaldif << std::endl;
   }
 
   if ( !cntr_param.eigthres.empty()) {
     COM_call_function( PROP_set_option, "eigthres", cntr_param.eigthres.c_str());
-    if ( rank==0) std::cout << "Set eigthres to " << cntr_param.eigthres << std::endl;
+    if ( mpi_rank==0) std::cout << "Set eigthres to " << cntr_param.eigthres << std::endl;
   }
 
   if ( !cntr_param.courant.empty()) {
     COM_call_function( PROP_set_option, "courant", cntr_param.courant.c_str());
-    if ( rank==0) std::cout << "Set courant constant to " << cntr_param.courant << std::endl;
+    if ( mpi_rank==0) std::cout << "Set courant constant to " << cntr_param.courant << std::endl;
   }
 
   if ( !cntr_param.fangle.empty()) {
     COM_call_function( PROP_set_option, "fangle", cntr_param.fangle.c_str());
-    if ( rank==0) std::cout << "Set weak-feature angle to " << cntr_param.fangle << std::endl;
+    if ( mpi_rank==0) std::cout << "Set weak-feature angle to " << cntr_param.fangle << std::endl;
   }
   if ( !cntr_param.sangle.empty()) {
     COM_call_function( PROP_set_option, "sangle", cntr_param.sangle.c_str());
-    if ( rank==0) std::cout << "Set strong-feature angle to " << cntr_param.sangle << std::endl;
+    if ( mpi_rank==0) std::cout << "Set strong-feature angle to " << cntr_param.sangle << std::endl;
   }
 
   if ( !cntr_param.smoother.empty()) {
     COM_call_function( PROP_set_option, "smoother", cntr_param.smoother.c_str());
-    if ( rank==0) std::cout << "Set smoother to " << cntr_param.smoother << std::endl;
+    if ( mpi_rank==0) std::cout << "Set smoother to " << cntr_param.smoother << std::endl;
   }
   
   if ( !cntr_param.rediter.empty()) {
     COM_call_function( PROP_set_option, "rediter", cntr_param.rediter.c_str());
-    if ( rank==0) std::cout << "Set rediter to " << cntr_param.rediter << std::endl;
+    if ( mpi_rank==0) std::cout << "Set rediter to " << cntr_param.rediter << std::endl;
   }
 
   if ( !cntr_param.conserv.empty()) {
     COM_call_function( PROP_set_option, "conserv", cntr_param.conserv.c_str());
-    if ( rank==0) std::cout << "Set conserv to " << cntr_param.conserv << std::endl;
+    if ( mpi_rank==0) std::cout << "Set conserv to " << cntr_param.conserv << std::endl;
   }
 
   if ( !cntr_param.verbose.empty()) {
     COM_call_function( PROP_set_option, "verbose", cntr_param.verbose.c_str());
-    if ( rank==0) std::cout << "Set verbose level to " << cntr_param.verbose << std::endl;
+    if ( mpi_rank==0) std::cout << "Set verbose level to " << cntr_param.verbose << std::endl;
   }
 
   if ( !cntr_param.weight.empty()) {
     COM_call_function( PROP_set_option, "weight", cntr_param.weight.c_str());
-    if ( rank==0) std::cout << "Set weight to " << cntr_param.weight << std::endl;
+    if ( mpi_rank==0) std::cout << "Set weight to " << cntr_param.weight << std::endl;
   }
 
 }
 
 // Read in a surface pmesh, and return its window name.
 std::string read_in_mesh ( const char *fname) {
-  if ( rank==0) cout << "Reading surface mesh file \"" << fname << '"' << endl;
+  if ( mpi_rank==0) cout << "Reading surface mesh file \"" << fname << '"' << endl;
 
   std::string fname_str(fname);
 
   std::string::size_type pos = fname_str.find_first_of( ".");
   const string wname = fname_str.substr( 0, pos);
 
-  if ( rank==0) cout << "Creating window \"" << wname << '"' << endl;
+  if ( mpi_rank==0) cout << "Creating window \"" << wname << '"' << endl;
 
   IM_Reader im_reader;
   int npanes = im_reader.read_winmesh( fname, wname, false); 
@@ -431,7 +431,7 @@ int main(int argc, char *argv[]) {
   load_modules();
   print_usage( argc, argv);
 
-  if ( COMMPI_Initialized()) rank = COMMPI_Comm_rank( MPI_COMM_WORLD);
+  if ( COMMPI_Initialized()) mpi_rank = COMMPI_Comm_rank( MPI_COMM_WORLD);
 
   // Read in mesh file.
   string wname = read_in_mesh( argv[1]);
@@ -456,7 +456,7 @@ int main(int argc, char *argv[]) {
   int PROP_propagate = COM_get_function_handle( "PROP.propagate");
   int BLAS_add = COM_get_function_handle( "BLAS.add");
 
-  if ( rank==0) cout << "Propagating interface..." << endl;
+  if ( mpi_rank==0) cout << "Propagating interface..." << endl;
   // Initialize control parameters
   COM_call_function( PROP_init, &pmesh);
   init_parameters( cntr_param);
@@ -511,19 +511,19 @@ int main(int argc, char *argv[]) {
   areas.precision(10); vols.precision(10);
   cout.precision(10);
 
-  if ( rank==0) areas.open((wname+"_areas.m").c_str());
-  if ( rank==0) vols.open((wname+"_vols.m").c_str());
+  if ( mpi_rank==0) areas.open((wname+"_areas.m").c_str());
+  if ( mpi_rank==0) vols.open((wname+"_vols.m").c_str());
 
   double a=compute_area( wname), v=compute_volume(wname);
 
-  if ( rank==0) {
+  if ( mpi_rank==0) {
     std::cout << "Area is " << a << " and total volume is " << v << std::endl;
     areas << wname << "_as = [0 " << a << ";..." << std::endl;
     vols << wname << "_vs = [0 " << v << ";..." << std::endl;
   }
 
   char fname[40];
-  std::sprintf(fname, "timedata_%03d.txt", rank);
+  std::sprintf(fname, "timedata_%03d.txt", mpi_rank);
 
 #ifdef MESH_ADAPT
   AdaptCOMWindow acw( wname.c_str());
@@ -553,7 +553,7 @@ int main(int argc, char *argv[]) {
 
   double t=cntr_param.start*cntr_param.timestep; 
   for ( int i=1+cntr_param.start; i<=cntr_param.steps; ++i, t+=cntr_param.timestep) {
-    if ( rank==0) cout << "Step " << i << endl;
+    if ( mpi_rank==0) cout << "Step " << i << endl;
 
     double local_t = 0, t_rem = cntr_param.timestep, t_elapsed;
     while ( t_rem > 0) {
@@ -613,7 +613,7 @@ int main(int argc, char *argv[]) {
     }
 
     a=compute_area( wname); v=compute_volume(wname);
-    if ( rank==0) {
+    if ( mpi_rank==0) {
       std::cout << "Area is " << a << " and total volume is " << v << std::endl;
       double t = i*cntr_param.timestep;
       areas << '\t' << t << '\t';

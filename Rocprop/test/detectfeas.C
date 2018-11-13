@@ -48,7 +48,7 @@ void load_modules() {
   COM_LOAD_MODULE_STATIC_DYNAMIC(Rocout, "OUT");
 }
 
-static int rank = 0;
+static int mpi_rank = 0;
 
 void print_usage( int argc, char *argv[]) {
   if ( argc < 2) {
@@ -100,14 +100,14 @@ void init_parameters( const Control_parameter &cntr_param) {
 
   if ( !cntr_param.fangle.empty()) {
     COM_call_function( PROP_set_option, "fangle", cntr_param.fangle.c_str());
-    if ( rank==0) std::cout << "Set weak-feature angle to " << cntr_param.fangle << std::endl;
+    if ( mpi_rank==0) std::cout << "Set weak-feature angle to " << cntr_param.fangle << std::endl;
   }
   else
     COM_call_function( PROP_set_option, "fangle", "15");
 
   if ( !cntr_param.sangle.empty()) {
     COM_call_function( PROP_set_option, "sangle", cntr_param.sangle.c_str());
-    if ( rank==0) std::cout << "Set strong-feature angle to " << cntr_param.sangle << std::endl;
+    if ( mpi_rank==0) std::cout << "Set strong-feature angle to " << cntr_param.sangle << std::endl;
   }
   else
     COM_call_function( PROP_set_option, "sangle", "60");
@@ -118,14 +118,14 @@ void init_parameters( const Control_parameter &cntr_param) {
 
 // Read in a surface pmesh, and return its window name.
 std::string read_in_mesh ( const char *fname) {
-  if ( rank==0) cout << "Reading surface mesh file \"" << fname << '"' << endl;
+  if ( mpi_rank==0) cout << "Reading surface mesh file \"" << fname << '"' << endl;
 
   std::string fname_str(fname);
 
   std::string::size_type pos = fname_str.find_first_of( ".");
   const string wname = fname_str.substr( 0, pos);
 
-  if ( rank==0) cout << "Creating window \"" << wname << '"' << endl;
+  if ( mpi_rank==0) cout << "Creating window \"" << wname << '"' << endl;
 
   IM_Reader im_reader;
   int npanes = im_reader.read_winmesh( fname, wname, false); 
@@ -187,7 +187,7 @@ int main(int argc, char *argv[]) {
   load_modules();
   print_usage( argc, argv);
 
-  if ( COMMPI_Initialized()) rank = COMMPI_Comm_rank( MPI_COMM_WORLD);
+  if ( COMMPI_Initialized()) mpi_rank = COMMPI_Comm_rank( MPI_COMM_WORLD);
 
   // Read in mesh file.
   string wname = read_in_mesh( argv[1]);
@@ -208,16 +208,16 @@ int main(int argc, char *argv[]) {
   int PROP_propagate = COM_get_function_handle( "PROP.propagate");
   init_parameters( cntr_param);
 
-  if ( rank==0) cout << "Initializing data structures..." << endl;
+  if ( mpi_rank==0) cout << "Initializing data structures..." << endl;
   // Initialize control parameters
   COM_call_function( PROP_init, &pmesh);
 
-  if ( rank==0) cout << "Detecting features..." << endl;
+  if ( mpi_rank==0) cout << "Detecting features..." << endl;
   double zero=0.;
   // Perform one step of smoothing to detect features.
   COM_call_function( PROP_propagate, &pmesh, &disps, &zero, &disps, &zero);
 
-  if ( rank==0) cout << "Writing out solutions..." << endl;
+  if ( mpi_rank==0) cout << "Writing out solutions..." << endl;
   output_solution( wname, "00000", cntr_param.format);
 
   COM_finalize();
