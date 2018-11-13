@@ -645,7 +645,7 @@ namespace Mesquite{
 			 "Unrecognized TagType.");
       break;
     }
-    s_to_t.insert(std::make_pair<msq_std::string,tagStruct>(tag_name,new_tag));
+    s_to_t.insert(std::make_pair(tag_name,new_tag));
     std::map<msq_std::string,tagStruct>::iterator pos;
     pos = s_to_t.find(tag_name);
     COM_assertion_msg(pos != s_to_t.end(),
