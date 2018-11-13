@@ -1,5 +1,28 @@
-cmake_minimum_required (VERSION 2.8)
-project(Rocstar Fortran C CXX)
+cmake_minimum_required (VERSION 3.1)
+project(Rocstar LANGUAGES NONE VERSION 1.0)
+
+# configuration scripts 
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# initialization and include paths
+include(cmake-buildscripts/AmberBuildSystemInit.cmake NO_POLICY_SCOPE)
+cmake_policy(VERSION 3.1)
+
+# now enable the languages
+enable_language(C CXX Fortran)
+
+include(AmberBuildSystem2ndInit)	
+
+# use MPI
+include(MPIConfig)
+
+# use Amber compiler flags
+include(CompilerFlags)
+#...but, for our purposes we can always used the optimized flags
+add_flags(C ${OPT_CFLAGS})
+add_flags(CXX ${OPT_CXXFLAGS})
+add_flags(Fortran ${OPT_FFLAGS})
+
 set (BUILD_STATIC FALSE CACHE BOOL "Build static libraries")
 set (ENABLE_MPI TRUE CACHE BOOL "Build with MPI Support")
 
@@ -25,7 +48,7 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 
 # 
 # Add testing support from IRAD
@@ -127,6 +150,8 @@ ENDIF()
 
 INCLUDE(CPack)
 
+# Generate install rule to bundle and fix OS X dependencies
+add_subdirectory(cmake-buildscripts/BundleOSXDependencies)
 
-
+print_build_report()
 

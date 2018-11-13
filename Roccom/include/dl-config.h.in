@@ -1,0 +1,5 @@
+// Header configured by CMake to report the current platform's shared library prefix and suffix
+
+#define SHARED_LIB_PREFIX "@CMAKE_SHARED_LIBRARY_PREFIX@"
+
+#define SHARED_LIB_SUFFIX "@CMAKE_SHARED_LIBRARY_SUFFIX@"
