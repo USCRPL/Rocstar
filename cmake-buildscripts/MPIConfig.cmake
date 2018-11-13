@@ -1,6 +1,6 @@
 #CMake config file for MPI
 # MUST be included after OpenMPConfig, if OpenMPConfig is included at all
-option(MPI "Build ${PROJECT_NAME} with MPI inter-machine parallelization support." FALSE)
+option(MPI "Build ${PROJECT_NAME} with MPI inter-machine parallelization support." TRUE)
 
 include(ParallelizationConfig)
 
@@ -26,6 +26,8 @@ Please install one and try again, or set MPI_${LANG}_INCLUDE_PATH and MPI_${LANG
 		set(MPI_Fortran_COMPILE_FLAGS "${MPI_Fortran_COMPILE_FLAGS} -fno-range-check -Wno-conversion")
 	endif()
 	
+	set(MPI_DEFINITIONS -DMPICH_IGNORE_CXX_SEEK -D_ROCSTAR_PARALLEL_)
+	
 	foreach(LANG C CXX Fortran)
 		
 		#Trim leading spaces from the compile flags.  They cause problems with PROPERTY COMPILE_OPTIONS
@@ -37,6 +39,9 @@ Please install one and try again, or set MPI_${LANG}_INCLUDE_PATH and MPI_${LANG
 		#convert space seperated flag variables into proper lists
 		separate_arguments(MPI_${LANG}_COMPILE_OPTIONS UNIX_COMMAND "${MPI_${LANG}_COMPILE_FLAGS}")
 		separate_arguments(MPI_${LANG}_LINK_OPTIONS UNIX_COMMAND "${MPI_${LANG}_LINK_FLAGS}")
+		
+		# add our definitions
+		list(APPEND MPI_${LANG}_COMPILE_OPTIONS ${MPI_DEFINITIONS})
 		
 		# --------------------------------------------------------------------
 		# sometimes MPI will include flags of the form "-Xlinker -rpath -Xlinker /usr/foo".  Unfortunately,
@@ -127,11 +132,6 @@ Please install one and try again, or set MPI_${LANG}_INCLUDE_PATH and MPI_${LANG
 			set_property(TARGET mpi_${LANG_LOWERCASE} PROPERTY INTERFACE_COMPILE_OPTIONS $<$<COMPILE_LANGUAGE:${LANG}>:${MPI_${LANG}_COMPILE_OPTIONS}>)
 		else()
 			set_property(TARGET mpi_${LANG_LOWERCASE} PROPERTY INTERFACE_COMPILE_OPTIONS ${MPI_${LANG}_COMPILE_OPTIONS})
-		endif()
-		
-		# C++ MPI doesn't like having "MPI" defined, but it's what Amber uses as the MPI switch in most programs (though not EMIL)
-		if(NOT ${LANG} STREQUAL CXX)
-			set_property(TARGET mpi_${LANG_LOWERCASE} PROPERTY INTERFACE_COMPILE_DEFINITIONS MPI)	
 		endif()
 			
 	endforeach()
@@ -225,5 +225,14 @@ Please install one and try again, or set MPI_${LANG}_INCLUDE_PATH and MPI_${LANG
 		endif()
 		
 	endfunction(make_mpi_version)
+else()
+	
+	# make fake MPI targets
+	foreach(LANG ${ENABLED_LANGUAGES})
+		string(TOLOWER ${LANG} LANG_LOWERCASE)
+		add_library(mpi_${LANG_LOWERCASE} INTERFACE)
+		target_compile_definitions(mpi_${LANG_LOWERCASE} INTERFACE DUMMY_MPI)
+		
+	endforeach()
 endif()
 

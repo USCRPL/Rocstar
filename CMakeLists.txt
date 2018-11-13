@@ -36,6 +36,8 @@ set(BUNDLED_3RDPARTY_TOOLS metis)
 include(3rdPartyTools)
 include(NetlibConfig)
 
+set(HDF5_LIB "" CACHE PATH "" FORCE)
+
 # global compile flags
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -49,77 +51,33 @@ if(NOT HAVE_GLOB_H)
 	add_definitions(-D_NO_GLOB_)
 endif()
 
+# force executables to be saved to the lib and bin folders in the binary dir
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-set (BUILD_STATIC FALSE CACHE BOOL "Build static libraries")
-set (ENABLE_MPI TRUE CACHE BOOL "Build with MPI Support")
-
-if(BUILD_STATIC)
-	set(BUILD_SHARED_LIBS FALSE)
-else()
-	set(BUILD_SHARED_LIBS TRUE)
-endif()
 
 set (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single directory for all executables.")
 set (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib CACHE PATH "Single directory for all libraries and archives.")
 mark_as_advanced (LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
-IF(NOT ENABLE_MPI)
-  add_definitions( -DDUMMY_MPI )
-ELSE()
-  FIND_PACKAGE(MPI REQUIRED)
-  add_definitions( -DMPICH_IGNORE_CXX_SEEK )
-  INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-ENDIF()
-if (NOT CMAKE_BUILD_TYPE)
-  message(STATUS "No build type selected, default to Release")
-  set(CMAKE_BUILD_TYPE "Release")
-endif()
-
-set(CMAKE_CXX_STANDARD 11)
-
-# 
 # Add testing support from IRAD
-#
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 INCLUDE(CTest)
 IF(BUILD_TESTING)
   SET(BUILDNAME "" CACHE STRING "Name of build on the dashboard")
   MARK_AS_ADVANCED(BUILDNAME)
 ENDIF(BUILD_TESTING)
 
+# include IRAD common library
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 add_subdirectory(IRAD)
 SET(IRAD_INCPATH ${CMAKE_SOURCE_DIR}/IRAD/include)
 SET(RUNTEST ${EXECUTABLE_OUTPUT_PATH}/runtest)
 SET(TESTRESULT ${EXECUTABLE_OUTPUT_PATH}/testresults)
 SET(IRAD_LIB IRAD)
-include_directories(${IRAD_INCPATH})
+
+# add main subdirectories
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 add_subdirectory(metis-4.0.3)
-
-# add some stubs for testing. this crap all gets removed
-# when we add the real tests for Rocstar
-
-#ADD_LIBRARY(Rocstar SHARED src/ExampleSourceFile.C)
-#TARGET_LINK_LIBRARIES(Rocstar ${IRAD_LIB})
-#ADD_EXECUTABLE(rocstar_test src/TestRocstar.C)
-#TARGET_LINK_LIBRARIES(rocstar_test Rocstar)
-#ADD_EXECUTABLE(sep src/ExampleSerialProgram.C src/sep.C)
-#TARGET_LINK_LIBRARIES(sep Rocstar)
-#ADD_EXECUTABLE(make_project src/MakeProject.C)
-#TARGET_LINK_LIBRARIES(make_project Rocstar)
-
-IF(MPI_CXX_COMPILER)
-  ADD_DEFINITIONS(-D_ROCSTAR_PARALLEL_)
-#  ADD_EXECUTABLE(pepi src/ExampleParallelProgram.C src/pepi.C)
-#  TARGET_LINK_LIBRARIES(pepi Rocstar)
-#  ADD_EXECUTABLE(rocstar_parallel_test src/ParallelTestRocstar.C)
-#  TARGET_LINK_LIBRARIES(rocstar_parallel_test Rocstar)
-ENDIF()
-#
-# original rocstar stuff below here
-#
-
 add_subdirectory(Roccom)
 add_subdirectory(Rocface)
 add_subdirectory(Rocprop)
@@ -132,11 +90,11 @@ add_subdirectory(Rocburn)
 add_subdirectory(Rocprep)
 add_subdirectory(testing)
 
-include_directories(./Roccom/include ./Rocman/include)
+# add to-level rocstar executable
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 add_executable(rocstar src/rocstar.C)
-set_source_files_properties(src/rocstar.C PROPERTIES COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-set_target_properties(rocstar PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-target_link_libraries(rocstar Rocman Roccomf Roccom ${IRAD_LIB} ${MPI_CXX_LIBRARIES})
+target_link_libraries(rocstar Rocman Roccomf Roccom ${IRAD_LIB} mpi_cxx)
 
 INSTALL(TARGETS rocstar RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 
