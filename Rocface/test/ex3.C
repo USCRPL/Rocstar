@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
       char fname[100];
       std::sprintf( fname, "%s%d%s", str_prefix, i+1, str_suffix);
       std::ifstream is( fname);
-      assert( is != NULL);
+      assert( is);
       read_ij( is, str_mesh_coors[i], dims[i]);
       
       str_mesh_nd[i] = str_mesh_coors[i];
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
     if ( i%comm_size==comm_rank) {
       char fname[100];
       std::sprintf( fname, "%s%d%s", tri_prefix, i+1, tri_suffix);
-      ifstream is( fname); assert( is != NULL);
+      ifstream is( fname); assert( is);
       read_obj( is, tri_mesh_coors[i], tri_mesh_elems[i]);
       
       tri_mesh_nd[i] = tri_mesh_coors[i];

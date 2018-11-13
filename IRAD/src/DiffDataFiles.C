@@ -18,7 +18,7 @@ namespace IRAD
   bool isNumber(std::string sCheck){
     if(sCheck == "")
       return false;
-    for(int i=0; i < sCheck.size();i++){
+    for(size_t i=0; i < sCheck.size();i++){
       if(!isdigit(sCheck[i]) && sCheck[i] != 'e' && sCheck[i] != 'E'
          && sCheck[i] != '.' && sCheck[i] != '+' && sCheck[i] != '-'){
         return false;

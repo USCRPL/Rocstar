@@ -8,14 +8,11 @@ function(print_build_report)
 	colormsg(HIBLUE "**************************************************************************")
 	colormsg("                             " _WHITE_ "Build Report")
 	colormsg("                            " _HIMAG_ "Compiler Flags:")
-	colormsg(HIMAG "C" HIWHITE "No-Opt:         "  WHITE "${CMAKE_C_FLAGS}" HIBLUE "${NO_OPT_CFLAGS_SPC}")
-	colormsg(HIMAG "C" HIWHITE "Optimized:      " WHITE "${CMAKE_C_FLAGS}" HIBLUE "${OPT_CFLAGS_SPC}")
+	colormsg(HIMAG "C:         " WHITE "${CMAKE_C_FLAGS}")
 	colormsg("")
-	colormsg(GREEN "CXX" HIWHITE "No-Opt:       " WHITE "${CMAKE_CXX_FLAGS}" HIBLUE "${NO_OPT_CXXFLAGS_SPC}")
-	colormsg(GREEN "CXX" HIWHITE "Optimized:    " WHITE "${CMAKE_CXX_FLAGS}" HIBLUE "${OPT_CXXFLAGS_SPC}")
+	colormsg(GREEN "CXX:       " WHITE "${CMAKE_CXX_FLAGS}")
 	colormsg("")
-	colormsg(HIRED "Fortran" HIWHITE "No-Opt:   " WHITE "${CMAKE_Fortran_FLAGS}" HIBLUE "${NO_OPT_FFLAGS_SPC}")
-	colormsg(HIRED "Fortran" HIWHITE "Optimized:" WHITE "${CMAKE_Fortran_FLAGS}" HIBLUE "${OPT_FFLAGS_SPC}")
+	colormsg(HIRED "Fortran:   " WHITE "${CMAKE_Fortran_FLAGS}")
 	
 	colormsg("")
     colormsg("                         " _HIMAG_ "3rd Party Libraries")
@@ -123,28 +120,6 @@ function(print_build_report)
 	colormsg(CYAN "  Fortran:" YELLOW "${CMAKE_Fortran_COMPILER_ID} ${CMAKE_Fortran_COMPILER_VERSION}" HIRED "(${CMAKE_Fortran_COMPILER})")
 	endif()
 		
-	# this part is for Amber only
-	if(INSIDE_AMBER)
-		message("")
-		colormsg("                            " _HIMAG_ "Building Tools:")
-	
-		# NOTE: we can't sort this until after the subdirs have been added because they need to get added in dependency order 
-		string(TOLOWER "${AMBER_TOOLS}" AMBER_TOOLS) # list(SORT) sorts capital letters first, so we need to make everything lowercase
-		list(SORT AMBER_TOOLS)
-		list_to_space_separated(BUILDING_TOOLS ${AMBER_TOOLS})
-		
-		colormsg("${BUILDING_TOOLS}")
-		message("")
-		colormsg("                          " _HIMAG_ "NOT Building Tools:")
-		foreach(TOOL ${REMOVED_TOOLS})
-		
-			# get the corresponding reason
-			list(FIND REMOVED_TOOLS ${TOOL} TOOL_INDEX)
-			list(GET REMOVED_TOOL_REASONS ${TOOL_INDEX} REMOVAL_REASON)
-			
-			colormsg(HIRED "${TOOL} - ${REMOVAL_REASON}")
-		endforeach()
-	endif()
 	colormsg(HIBLUE "**************************************************************************")
 	
 	if(DEFINED PRINT_PACKAGING_REPORT AND PRINT_PACKAGING_REPORT)

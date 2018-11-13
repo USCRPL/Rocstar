@@ -28,7 +28,7 @@
 template <class T>
 struct Rocblas::limit1v : std::binary_function<T,T,T> {
   T operator()(T x, T y) {
-    if ( x>=0&&y>=0 || x<=0&&y<=0)
+    if ( (x>=0&&y>=0) || (x<=0&&y<=0))
       return std::abs(x)<std::abs(y)?x:y;
     else
       return 0;
@@ -129,7 +129,7 @@ void Rocblas::calc( Attribute *z, const Attribute *x, const void *yin,
 
     const Attribute *py = (ytype!=BLAS_VOID&&yit)?(*yit)->attribute(y->id()):y;
     int ystrd = get_stride<ytype>(py);
-    COM_assertion_msg( ytype!=BLAS_SCNE && ytype!=BLAS_VEC2D ||
+    COM_assertion_msg( (ytype!=BLAS_SCNE && ytype!=BLAS_VEC2D) ||
 		       (length == int(py->size_of_items()) || ystrd==0),
 		       (std::string("Numbers of items do not match between ")+
 			y->fullname()+" and "+z->fullname()+

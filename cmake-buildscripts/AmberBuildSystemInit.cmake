@@ -37,7 +37,8 @@ set(CMAKE_INSTALL_MESSAGE LAZY)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} 
 	"${CMAKE_CURRENT_LIST_DIR}/find-modules" 
-	"${CMAKE_CURRENT_LIST_DIR}/patched-cmake-modules")
+	"${CMAKE_CURRENT_LIST_DIR}/patched-cmake-modules"
+	"${CMAKE_CURRENT_LIST_DIR}/hanjianwei")
 
 # includes
 # --------------------------------------------------------------------

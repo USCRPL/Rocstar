@@ -726,16 +726,16 @@ namespace Mesh {
 			  GeoPrim::CVector fjac[]) const;
   };
 
-  int GetMeshCentroids(Mesh::NodalCoordinates &nc,
+  void GetMeshCentroids(Mesh::NodalCoordinates &nc,
 		       Mesh::Connectivity     &conn,
 		       std::vector<double>    &centroids);
 
-  int CollideCellsWithBox(Mesh::NodalCoordinates &nc,
+  void CollideCellsWithBox(Mesh::NodalCoordinates &nc,
 			  Mesh::Connectivity     &conn,
 			  GeoPrim::CBox          &box,
 			  std::vector<Mesh::IndexType> &candidates,
 			  std::vector<Mesh::IndexType> &cells);
-  int CollideMeshWithBox(Mesh::NodalCoordinates &nc,
+  void CollideMeshWithBox(Mesh::NodalCoordinates &nc,
 			 Mesh::Connectivity     &conn,
 			 GeoPrim::CBox          &box,
 			 std::vector<Mesh::IndexType> &cells);

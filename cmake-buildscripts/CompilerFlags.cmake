@@ -82,7 +82,7 @@ if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
 endif()
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
-	add_flags(CXX -Wall -Wno-unused-function -Wno-unknown-pragmas)
+	add_flags(CXX -Wall -Wno-unused-function -Wno-unknown-pragmas -Wno-parentheses)
 
 	# Kill it!  Kill it with fire!
 	check_cxx_compiler_flag(-Wno-unused-local-typedefs SUPPORTS_WNO_UNUSED_LOCAL_TYPEDEFS)

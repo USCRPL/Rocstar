@@ -178,7 +178,7 @@ attribute, then its number of items must be 1.");
     result_type *zval = (result_type *)z->pointer();
     int   length = z->size_of_items();
 
-    COM_assertion_msg( length==0 || ytype == BLAS_VOID || zval && yval, 
+    COM_assertion_msg( length==0 || ytype == BLAS_VOID || (zval && yval), 
 		       (std::string("Caught NULL pointer in w-attribute ")+
 			z->fullname()+" or "+y->fullname()).c_str());
 
@@ -216,7 +216,7 @@ attribute, then its number of items must be 1.");
     Attribute *py = ytype!=BLAS_VOID&&yit?(*yit)->attribute(y->id()):y;
     int ystrd = get_stride<ytype>(py);
     const bool ystg = py && (ynum_dims!=num_dims || ynum_dims!=ystrd);
-    COM_assertion_msg( ytype!=BLAS_SCNE && ytype!=BLAS_VEC2D ||
+    COM_assertion_msg( (ytype!=BLAS_SCNE && ytype!=BLAS_VEC2D) ||
 		       length == int(py->size_of_items()) || ystrd==0,
 		       (std::string("Numbers of items do not match between ")+
 			y->fullname()+" and "+z->fullname()+
@@ -230,7 +230,7 @@ attribute, then its number of items must be 1.");
       if ( ytype != BLAS_VOID && yit)
 	yval = reinterpret_cast<argument_type *>(py->pointer());
 
-	COM_assertion_msg( length==0 || ytype == BLAS_VOID || zval && yval, 
+	COM_assertion_msg( length==0 || ytype == BLAS_VOID || (zval && yval), 
 			   (std::string("Caught NULL pointer in ")+
 			    z->fullname()+" or "+y->fullname()+" on pane "+
 			    to_str( (*zit)->id())).c_str());
@@ -253,7 +253,7 @@ attribute, then its number of items must be 1.");
 	  ystrd = get_stride<ytype>( py_i);
 	}
 
-	COM_assertion_msg( length==0 || ytype == BLAS_VOID || zval && yval, 
+	COM_assertion_msg( length==0 || ytype == BLAS_VOID || (zval && yval), 
 			   (std::string("Caught NULL pointer in ")+
 			    z->fullname()+" or "+y->fullname()+" on pane "+
 			    to_str( (*zit)->id())).c_str());

@@ -304,7 +304,7 @@ inline int Rocblas::get_stride( const Attribute *attr) {
 template <class data_type, int attr_type, bool is_staggered>
 inline data_type &
 Rocblas::getref( data_type *base, const int r, const int c, const int nc) {
-  if ( attr_type == BLAS_SCNE || attr_type == BLAS_VEC2D && is_staggered)
+  if ( attr_type == BLAS_SCNE || (attr_type == BLAS_VEC2D && is_staggered))
     return base[r*nc];
   else if ( attr_type == BLAS_VEC2D)
     return base[r*nc+c];
@@ -318,7 +318,7 @@ template <class data_type, int attr_type, bool is_staggered>
 inline const data_type &
 Rocblas::getref( const data_type *base, const int r,
 		 const int c, const int nc) {
-  if ( attr_type == BLAS_SCNE || attr_type == BLAS_VEC2D && is_staggered)
+  if ( attr_type == BLAS_SCNE || (attr_type == BLAS_VEC2D && is_staggered))
     return base[r*nc];
   else if ( attr_type == BLAS_VEC2D)
     return base[r*nc+c];

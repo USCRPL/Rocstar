@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     char fname[100];
     std::sprintf( fname, "%s%d%s", t1_prefix, i+1, t1_suffix);
     std::ifstream is( fname);
-    assert( is != NULL);
+    assert( is);
     read_obj( is, t1_mesh_coors[i], t1_mesh_elems[i]);
   }
 
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     char fname[100];
     std::sprintf( fname, "%s%d%s", t2_prefix, i+1, t2_suffix);
     std::ifstream is( fname);
-    assert( is != NULL);
+    assert( is);
     read_obj( is, t2_mesh_coors[i], t2_mesh_elems[i]);
   }
   COM_new_window("tri2");

@@ -23,6 +23,22 @@ add_flags(C ${OPT_CFLAGS})
 add_flags(CXX ${OPT_CXXFLAGS})
 add_flags(Fortran ${OPT_FFLAGS})
 
+# 3rd party tools
+set(REQUIRED_3RDPARTY_TOOLS ) 
+if(USE_FFT)
+	list(APPEND REQUIRED_3RDPARTY_TOOLS fftw)
+endif()
+
+# whether blas and lapack are required
+set(LINALG_LIBS_REQUIRED TRUE)
+# programs where INTERNAL is a valid status
+set(BUNDLED_3RDPARTY_TOOLS metis)
+include(3rdPartyTools)
+include(NetlibConfig)
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 set (BUILD_STATIC FALSE CACHE BOOL "Build static libraries")
 set (ENABLE_MPI TRUE CACHE BOOL "Build with MPI Support")
 

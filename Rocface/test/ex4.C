@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
       char fname[100];
       std::sprintf( fname, "%s%d%s", quad_prefix, i+1, quad_suffix);
       std::ifstream is( fname);
-      assert( is != NULL);
+      assert( is);
       int n = read_obj( is, quad_mesh_coors[i], quad_mesh_elems[i]);
       assert( n==4);
       
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
     if ( i%comm_size==comm_rank) {
       char fname[100];
       std::sprintf( fname, "%s%d%s", tri_prefix, i+1, tri_suffix);
-      ifstream is( fname); assert( is != NULL);
+      ifstream is( fname); assert( is);
       int n = read_obj( is, tri_mesh_coors[i], tri_mesh_elems[i]);
       assert( n==3 || n==6);
       

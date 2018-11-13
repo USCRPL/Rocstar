@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <ext/hash_map>
 #include <cstdlib>
 #include <cmath>
 #include <map>

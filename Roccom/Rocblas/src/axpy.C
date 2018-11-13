@@ -115,7 +115,7 @@ void Rocblas::axpy_gen( const void *ain, const Attribute *x,
     const Attribute *pa = (atype!=BLAS_VOID&&ait)?(*ait)->attribute(a->id()):a;
     int astrd = get_stride<atype>(pa);
     const bool astg = pa && (anum_dims!=num_dims || anum_dims!=astrd);
-    COM_assertion_msg( atype!=BLAS_SCNE && atype!=BLAS_VEC2D ||
+    COM_assertion_msg( (atype!=BLAS_SCNE && atype!=BLAS_VEC2D) ||
 		       length == int(pa->size_of_items()) || astrd==0,
 		       (std::string("Numbers of items do not match between ")+
 			a->fullname()+" and "+z->fullname()+

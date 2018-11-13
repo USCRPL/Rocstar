@@ -125,7 +125,7 @@ namespace Mesh {
     }
   };
  
-  int CollideCellsWithBox(Mesh::NodalCoordinates &nc,
+  void CollideCellsWithBox(Mesh::NodalCoordinates &nc,
 			  Mesh::Connectivity     &conn,
 			  GeoPrim::CBox          &box,
 			  std::vector<Mesh::IndexType> &candidates,
@@ -151,7 +151,7 @@ namespace Mesh {
     
   };
 
-  int CollideMeshWithBox(Mesh::NodalCoordinates &nc,
+  void CollideMeshWithBox(Mesh::NodalCoordinates &nc,
 			 Mesh::Connectivity     &conn,
 			 GeoPrim::CBox          &box,
 			 std::vector<Mesh::IndexType> &cells)
@@ -177,7 +177,7 @@ namespace Mesh {
     
   };
 
-  int GetMeshCentroids(Mesh::NodalCoordinates &nc,
+  void GetMeshCentroids(Mesh::NodalCoordinates &nc,
 		       Mesh::Connectivity     &conn,
 		       std::vector<double>    &centroids)
   {

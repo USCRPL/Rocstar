@@ -45,7 +45,7 @@ public:
   // given file and return the number of local panes.
   int read_mesh( const char *fname, const std::string &wname) {
     std::ifstream is( fname); 
-    if ( is == NULL) {
+    if (!is) {
       std::cerr << "Error: Could not open file " << fname << std::endl;
       exit(-1);
     }

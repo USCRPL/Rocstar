@@ -117,7 +117,7 @@ const char *read_file(const char *file,blockConsumer &dest)
 	else if (endsWith(file,".reg"))
 		return read_reg(file,dest);
 	else
-		return "Unrecognized input mesh file extension! ("__FILE__")";
+		return "Unrecognized input mesh file extension! (" __FILE__ ")";
 	return NULL;
 }
 
