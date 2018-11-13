@@ -38,8 +38,6 @@ set_source_files_properties(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "-fPIC" )
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include_directories(include)
-
 
 IF(NOT BUILD_STATIC)
   add_library(Roccom SHARED ${LIB_SRCS})
@@ -51,6 +49,9 @@ ELSE()
 ENDIF()
 target_link_libraries(Roccom ${DL_LIB} ${MPI_CXX_LIBRARIES})
 target_link_libraries(Roccomf Roccom ${MPI_Fortran_LIBRARIES})
+
+target_include_directories(Roccom PUBLIC include)
+target_include_directories(Roccomf PUBLIC include)
 
 IF(MPI_LINK_FLAGS)
   SET_TARGET_PROPERTIES(Roccom PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")

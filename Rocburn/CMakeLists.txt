@@ -10,11 +10,9 @@ ELSE()
   add_definitions( -DMPICH_IGNORE_CXX_SEEK -DMPI)
   INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
 ENDIF()
-find_library(HDF4_LIB df HINTS /usr/lib/hdf /usr/lib64/hdf)
-find_library(MFHDF_LIB mfhdf HINTS /usr/lib/hdf /usr/lib64/hdf)
+
 find_library(ZLIB z)
 find_library(JPEG_LIB jpeg)
-find_path(HDF4_INC hdf.h HINTS /usr/include/hdf)
 find_library(BLOCKSOLVE_LIBRARY blocksolve95)
 find_path(BLOCKSOLVE_INC blocksolve95.h)
 
@@ -35,9 +33,6 @@ set_source_files_properties(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "-fPIC ${MPI_Fo
 # rpath settings
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-include_directories(${ROCCOM_INC} ${ROCMAN_INC} ${HDF4_INC})
-add_definitions(-DUSE_HDF=1)
 
 IF(NOT BUILD_STATIC)
   add_library(Rocburn SHARED ${LIB_SRCS})

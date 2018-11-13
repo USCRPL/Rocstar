@@ -36,7 +36,12 @@ set(BUNDLED_3RDPARTY_TOOLS metis)
 include(3rdPartyTools)
 include(NetlibConfig)
 
+# global compile flags
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+if(hdf4_ENABLED)
+	add_definitions(-DUSE_HDF=1)
+endif()
 
 # detect glob support
 check_all_includes(CXX glob.h)

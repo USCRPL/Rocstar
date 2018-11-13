@@ -16,16 +16,6 @@ else()
 	list(APPEND NETLIB_LIBRARIES blas lapack)
 endif()
 
-# arpack
-if(arpack_ENABLED)
-	list(APPEND NETLIB_LIBRARIES arpack)
-endif()
-
-# if the system lacks a C99 complex library, use our own implementation
-if(c9x-complex_ENABLED)
-    list(APPEND NETLIB_LIBRARIES mc)
-endif()
-
 # link system math library if it exists
 if(libm_ENABLED)
 	list(APPEND NETLIB_LIBRARIES ${LIBM})

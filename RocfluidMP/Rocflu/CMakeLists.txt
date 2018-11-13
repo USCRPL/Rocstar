@@ -21,10 +21,6 @@ ELSE()
   INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
 ENDIF()
 
-FIND_PACKAGE(BLAS REQUIRED)
-FIND_PACKAGE(LAPACK REQUIRED)
-find_library(HDF4_LIB df HINTS /usr/lib/hdf /usr/lib64/hdf)
-find_library(MFHDF_LIB mfhdf HINTS /usr/lib/hdf /usr/lib64/hdf)
 find_library(ZLIB z)
 find_library(JPEG_LIB jpeg)
 find_path(HDF4_INC hdf.h HINTS /usr/include/hdf)
@@ -700,7 +696,7 @@ ELSE()
   add_definitions( -DSTATIC_LINK )
 ENDIF()
 SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${BLAS_LINKER_FLAGS} ${LAPACK_LINKER_FLAGS}" )
-target_link_libraries(Rocflu Rocmop Roccomf Roccom ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES} ${MPI_Fortran_LIBRARIES})
+target_link_libraries(Rocflu Rocmop Roccomf Roccom netlib ${MPI_Fortran_LIBRARIES})
 
 add_executable(rfluinit ${INIT_SRCS})
 target_link_libraries(rfluinit Rocflu Rocmop Rocout Rocin Roccomf Roccom ${MPI_Fortran_LIBRARIES} ${MPI_CXX_LIBRARIES} ${HDF5_LIB})
@@ -712,8 +708,6 @@ add_executable(rflumap ${MAP_SRCS})
 target_link_libraries(rflumap Rocflu Rocmop Rocout Rocin Roccomf Roccom ${MPI_Fortran_LIBRARIES} ${MPI_CXX_LIBRARIES} ${HDF5_LIB} ${HDF5_LIB})
 
 SET_TARGET_PROPERTIES(Rocflu rfluinit rflupart rflumap PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS} ${MPI_Fortran_LINK_FLAGS}")
-#target_link_libraries(makeflo read write ${MFHDF_LIB} ${HDF4_LIB} ${JPEG_LIB} ${ZLIB})
-#target_link_libraries(rfloprep Rocflo Rocout Rocin Roccomf Roccom)
 
 # Unit test programs
 #read.tst: $(RTST) read.cpp

@@ -9,13 +9,15 @@ set(3RDPARTY_TOOLS
 blas
 lapack 
 libm
-mkl)
+mkl
+hdf4)
 
 set(3RDPARTY_TOOL_USES
 "for fundamental linear algebra calculations"                                     
 "for fundamental linear algebra calculations"                                                                    
 "for fundamental math routines if they are not contained in the C library"
-"alternate implementation of lapack and blas that is tuned for speed")                                                  
+"alternate implementation of lapack and blas that is tuned for speed"
+"used for saving array data to files")                                                  
 
 
 #sets a tool to external, internal, or disabled
@@ -207,6 +209,20 @@ if(NEED_libm)
 	endif()
 endif()
 
+#------------------------------------------------------------------------------
+#  HDF4
+#------------------------------------------------------------------------------ 
+
+if(NEED_hdf4)
+	find_package(HDF4)
+	
+	if(HDF4_FOUND)
+		set_3rdparty(hdf4 EXTERNAL)
+	else()
+		set_3rdparty(hdf4 DISABLED)
+	endif()
+endif()
+
 # Apply user overrides
 # -------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -337,3 +353,11 @@ endif()
 if(libm_EXTERNAL)	
 	import_library(libm ${LIBM})
 endif()
+
+#------------------------------------------------------------------------------
+#  HDF4
+#------------------------------------------------------------------------------ 
+if(hdf4_EXTERNAL)	
+	import_libraries(hdf4 LIBRARIES ${HDF4_LIBRARIES} INCLUDES ${HDF4_INCLUDE_DIR})
+endif()
+
