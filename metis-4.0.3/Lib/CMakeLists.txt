@@ -12,3 +12,4 @@ set(METIS_SOURCES coarsen.c fm.c initpart.c match.c ccgraph.c memory.c
 add_library(metis ${METIS_SOURCES})
 target_include_directories(metis PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_property(TARGET metis PROPERTY VERSION 4.0.3)
+target_link_libraries(metis libm)
