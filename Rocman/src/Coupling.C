@@ -321,7 +321,10 @@ void Coupling::read_restart_info()
     int curStep;
     double initialTime;
     while (!feof(fp)) {
-      fscanf(fp, "%d %le", &curStep, &initialTime);
+      if(fscanf(fp, "%d %le", &curStep, &initialTime) == EOF)
+      {
+        break;
+      }
     }
     fclose(fp);
     if (comm_rank == 0)

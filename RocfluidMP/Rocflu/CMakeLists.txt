@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+
 project(Rocflu)
 enable_language(CXX Fortran)
 load_cache(../)

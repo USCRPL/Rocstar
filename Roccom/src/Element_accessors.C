@@ -198,7 +198,7 @@ int Facet_node_enumerator::size_of_nodes() const {
 
     if ( _ene->is_quadratic()) {
       int num_nodes = _ene->size_of_nodes();
-      nn += _ne + (num_nodes == 18 && _k<3 || num_nodes == 27);
+      nn += _ne + ((num_nodes == 18 && _k<3) || num_nodes == 27);
     }
     return nn;
   }

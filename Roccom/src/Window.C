@@ -368,7 +368,7 @@ Attribute *Window::inherit( Attribute *from, const std::string &aname,
 
     // Inherit the pane if the condition was set to an variable (cnd!=NULL),
     // or set to to pane ID (cnd==NULL && val!=0), or not set.
-    if ( !cond && (val==0 || val==ppn->id()) || cnd && *cnd == val) {
+    if ( (!cond && (val==0 || val==ppn->id())) || (cnd && *cnd == val)) {
       // Create new panes only when we are inheriting the mesh.
       Pane_friend *pn;
       if ( insert_pane)

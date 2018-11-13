@@ -377,7 +377,7 @@ reinit_attr( int aid, OP_Init op, void **addr,
 			    append_frame(a->fullname(), Pane::reinit_attr));
     }
 
-    if ( strd==0 || strd<0 && a->stride()==0) 
+    if ( strd==0 || (strd<0 && a->stride()==0)) 
       // Default value for stride is number of components
       strd = ncomp;
     else if ( strd<0)
@@ -416,7 +416,7 @@ reinit_conn( Connectivity *con, OP_Init op, int **addr,
       }
     }
 
-    if ( strd==0 || strd<0 && con->stride()==0) 
+    if ( strd==0 || (strd<0 && con->stride()==0)) 
       // Default value for stride is number of components
       strd = con->size_of_components();
     else if ( strd<0)
@@ -497,8 +497,8 @@ Attribute *Pane::inherit( Attribute *from, const std::string &aname,
 	((Attribute_friend*)_attr_set[COM_CONN])->inherit( from, false, withghost);
 	// Check that if structured meshes, the nodal coordinates 
 	// was also used.
-	COM_assertion( !is_structured() || _attr_set[COM_NC]->parent() && 
-		       _attr_set[COM_NC]->parent()->pane() == from->pane());
+	COM_assertion( !is_structured() || (_attr_set[COM_NC]->parent() && 
+		       _attr_set[COM_NC]->parent()->pane() == from->pane()));
       }
 
       // Inherit individual connectivity tables
@@ -612,8 +612,8 @@ Attribute *Pane::inherit( Attribute *from, const std::string &aname,
     Attribute *dest_data = attribute( a->id()+j);
     
     if ( dest_data->pointer() && src_data->pointer()) {
-      COM_assertion_msg( withghost && dest_data->size_of_items()==src_data->size_of_items() ||	
-			 !withghost && dest_data->size_of_real_items()==src_data->size_of_real_items(),
+      COM_assertion_msg( (withghost && dest_data->size_of_items()==src_data->size_of_items()) ||	
+			 (!withghost && dest_data->size_of_real_items()==src_data->size_of_real_items()),
 			 (std::string("Number of items of attributes ")+
 			  from->fullname()+" and " +a->fullname()+ 
 			  " do not match during copying.").c_str());

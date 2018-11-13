@@ -1582,7 +1582,7 @@ extern "C" void COM_F_FUNC2( com_icall_function, COM_ICALL_FUNCTION)
   for ( int i=0; i<argc-1; ++i) 
     lens[i] = (unsigned int)((char *)(args[argc+i])-(char *)(0));
 
-  COM_get_roccom()->icall_function(wf, argc, args, lens, false);
+  COM_get_roccom()->icall_function(wf, argc, args, lens, nullptr);
 }
 
 extern "C" void COM_F_FUNC2(com_test, COM_TEST)

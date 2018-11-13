@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+
 project(GridConversion)
 ENABLE_LANGUAGE( CXX Fortran )
 IF(NOT ENABLE_MPI)

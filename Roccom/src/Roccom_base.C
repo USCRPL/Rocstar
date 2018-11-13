@@ -44,6 +44,7 @@
 #include <sstream>
 #include "Roccom_base.h"
 #include "commpi.h"
+#include "dl-config.h"
 
 COM_BEGIN_NAME_SPACE
 
@@ -82,9 +83,8 @@ inline static void remove_arg( int *argc, char ***argv, int i) {
 #endif
 
 Roccom_base::Roccom_base( int *argc, char ***argv) throw( COM_exception, int)
-  : _depth(0), _verbose(0), _verb1(0), _comm(MPI_COMM_WORLD),
-    _mpi_initialized(false), _errorcode(0), _exception_on(true), _profile_on(0),
-    _debug(false)
+  : _depth(0), _verbose(0), _verb1(0), _debug(false), _comm(MPI_COMM_WORLD),
+    _mpi_initialized(false), _errorcode(0), _exception_on(true), _profile_on(0)
 {
   _attr_map.add_object("",NULL);
   _func_map.add_object("",NULL);
@@ -222,7 +222,7 @@ Roccom_base::load_module( const std::string &lname,
   // Obtain a reference to the library.
   int index = _module_map.find(lname).first;
   if ( index<0) { // Load the library
-    std::string lname_short = std::string("lib") + lname + ".so";
+    std::string lname_short = std::string(SHARED_LIB_PREFIX) + lname + std::string(SHARED_LIB_SUFFIX);
     std::string lname_full = _libdir + lname_short;
 
     // Open the library
@@ -283,7 +283,7 @@ Roccom_base::load_module( const std::string &lname,
       // 3: uppercase _
       // 4: lowercase __
     for ( int i=ibegin; i<=iend; ++i) {
-      if ( i & 1 == 1)
+      if ( (i & 1) == 1)
 	std::transform( fname.begin(), fname.end(), fname.begin(), toupper);
       else
 	std::transform( fname.begin(), fname.end(), fname.begin(), tolower);
@@ -362,7 +362,7 @@ Roccom_base::unload_module( const std::string &lname,
   }
   else {
     if ( _f90_mangling != -1) {
-      if ( _f90_mangling & 1 == 1)
+      if ( (_f90_mangling & 1) == 1)
 	std::transform( fname.begin(), fname.end(), fname.begin(), toupper);
       else
 	std::transform( fname.begin(), fname.end(), fname.begin(), tolower);
@@ -2246,12 +2246,17 @@ int Roccom_base::split_name( const std::string &wa, std::string &wname,
   }
 
   if ( wname.empty() || aname.empty()) 
+  {
     if ( tothrow)
+	{
       throw COM_exception(COM_ERR_INVALID_ATTRIBUTE_NAME,
 			  append_frame(wa,Roccom_base::split_name));
+	}
     else
+	{
       return 1;
-
+	}
+  }
   return 0;
 }
 

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+
 project(Roccom)
 ENABLE_LANGUAGE( CXX Fortran )
 include(FortranCInterface)
@@ -9,6 +9,11 @@ set (ENABLE_MPI TRUE CACHE BOOL "Build with MPI Support")
 set (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single directory for all executables.")
 set (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib CACHE PATH "Single directory for all libraries and archives.")
 mark_as_advanced (LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+
+# configure dl-config.h
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
+configure_file(include/dl-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/dl-config.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 IF(NOT ENABLE_MPI)
   add_definitions( -DDUMMY_MPI )

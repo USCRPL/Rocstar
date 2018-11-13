@@ -281,7 +281,7 @@ copy_array( void *buf, int strd, int n,
   char *ptr0 = (char*)pointer();
   if (offset) ptr0 += offset*ncomp*basesize;
 
-  if ( _strd == strd && (_strd == ncomp || n==_cap && strd==1) ) {
+  if ( _strd == strd && (_strd == ncomp || (n==_cap && strd==1)) ) {
     // two arrays have the same layout
     if ( direction == COPY_IN)
       std::memcpy( ptr0, buf, n*ncomp*basesize);
@@ -333,7 +333,7 @@ copy_array( void *buf, int strd, int n,
 void Attribute::
 append_array( const void *from, int strd, int nitem) throw(COM_exception)
 {
-  if ( !is_panel() && !is_windowed() || size_of_ghost_items())
+  if ( (!is_panel() && !is_windowed()) || size_of_ghost_items())
     throw COM_exception( COM_ERR_APPEND_ARRAY,
 			 append_frame(fullname(), Attribute::append_array));
 

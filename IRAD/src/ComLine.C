@@ -296,7 +296,7 @@ namespace IRAD {
   
     void ComLineObject::AddOption(char s,const std::string &l,int atype)
     {
-      this->push_back(std::make_pair<char,std::string>(s,l));
+      this->push_back(std::make_pair(s,l));
       _options[s] = std::string("");
       _type[s] = atype;
       if(atype > 0)
@@ -306,7 +306,7 @@ namespace IRAD {
     
     void ComLineObject::AddOption(char s,const std::string &l,int type,const std::string argname)
     {
-      this->push_back(std::make_pair<char,std::string>(s,l));
+      this->push_back(std::make_pair(s,l));
       _options[s] = std::string("");
       _type[s] = type;
       _argname[s] = argname;

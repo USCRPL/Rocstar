@@ -85,7 +85,10 @@ get_restart_time(const string &restart_file)
   FILE *fp = fopen(restart_file.c_str(), "r");
   if (fp == NULL) return 0.0;
   while (!feof(fp)) {
-      fscanf(fp, "%d %le", &curStep, &curTime);
+      if(fscanf(fp, "%d %le", &curStep, &curTime) == EOF)
+	  {
+		  break;
+	  }
   }
   fclose(fp);
 #endif
@@ -669,7 +672,7 @@ void rocstar_driver( int verb, int remeshed, bool debug) {
 
     // March through time until either the specified maximum time or the maximum
     // number of time steps have been exceeded (whichever comes first).
-  int InterfaceConverged;
+  int InterfaceConverged = 0;
   MPI_Barrier(param.communicator);
   //  if(comm_rank == 0)
   //    std::cout << "Rocstar: Preparig to step..." << std::endl;

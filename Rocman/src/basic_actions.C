@@ -801,7 +801,7 @@ void ComputeBurnPane::run( double t, double dt, double alpha_dummy) {
   // The rest of computation are on burning panes only
   // Note that b_rb_alp is used here as a temporary variable.
   //  b_rb_alp is not used elsewhere.
-  if (zoom>=1.0 && sagent==NULL || sagent && sagent->withALE) {                      
+  if ((zoom>=1.0 && sagent==NULL) || (sagent && sagent->withALE)) {                      
     COM_call_function( RocBlas::mul, &fb_rhof_alp_hdl, &b_rb_alp_hdl, &b_rb_alp_hdl);
     //  debug_print(fagent->fluidBufB+".mdot_alp", 102, 0);
     //  debug_print(fagent->fluidBufNG+".mdot_alp", 102, 0);
