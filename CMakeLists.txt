@@ -38,6 +38,14 @@ include(NetlibConfig)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# detect glob support
+check_all_includes(CXX glob.h)
+if(NOT HAVE_GLOB_H)
+	add_definitions(-D_NO_GLOB_)
+endif()
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 set (BUILD_STATIC FALSE CACHE BOOL "Build static libraries")
 set (ENABLE_MPI TRUE CACHE BOOL "Build with MPI Support")
