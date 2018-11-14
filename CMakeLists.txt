@@ -33,6 +33,7 @@ endif()
 set(LINALG_LIBS_REQUIRED TRUE)
 # programs where INTERNAL is a valid status
 set(BUNDLED_3RDPARTY_TOOLS metis)
+set(REQUIRED_3RDPARTY_TOOLS hdf4) 
 include(3rdPartyTools)
 include(NetlibConfig)
 
@@ -45,11 +46,22 @@ if(hdf4_ENABLED)
 	add_definitions(-DUSE_HDF=1)
 endif()
 
+if(pthread_ENABLED)
+	add_definitions(-DUSE_PTHREADS)
+endif()
+
 # detect glob support
 check_all_includes(CXX glob.h)
 if(NOT HAVE_GLOB_H)
 	add_definitions(-D_NO_GLOB_)
 endif()
+
+# generate Fortran to C name-mangling macros
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
+FortranCInterface_HEADER(${CMAKE_CURRENT_BINARY_DIR}/include/FC.h MACRO_NAMESPACE "FC_")
+FortranCInterface_VERIFY(CXX)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+
 
 # force executables to be saved to the lib and bin folders in the binary dir
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------

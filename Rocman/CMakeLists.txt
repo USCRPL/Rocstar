@@ -1,7 +1,5 @@
-
 project(Rocman)
 
-load_cache(../)
 
 #INCLUDE(CTest)
 find_path(ROCCOM_INC roccom.h HINTS ../Roccom/include) 

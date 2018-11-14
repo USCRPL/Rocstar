@@ -10,14 +10,18 @@ blas
 lapack 
 libm
 mkl
-hdf4)
+hdf4
+pthread
+cgns)
 
 set(3RDPARTY_TOOL_USES
 "for fundamental linear algebra calculations"                                     
 "for fundamental linear algebra calculations"                                                                    
 "for fundamental math routines if they are not contained in the C library"
 "alternate implementation of lapack and blas that is tuned for speed"
-"used for saving array data to files")                                                  
+"used for saving array data to files"
+"POSIX threading library"
+"used as an optional output format for fluid data")                                                
 
 
 #sets a tool to external, internal, or disabled
@@ -64,11 +68,6 @@ macro(set_3rdparty TOOL STATUS)
 	endif()	
 endmacro(set_3rdparty)
 
-#------------------------------------------------------------------------------
-#  OS threading library (not really a 3rd party tool)
-#------------------------------------------------------------------------------
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE) #Yeah, we're biased.
-find_package(Threads)
 
 # first, figure out which tools we need
 # -------------------------------------------------------------------------------------------------------------------------------
@@ -223,6 +222,35 @@ if(NEED_hdf4)
 	endif()
 endif()
 
+#------------------------------------------------------------------------------
+#  PThread
+#------------------------------------------------------------------------------ 
+
+if(NEED_pthread)
+	set(CMAKE_THREAD_PREFER_PTHREAD TRUE) #Yeah, we're biased.
+	find_package(Threads)
+	
+	if(CMAKE_USE_PTHREADS_INIT)
+		set_3rdparty(pthread EXTERNAL)
+	else()
+		set_3rdparty(pthread DISABLED)
+	endif()
+endif()
+
+#------------------------------------------------------------------------------
+#  CGNS
+#------------------------------------------------------------------------------ 
+
+if(NEED_cgns)
+	find_package(CGNS)
+	
+	if(CGNS_FOUND)
+		set_3rdparty(cgns EXTERNAL)
+	else()
+		set_3rdparty(cgns DISABLED)
+	endif()
+endif()
+
 # Apply user overrides
 # -------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -342,7 +370,6 @@ if(arpack_EXTERNAL)
 	if(NOT ARPACK_HAS_ARSECOND)
 		message(STATUS "System arpack is missing the arsecond_ function.  That function will be built inside amber")
 	endif()
-
 elseif(arpack_INTERNAL)
 	list(APPEND 3RDPARTY_SUBDIRS arpack)
 endif()
@@ -361,3 +388,15 @@ if(hdf4_EXTERNAL)
 	import_libraries(hdf4 LIBRARIES ${HDF4_LIBRARIES} INCLUDES ${HDF4_INCLUDE_DIR})
 endif()
 
+#------------------------------------------------------------------------------
+#  PThread
+#------------------------------------------------------------------------------ 
+
+# we actually don't need to do anything here
+
+#------------------------------------------------------------------------------
+#  CGNS
+#------------------------------------------------------------------------------ 
+if(cgns_EXTERNAL)	
+	import_libraries(cgns LIBRARIES ${CGNS_LIBRARIES} INCLUDES ${CGNS_INCLUDE_DIRS})
+endif()
