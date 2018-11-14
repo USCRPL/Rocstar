@@ -1,18 +1,4 @@
-
 project(Rocface)
-
-load_cache(../)
-IF(NOT ENABLE_MPI)
-  add_definitions( -DDUMMY_MPI )
-ELSE()
-  FIND_PACKAGE(MPI REQUIRED)
-  add_definitions( -DMPICH_IGNORE_CXX_SEEK )
-  INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-ENDIF()
-
-#INCLUDE(CTest)
-find_path(ROCCOM_INC roccom.h HINTS ../Roccom/include) 
-find_path(ROCIN_INC HDF4.h HINTS ../Roccom/Rocin/include) 
 
 set (RFC_SRCS src/Base/RFC_Window_base.C src/Base/RFC_Window_base_IO.C src/Base/RFC_Window_base_IO_tecplot.C 
               src/Base/RFC_Window_base_IO_binary.C src/Overlay/RFC_Window_overlay.C src/Overlay/RFC_Window_overlay_fea.C
@@ -28,23 +14,10 @@ set (CGAL_SRCS CGAL/src/Color.C CGAL/src/Double.C CGAL/src/Origin.C CGAL/src/aff
 set (LIB_SRCS ${RFC_SRCS} ${CGAL_SRCS})
 set (ALL_SRCS ${LIB_SRCS} ${TEST_SRCS} ${UTIL_SRCS})
 
-set_source_files_properties(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "-fPIC ${MPI_CXX_COMPILE_FLAGS}" )
-#set(TEST_SRCS src/MANTest.C)
+add_library(Rocface ${LIB_SRCS})
+target_link_libraries(Rocface Rocsurf Rocmap Rocsurf Roccom mpi_cxx)
 
-# rpath settings
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-include_directories(include ${ROCCOM_INC} ${ROCIN_INC} include/Base include/Transfer include/Overlay CGAL/include)
-
-
-IF(NOT BUILD_STATIC)
-  add_library(Rocface SHARED ${LIB_SRCS})
-ELSE()
-  add_library(Rocface STATIC ${LIB_SRCS})
-  add_definitions( -DSTATIC_LINK )
-ENDIF()
-target_link_libraries(Rocface Rocsurf Rocmap Rocsurf Roccom ${MPI_CXX_LIBRARIES})
+target_include_directories(Rocface PUBLIC include include/Base include/Transfer include/Overlay CGAL/include)
 
 add_executable(ex1 test/ex1.C test/meshio.C)
 add_executable(ex2 test/ex2.C test/meshio.C)
@@ -55,45 +28,18 @@ add_executable(ex6DataTransfer test/ex6DataTransfer.C test/meshio.C)
 add_executable(plot3d test/plot3d.C test/meshio.C)
 add_executable(reptrans test/reptrans.C test/meshio.C)
 add_executable(readsdv test/readsdv.C test/meshio.C)
-target_link_libraries(ex1 Rocface ${HDF5_LIB})
-target_link_libraries(ex2 Rocface ${HDF5_LIB})
-target_link_libraries(ex3 Rocface ${HDF5_LIB})
-target_link_libraries(ex4 Rocface ${HDF5_LIB})
-target_link_libraries(ex5 Rocface ${HDF5_LIB})
-target_link_libraries(ex6DataTransfer Rocface ${HDF5_LIB})
-target_link_libraries(plot3d Rocface ${HDF5_LIB})
-target_link_libraries(reptrans Rocface ${HDF5_LIB})
-target_link_libraries(readsdv Rocface ${HDF5_LIB})
+
+targets_link_libraries(ex1 ex2 ex3 ex4 ex5 ex6DataTransfer plot3d reptrans readsdv LIBRARIES Rocface)
 
 add_executable(surfdiver util/surfdiver.C)
-target_link_libraries(surfdiver Rocface ${HDF5_LIB})
+target_link_libraries(surfdiver Rocface)
 add_executable(rfctest util/rfctest.C)
-target_link_libraries(rfctest Rocface ${HDF5_LIB})
+target_link_libraries(rfctest Rocface)
 add_executable(autosurfer util/autosurfer.C)
-target_link_libraries(autosurfer Rocface ${HDF5_LIB})
+target_link_libraries(autosurfer Rocface)
 add_executable(surfjumper util/surfjumper.C)
-target_link_libraries(surfjumper Rocface ${HDF5_LIB})
+target_link_libraries(surfjumper Rocface)
 add_executable(surfextractor util/surfextractor.C)
-target_link_libraries(surfextractor Rocface ${HDF5_LIB})
-
-SET_TARGET_PROPERTIES(Rocface PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(ex1 PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(ex2 PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(ex3 PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(ex4 PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(ex5 PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(ex6DataTransfer PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(plot3d PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(reptrans PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(readsdv PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(surfdiver PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(rfctest PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(autosurfer PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(surfjumper PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-SET_TARGET_PROPERTIES(surfextractor PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-
-#ADD_TEST(RunAllTests ${EXECUTABLE_OUTPUT_PATH}/testx testresults.txt)
-#ADD_TEST(TestObject:ValidHandle ${TEST_RESULTS} TestObject:ValidHandle testresults.txt)
-#ADD_TEST(TestObject:Exists ${TEST_RESULTS} TestObject:Exists testresults.txt)
+target_link_libraries(surfextractor Rocface)
 
 INSTALL(TARGETS Rocface surfdiver rfctest autosurfer surfjumper surfextractor RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)

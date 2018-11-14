@@ -245,7 +245,7 @@ protected:
 
   std::map<int32, COM_Type> m_HDF2COM;
 #ifdef USE_CGNS
-  std::map<DataType_t, COM_Type> m_CGNS2COM;
+  std::map<CGNS_ENUMT(DataType_t), COM_Type> m_CGNS2COM;
 #endif // USE_CGNS
 };
 

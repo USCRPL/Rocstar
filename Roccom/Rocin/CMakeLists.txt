@@ -1,14 +1,9 @@
 project(Rocin)
 
-set (ENABLE_CGNS FALSE CACHE BOOL "Build with CGNS Support")
-
-IF(ENABLE_CGNS)
+IF(cgns_ENABLED)
   add_definitions ( -DUSE_CGNS )
 ENDIF()
 
-
-find_library(ZLIB z)
-find_library(JPEG_LIB jpeg)
 find_library(PTHREAD_LIB pthread)
 
 set (ROCIN_SRCS src/Rocin.C src/read_parameter_file.C)
@@ -31,7 +26,7 @@ include_directories(include)
 add_library(Rocin ${ROCIN_SRCS})
 add_library(RHDF4 ${RHDF4_SRCS})
 
-target_link_libraries(RHDF4 Roccom hdf4 ${JPEG_LIB} ${ZLIB})
+target_link_libraries(RHDF4 Roccom hdf4 ${ZLIB})
 IF(cgns_ENABLED)
   target_link_libraries(Rocin cgns)
 ENDIF()

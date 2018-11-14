@@ -1,9 +1,6 @@
+project(Rocflo)
 
-project(Rocflo Fortran C CXX)
-enable_language(Fortran C CXX)
-include(FortranCInterface)
-#load_cache(../)
-set (ROCSTAR TRUE CACHE BOOL "Build as Rocstar Module")
+set(ROCSTAR TRUE)
 set (TURB FALSE CACHE BOOL "Enable Turbulence")
 set (STATS FALSE CACHE BOOL "Enable Statistics")
 set (PLAG FALSE CACHE BOOL "Enable Lagrangian Particles Multiphase Flow")
@@ -12,18 +9,12 @@ set (PERI FALSE CACHE BOOL "Enabled Periodic")
 set (INRT FALSE CACHE BOOL "Enable Particle Interactions")
 set (RADI FALSE CACHE BOOL "Enable Radiation")
 set (SPEC FALSE CACHE BOOL "Enable Species")
+
 add_definitions(-DNO_TECPLOT -DRFLO)
 
 if(MPI)
 	add_definitions(-DMPI)
 endif()
-
-find_library(ZLIB z)
-find_library(JPEG_LIB jpeg)
-
-#INCLUDE(CTest)
-find_path(ROCCOM_INC roccom.h HINTS ../../Roccom/include) 
-find_path(ROCMAN_INC rocman.h HINTS ../../Rocman/include)
 
 FILE (GLOB CORE_SRCS ../rocflo/*.F90)
 SET (LIBFLOFLU_SRCS 	
@@ -591,26 +582,10 @@ ENDIF()
 IF(SPEC)
   add_definitions(-DSPEC)
 ENDIF()
-SET_SOURCE_FILES_PROPERTIES(${LIB_SRCS} PROPERTIES COMPILE_FLAGS "${MPI_Fortran_COMPILE_FLAGS}")
-#
-#UTIL_OBJ=hash_table.o read.a write.a util.o
-#OBJ= adj.o face.o buildface.o split.o volume.o 
-#	readinp.o writeflo.o writetop.o writemblock.o 
-#	$(UTIL_OBJ)
-#HEADERS=adj.h face.h util.h hash_table.h vector3d.h gridutil.h
-#DEST=$(BINPRE)makeflo    # Prepend $(BINPRE) to put into bin directory
-#RTST= $(UTIL_OBJ)
-#ATST=read.o $(UTIL_OBJ)
-#
-#CPPFLAGS+=-DUSE_HDF=1 $(HDFINC)
-#LFLAGS=$(LDFLAGS) $(HDFLIB) $(SYSLIBS) $(DEPLIBS)
-#
 
 SET(MAKEFLO_DIR ../utilities/rocflo/makeflo)
 FILE(GLOB MAKEFLO_CPP_FILES ${MAKEFLO_DIR}/*.cpp)
 FILE(GLOB MAKEFLO_F90_FILES ${MAKEFLO_DIR}/*.f90)
-set_source_files_properties(${MAKEFLO_CPP_FILES} PROPERTIES COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-set_source_files_properties(${MAKEFLO_F90_FILES} PROPERTIES COMPILE_FLAGS "${MPI_Fortran_COMPILE_FLAGS}")
 SET(MAKEFLO_READ_SRCS ${MAKEFLO_DIR}/read.cpp ${MAKEFLO_DIR}/readgrd.cpp ${MAKEFLO_DIR}/readreg.cpp
                       ${MAKEFLO_DIR}/readmsh.f90 ${MAKEFLO_DIR}/readhdf.cpp)
 SET(MAKEFLO_WRITE_SRCS ${MAKEFLO_DIR}/write.cpp ${MAKEFLO_DIR}/writemsh.f90 ${MAKEFLO_DIR}/writehdf.cpp
@@ -623,23 +598,12 @@ SET(MAKEFLO_CORE_SRCS ${MAKEFLO_DIR}/adj.cpp ${MAKEFLO_DIR}/face.cpp ${MAKEFLO_D
 SET(MAKEFLO_SRCS ${MAKEFLO_CPP_FILES} ${MAKEFLO_F90_FILES})
 SET(UTIL_SRCS ${MAKEFLO_SRCS})
 SET(ALL_SRCS ${LIB_SRCS} ${UTIL_SRCS})
-set_source_files_properties(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "-fPIC" )
-#set(TEST_SRCS src/MANTest.C)
 
-# rpath settings
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+add_library(Rocflo ${LIB_SRCS})
 
-include_directories( ../include ${ROCCOM_INC} ${ROCMAN_INC})
-add_definitions(-DUSE_HDF=1)
+target_link_libraries(Rocflo Roccomf Roccom Rocman mpi_c mpi_fortran)
 
-IF(NOT BUILD_STATIC)
-  add_library(Rocflo SHARED ${LIB_SRCS})
-ELSE()
-  add_library(Rocflo STATIC ${LIB_SRCS})
-  add_definitions( -DSTATIC_LINK )
-ENDIF()
-target_link_libraries(Rocflo Roccomf Roccom mpi_c mpi_fortran)
+target_include_directories(Rocflo PUBLIC ../include)
 
 #add_library(makeflofio ${MAKEFLO_DIR}/readmsh.f90 ${MAKEFLO_DIR}/writemsh.f90 ${MAKEFLO_DIR}/writegrda.f90 ${MAKEFLO_DIR}/writegrdb.f90)
 #add_library(read ${MAKEFLO_DIR}/read.cpp ${MAKEFLO_DIR}/readgrd.cpp ${MAKEFLO_DIR}/readreg.cpp ${MAKEFLO_DIR}/readhdf.cpp)
@@ -649,24 +613,11 @@ target_link_libraries(Rocflo Roccomf Roccom mpi_c mpi_fortran)
 add_executable(makeflo ${MAKEFLO_DIR}/makeflo.cpp ${MAKEFLO_CORE_SRCS} ${MAKEFLO_DIR}/read.cpp ${MAKEFLO_DIR}/readgrd.cpp ${MAKEFLO_DIR}/readreg.cpp ${MAKEFLO_DIR}/readhdf.cpp ${MAKEFLO_DIR}/write.cpp ${MAKEFLO_DIR}/writehdf.cpp ${MAKEFLO_DIR}/readmsh.f90 ${MAKEFLO_DIR}/writemsh.f90 ${MAKEFLO_DIR}/writegrda.f90 ${MAKEFLO_DIR}/writegrdb.f90)
 target_link_libraries(makeflo hdf4 ${JPEG_LIB} ${ZLIB})
 add_executable(makemblock ${MAKEFLO_DIR}/makemblock.cpp ${MAKEFLO_CORE_SRCS} ${MAKEFLO_DIR}/read.cpp ${MAKEFLO_DIR}/readgrd.cpp ${MAKEFLO_DIR}/readreg.cpp ${MAKEFLO_DIR}/readhdf.cpp ${MAKEFLO_DIR}/write.cpp ${MAKEFLO_DIR}/writehdf.cpp ${MAKEFLO_DIR}/readmsh.f90 ${MAKEFLO_DIR}/writemsh.f90 ${MAKEFLO_DIR}/writegrda.f90 ${MAKEFLO_DIR}/writegrdb.f90)
-target_link_libraries(makemblock hdf4 ${JPEG_LIB} ${ZLIB})
+target_link_libraries(makemblock hdf4)
 add_executable(simpleblock ${MAKEFLO_DIR}/simpleblock.cpp ${MAKEFLO_CORE_SRCS} ${MAKEFLO_DIR}/read.cpp ${MAKEFLO_DIR}/readgrd.cpp ${MAKEFLO_DIR}/readreg.cpp ${MAKEFLO_DIR}/readhdf.cpp ${MAKEFLO_DIR}/write.cpp ${MAKEFLO_DIR}/writehdf.cpp ${MAKEFLO_DIR}/readmsh.f90 ${MAKEFLO_DIR}/writemsh.f90 ${MAKEFLO_DIR}/writegrda.f90 ${MAKEFLO_DIR}/writegrdb.f90)
-target_link_libraries(simpleblock hdf4 ${JPEG_LIB} ${ZLIB} )
+target_link_libraries(simpleblock hdf4)
 add_executable(rfloprep ${FLOPREP_SRCS})
 set_property(TARGET rfloprep PROPERTY LINKER_LANGUAGE Fortran)
-target_link_libraries(rfloprep Rocflo Rocout Rocin Roccomf Roccom ${HDF5_LIB})
-
-# Unit test programs
-#read.tst: $(RTST) read.cpp
-#	$(CXX)  $(OPTS) $(CCFLAGS) -DSTANDALONE -c read.cpp 
-#	$(LD) $(OPTS) read.o $(RTST) -o $@ $(LFLAGS)
-
-#adj.tst: $(ATST) adj.cpp
-#	$(CXX)  $(OPTS) $(CCFLAGS) -DSTANDALONE -c adj.cpp 
-#	$(LD) $(OPTS) adj.o $(ATST) -o $@ $(LFLAGS)
-
-#ADD_TEST(RunAllTests ${EXECUTABLE_OUTPUT_PATH}/testx testresults.txt)
-#ADD_TEST(TestObject:ValidHandle ${TEST_RESULTS} TestObject:ValidHandle testresults.txt)
-#ADD_TEST(TestObject:Exists ${TEST_RESULTS} TestObject:Exists testresults.txt)
+target_link_libraries(rfloprep Rocflo Rocout Rocin Roccomf Roccom)
 
 INSTALL(TARGETS makemblock simpleblock rfloprep Rocflo makeflo RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)

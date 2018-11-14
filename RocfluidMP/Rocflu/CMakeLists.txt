@@ -1,8 +1,6 @@
-
 project(Rocflu)
-enable_language(CXX Fortran)
-load_cache(../)
-set (ROCSTAR TRUE  CACHE BOOL "Build as Rocstar Module")
+
+set(ROCSTAR TRUE)
 set (TURB    FALSE CACHE BOOL "Enable Turbulence")
 set (STATS   FALSE CACHE BOOL "Enable Statistics")
 set (PLAG    FALSE CACHE BOOL "Enable Lagrangian Particles Multiphase Flow")
@@ -12,21 +10,6 @@ set (INRT    FALSE CACHE BOOL "Enable Particle Interactions")
 set (RADI    FALSE CACHE BOOL "Enable Radiation")
 set (SPEC    FALSE CACHE BOOL "Enable Species")
 add_definitions(-DNO_TECPLOT -DRFLU)
-
-IF(NOT ENABLE_MPI)
-  add_definitions( -DDUMMY_MPI )
-ELSE()
-  FIND_PACKAGE(MPI REQUIRED)
-  add_definitions( -DMPICH_IGNORE_CXX_SEEK)
-  INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-ENDIF()
-
-find_library(ZLIB z)
-find_library(JPEG_LIB jpeg)
-find_path(HDF4_INC hdf.h HINTS /usr/include/hdf)
-#INCLUDE(CTest)
-find_path(ROCCOM_INC roccom.h HINTS ../../Roccom/include)
-find_path(ROCMAN_INC rocman.h HINTS ../../Rocman/include)
 
 FILE (GLOB CORE_SRCS ../rocflu/*.F90)
 
@@ -641,10 +624,7 @@ SET(MAP_SRCS ../utilities/rocflu/map/main.C
   ../utilities/rocflu/map/RFLU_WriteVersionString.F90
   ../utilities/rocflu/map/rflumap.F90
   ../libflu/dcuhre.f)
-
-SET_SOURCE_FILES_PROPERTIES(../utilities/rocflu/map/main.C ../utilities/rocflu/part/main.C
-  ../utilities/rocflu/init/main.C ../libflu/clop.C PROPERTIES COMPILE_FLAGS "-fPIC ${MPI_CXX_COMPILE_FLAGS}")
-
+  
 SET(LIB_SRCS ${MODFLU_SRCS} ${MODFLOFLU_SRCS} ${LIBFLU_SRCS} ${LIBFLOFLU_SRCS}
   ${CORE_SRCS})
 IF(ROCSTAR)
@@ -682,44 +662,21 @@ IF(SPEC)
 ENDIF()
 
 SET(ALL_SRCS ${LIB_SRCS} ${INIT_SRCS} ${PART_SRCS} ${MAP_SRCS})
-SET_SOURCE_FILES_PROPERTIES(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "${MPI_Fortran_COMPILE_FLAGS}")
-# rpath settings
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include_directories( ../include ${ROCCOM_INC} ${ROCMAN_INC} ${HDF4_INC})
+add_library(Rocflu ${LIB_SRCS})
+target_link_libraries(Rocflu Rocmop Roccomf Roccom Rocman netlib mpi_fortran)
 
-IF(NOT BUILD_STATIC)
-  add_library(Rocflu SHARED ${LIB_SRCS})
-ELSE()
-  add_library(Rocflu STATIC ${LIB_SRCS})
-  add_definitions( -DSTATIC_LINK )
-ENDIF()
-SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${BLAS_LINKER_FLAGS} ${LAPACK_LINKER_FLAGS}" )
-target_link_libraries(Rocflu Rocmop Roccomf Roccom netlib ${MPI_Fortran_LIBRARIES})
+target_include_directories(Rocflu PUBLIC ../include)
 
 add_executable(rfluinit ${INIT_SRCS})
-target_link_libraries(rfluinit Rocflu Rocmop Rocout Rocin Roccomf Roccom ${MPI_Fortran_LIBRARIES} ${MPI_CXX_LIBRARIES} ${HDF5_LIB})
+target_link_libraries(rfluinit Rocflu Rocmop Rocout Rocin Roccomf Roccom )
 
 add_executable(rflupart ${PART_SRCS})
-target_link_libraries(rflupart Rocflu Rocmop Rocout Rocin Roccomf Roccom metis ${MPI_Fortran_LIBRARIES} ${MPI_CXX_LIBRARIES} ${HDF5_LIB})
+target_link_libraries(rflupart Rocflu Rocmop Rocout Rocin Roccomf Roccom metis)
 
 add_executable(rflumap ${MAP_SRCS})
-target_link_libraries(rflumap Rocflu Rocmop Rocout Rocin Roccomf Roccom ${MPI_Fortran_LIBRARIES} ${MPI_CXX_LIBRARIES} ${HDF5_LIB} ${HDF5_LIB})
+target_link_libraries(rflumap Rocflu Rocmop Rocout Rocin Roccomf Roccom)
 
 SET_TARGET_PROPERTIES(Rocflu rfluinit rflupart rflumap PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS} ${MPI_Fortran_LINK_FLAGS}")
-
-# Unit test programs
-#read.tst: $(RTST) read.cpp
-#	$(CXX)  $(OPTS) $(CCFLAGS) -DSTANDALONE -c read.cpp 
-#	$(LD) $(OPTS) read.o $(RTST) -o $@ $(LFLAGS)
-
-#adj.tst: $(ATST) adj.cpp
-#	$(CXX)  $(OPTS) $(CCFLAGS) -DSTANDALONE -c adj.cpp 
-#	$(LD) $(OPTS) adj.o $(ATST) -o $@ $(LFLAGS)
-
-#ADD_TEST(RunAllTests ${EXECUTABLE_OUTPUT_PATH}/testx testresults.txt)
-#ADD_TEST(TestObject:ValidHandle ${TEST_RESULTS} TestObject:ValidHandle testresults.txt)
-#ADD_TEST(TestObject:Exists ${TEST_RESULTS} TestObject:Exists testresults.txt)
 
 INSTALL(TARGETS rflupart rflumap rfluinit Rocflu RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)

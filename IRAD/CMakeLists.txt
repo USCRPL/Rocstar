@@ -8,7 +8,7 @@ if(MPI)
 	list(APPEND LIB_SOURCES src/COMM.C)
 endif()
 
-IF(APPLE)
+IF(TARGET_OSX)
   add_definitions(-DDARWIN)
 ENDIF()
 
@@ -38,15 +38,8 @@ INSTALL(FILES ${INC_FILES} DESTINATION include)
 INSTALL(TARGETS IRAD checkresults testresults profane runtest diffdatafiles RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 
 # Add target to build the documentation
-
-FIND_PACKAGE(Doxygen)
-option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
-
 IF(BUILD_DOCUMENTATION)
 
-  IF(NOT DOXYGEN_FOUND)
-    MESSAGE(FATAL_ERROR "Doxygen is needed to build the documentation.")
-  ENDIF()
   
   SET( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/doc/IRAD.cfg.in )
   SET( doxyfile             ${CMAKE_CURRENT_BINARY_DIR}/IRAD.cfg )
@@ -58,7 +51,7 @@ IF(BUILD_DOCUMENTATION)
                       COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
                       MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
                       DEPENDS IRAD ${doxyfile} ${doxy_extra_files}
-                      COMMENT "Generating documentation")
+                      COMMENT "IRAD: Generating documentation")
 
   ADD_CUSTOM_TARGET( docs DEPENDS ${documentation} )
   INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc DESTINATION share/IRAD )

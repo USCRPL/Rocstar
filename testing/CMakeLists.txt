@@ -1,39 +1,11 @@
-
 project(Rocstar)
-ENABLE_LANGUAGE( CXX Fortran )
-IF(NOT ENABLE_MPI)
-  add_definitions( -DDUMMY_MPI )
-ELSE()
-  FIND_PACKAGE(MPI REQUIRED)
-  add_definitions( -DMPICH_IGNORE_CXX_SEEK )
-ENDIF()
-#include(FortranCInterface)
-#FortranCInterface_HEADER(${PROJECT_BINARY_DIR}/include/FC.h MACRO_NAMESPACE "FC_")
-#FortranCInterface_VERIFY(CXX QUIET)
-set (BUILD_STATIC FALSE CACHE BOOL "Build static library")
-set (ENABLE_MPI TRUE CACHE BOOL "Build with MPI Support")
-set (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single directory for all executables.")
-set (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib CACHE PATH "Single directory for all libraries and archives.")
-mark_as_advanced (LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
-#FIND_LIBRARY(IRAD_LIB IRAD)
-#FIND_FILE(IRAD_HDR COMM.H)
-FIND_PROGRAM(RUNTEST runtest)
-FIND_PROGRAM(TESTRESULT testresults)
-#GET_FILENAME_COMPONENT(IRAD_LIBPATH ${IRAD_LIB} PATH)
-#GET_FILENAME_COMPONENT(IRAD_INCPATH ${IRAD_HDR} PATH)
-GET_FILENAME_COMPONENT(IRAD_EXEPATH ${RUNTEST} PATH)
 
 #file(GLOB CPP_SRCS "src/*.C")
 #file(GLOB F90_SRCS "src/*.f90")
 #set (TESTMOD_SRCS src/TestModule.C)
 #set (FTESTMOD_SRCS src/ModTestObject.f90 src/TestModule.f90)
 #set (ALL_SRCS "${F90_SRCS} ${CPP_SRCS}" )
-#set_source_files_properties(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "-fPIC" )
-
-# rpath settings
-#SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 #include_directories( include ${CMAKE_BINARY_DIR}/include ../include ${IRAD_INCPATH})
 

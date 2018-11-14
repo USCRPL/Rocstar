@@ -56,6 +56,10 @@ if(NOT HAVE_GLOB_H)
 	add_definitions(-D_NO_GLOB_)
 endif()
 
+if(STATIC)
+	add_definitions(-DSTATIC_LINK=1)
+endif()
+
 # generate Fortran to C name-mangling macros
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
 FortranCInterface_HEADER(${CMAKE_CURRENT_BINARY_DIR}/include/FC.h MACRO_NAMESPACE "FC_")
@@ -102,7 +106,7 @@ add_subdirectory(Rocburn)
 add_subdirectory(Rocprep)
 add_subdirectory(testing)
 
-# add to-level rocstar executable
+# add top-level rocstar executable
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 add_executable(rocstar src/rocstar.C)
@@ -111,11 +115,12 @@ target_link_libraries(rocstar Rocman Roccomf Roccom ${IRAD_LIB} mpi_cxx)
 INSTALL(TARGETS rocstar RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 
 # Add target to build the documentation
-option(BUILD_DOCUMENTATION "Create and install the HTML based API
-documentation (requires Doxygen)" ON)
+
+FIND_PACKAGE(Doxygen)
+option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
+
 IF(BUILD_DOCUMENTATION)
 
-  FIND_PACKAGE(Doxygen)
   IF(NOT DOXYGEN_FOUND)
     MESSAGE(FATAL_ERROR "Doxygen is needed to build the documentation.")
   ENDIF()

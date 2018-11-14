@@ -1,21 +1,6 @@
-
 project(Rocfrac)
-enable_language(C CXX Fortran)
-load_cache(../)
-set (ROCSTAR TRUE CACHE BOOL "Build as Rocstar Module")
-IF(NOT ENABLE_MPI)
-  add_definitions( -DDUMMY_MPI )
-ELSE()
-  FIND_PACKAGE(MPI REQUIRED)
-  add_definitions( -DMPICH_IGNORE_CXX_SEEK )
-#  IF(MPI_CXX_COMPILER)
-#    set (CMAKE_CXX_COMPILER ${MPI_CXX_COMPILER})
-#  ENDIF(MPI_CXX_COMPILER)
-ENDIF()
-find_library(ZLIB z)
-find_library(JPEG_LIB jpeg)
-find_library(BLOCKSOLVE_LIBRARY blocksolve95)
-find_path(BLOCKSOLVE_INC blocksolve95.h)
+
+set (ROCSTAR TRUE)
 
 FILE (GLOB LIBFRAC_SRCS Source/*.f90)
 
@@ -24,23 +9,12 @@ FILE (GLOB PREP_SRCS utilities/RocfracPrep/*.f90)
 SET(LIB_SRCS ${LIBFRAC_SRCS})
 SET(UTIL_SRCS ${PREP_SRCS})
 SET(ALL_SRCS ${LIB_SRCS} ${UTIL_SRCS})
-set_source_files_properties(${ALL_SRCS} PROPERTIES COMPILE_FLAGS "-fPIC" )
-#set(TEST_SRCS src/MANTest.C)
 
-# rpath settings
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-IF(NOT BUILD_STATIC)
-  add_library(Rocfrac SHARED ${LIB_SRCS})
-ELSE()
-  add_library(Rocfrac STATIC ${LIB_SRCS})
-  add_definitions( -DSTATIC_LINK )
-ENDIF()
+add_library(Rocfrac ${LIB_SRCS})
 target_link_libraries(Rocfrac Rocout Rocin Roccomf Roccom Rocman)
 
 ADD_EXECUTABLE(rfracprep ${PREP_SRCS})
 set_property(TARGET rfracprep PROPERTY LINKER_LANGUAGE Fortran)
-TARGET_LINK_LIBRARIES(rfracprep Rocout Rocin Roccomf Roccom metis ${HDF5_LIB})
+TARGET_LINK_LIBRARIES(rfracprep Rocout Rocin Roccomf Roccom metis)
 
 INSTALL(TARGETS Rocfrac rfracprep RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
