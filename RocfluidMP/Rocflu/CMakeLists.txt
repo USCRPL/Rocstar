@@ -1,14 +1,6 @@
 project(Rocflu)
 
 set(ROCSTAR TRUE)
-set (TURB    FALSE CACHE BOOL "Enable Turbulence")
-set (STATS   FALSE CACHE BOOL "Enable Statistics")
-set (PLAG    FALSE CACHE BOOL "Enable Lagrangian Particles Multiphase Flow")
-set (PEUL    FALSE CACHE BOOL "Enable Eulerian Multiphase Flow")
-set (PERI    FALSE CACHE BOOL "Enabled Periodic")
-set (INRT    FALSE CACHE BOOL "Enable Particle Interactions")
-set (RADI    FALSE CACHE BOOL "Enable Radiation")
-set (SPEC    FALSE CACHE BOOL "Enable Species")
 add_definitions(-DNO_TECPLOT -DRFLU)
 
 FILE (GLOB CORE_SRCS ../rocflu/*.F90)
@@ -104,7 +96,7 @@ SET (LIBFLOFLU_SRCS
   ../libfloflu/WriteTotalMass.F90
   ../libfloflu/ZeroDummyCellsMP.F90
   ../libfloflu/ZeroResidualsMP.F90)
-IF(STATS)
+IF(ENABLE_STATS)
   LIST (APPEND LIBFLOFLU_SRCS ../libfloflu/ReadStatisticSection.F90)
 ENDIF()
 SET (LIBFLU_SRCS
@@ -174,7 +166,7 @@ SET (LIBFLU_SRCS
   ../libflu/RFLU_ZeroVirtualCellVars.F90
   ../libflu/dcuhre.f)
 
-IF (STATS)
+IF (ENABLE_STATS)
   SET (LIBFLU_SRCS ${LIBFLU_SRCS} ../libflu/RFLU_ReadStat.F90
     ../libflu/RFLU_WriteStat.F90)
 ENDIF()
@@ -214,30 +206,30 @@ SET ( MODFLOFLU_SRCS
 IF(ROCSTAR)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModRocstar.F90 )
 ENDIF()
-IF(INRT)
+IF(ENABLE_INRT)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesInteract.F90 )
 ENDIF()
-IF(PEUL)
+IF(ENABLE_PEUL)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesEulerian.F90 )
 ENDIF()
-IF(PLAG)
+IF(ENABLE_PLAG)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesLagrangian.F90 )
 ENDIF()
-IF(PERI)
+IF(ENABLE_PERI)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesPeriodic.F90 )
 ENDIF()
-IF(RADI)
+IF(ENABLE_RADI)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesRadiation.F90 )
 ENDIF()
-IF(SPEC)
+IF(ENABLE_SPEC)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesSpecies.F90 )
 ENDIF()
-IF(STATS)
+IF(ENABLE_STATS)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesStatistics.F90
     ../modfloflu/ModStatsRoutines.F90
     ../modfloflu/ModStatsPost.F90)
 ENDIF()
-IF(TURB)
+IF(ENABLE_TURB)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesTurbulence.F90 )
 ENDIF()
 
@@ -334,7 +326,7 @@ IF(PETSC)
   ../modflu/RFLU_ModPETScNewtonKrylov.F90
   ../modflu/RFLU_ModPETScAdmin.F90)
 ENDIF()
-IF(STATS)
+IF(ENABLE_STATS)
   LIST (APPEND MODFLO_SRCS ../modflo/RFLO_ModStatsBoundaryConditions.F90 )
 ENDIF()
 SET (TURB_SRCS
@@ -412,7 +404,7 @@ SET (TURB_SRCS
   ../rocturb/TURB_rFLU_WriteSolutionASCII.F90
   ../rocturb/TURB_rFLU_WriteSolutionBinary.F90)
 
-IF(STATS)
+IF(ENABLE_STATS)
   LIST (APPEND TURB_SRCS   ../rocturb/TURB_StatCCollector.F90
     ../rocturb/TURB_StatFCollector.F90
     ../rocturb/TURB_StatMapping.F90 )
@@ -520,11 +512,11 @@ SET(PLAG_SRCS
   ../rocpart/PLAG_RFLU_Update.F90
   ../rocpart/PLAG_RFLU_WriteSolutionASCII.F90
   ../rocpart/PLAG_RFLU_WriteSolutionBinary.F90)
-IF(STATS)
+IF(ENABLE_STATS)
   LIST(APPEND PLAG_SRCS ../rocpart/PLAG_StatMapping.F90)
 ENDIF()
-SET(PEUL_SRCS ../rocsmoke/PEUL_BuildVersionString.F90)
-SET(GLOB INRT_SRCS
+
+SET(INRT_SRCS
   ../rocinteract/INRT_ModInterfaces.F90
   ../rocinteract/INRT_ModParameters.F90
   ../rocinteract/INRT_AllocateAuxillary.F90
@@ -577,10 +569,10 @@ SET(ROCSTAR_SRCS
   ../rocstar/Fluid_postHdfOutput.F90
   ../rocstar/Rocflu_load_module.F90
   ../rocstar/Rocflu_unload_module.F90)
-IF(TURB)
+IF(ENABLE_TURB)
   LIST(APPEND ROCSTAR_SRCS ../rocstar/TURB_RFLU_ModRocstarAdmin.F90)
 ENDIF()
-IF(STATS)
+IF(ENABLE_STATS)
   LIST(APPEND ROCSTAR_SRCS ../rocstar/STAT_RocstarStatNaming.F90
     ../rocstar/STAT_RFLU_ModRocstarAdmin.F90)
 ENDIF()
@@ -618,6 +610,29 @@ SET(PART_SRCS ../utilities/rocflu/part/main.C
   ../utilities/rocflu/part/rflupart.F90
   ../libflu/dcuhre.f)
 
+ SET(PERI_SRCS
+  ../rocperi/PERI_ModInterfaces.F90
+  ../rocperi/PERI_ModParameters.F90
+  ../rocperi/PERI_AllocateMemory.F90 
+  ../rocperi/PERI_BuildVersionString.F90
+  ../rocperi/PERI_CheckParamInput.F90 
+  ../rocperi/PERI_CnlForceTerm.F90 
+  ../rocperi/PERI_DerivedInputValues.F90 
+  ../rocperi/PERI_InitInputValues.F90 
+  ../rocperi/PERI_InitSolution.F90 
+  ../rocperi/PERI_ModHybridDES.F90 
+  ../rocperi/PERI_PrintUserInput.F90 
+  ../rocperi/PERI_ReadInputFile.F90 
+  ../rocperi/PERI_ReadPeriSection.F90 
+  ../rocperi/PERI_SolutionUpdate.F90 
+  ../rocperi/PERI_SourceTerms.F90 
+  ../rocperi/PERI_UserInput.F90 
+  ../rocperi/PERI_coCprInitSolutionFlu.F90 
+  ../rocperi/PERI_coCprSlowTermsFlu.F90 
+  ../rocperi/PERI_coCnlInitSolutionFlu.F90 
+  ../rocperi/PERI_coPgradUpdateFlu.F90 
+  ../rocperi/PERI_rFLU_DeallocateMemory.F90)
+  
 SET(MAP_SRCS ../utilities/rocflu/map/main.C
   ../utilities/rocflu/map/BuildVersionString.F90
   ../utilities/rocflu/map/RFLU_PrintHeader.F90
@@ -625,40 +640,79 @@ SET(MAP_SRCS ../utilities/rocflu/map/main.C
   ../utilities/rocflu/map/rflumap.F90
   ../libflu/dcuhre.f)
   
+set(SPEC_SRCS 
+  ../rocspecies/SPEC_BuildVersionString.F90
+  ../rocspecies/SPEC_ModInterfaces.F90
+  ../rocspecies/SPEC_ModParameters.F90
+  ../rocspecies/SPEC_RFLU_ModChemistry.F90
+  ../rocspecies/SPEC_RFLU_ModReadWriteVars.F90
+  ../rocspecies/SPEC_CheckUserInput.F90
+  ../rocspecies/SPEC_DerivedInputValues.F90
+  ../rocspecies/SPEC_EqEulCorr.F90
+  ../rocspecies/SPEC_EqEulCorrPatch.F90
+  ../rocspecies/SPEC_InitInputValues.F90
+  ../rocspecies/SPEC_InitInputValuesSpecType.F90
+  ../rocspecies/SPEC_PrintUserInput.F90
+  ../rocspecies/SPEC_ReadInputFile.F90
+  ../rocspecies/SPEC_ReadSpecSection.F90
+  ../rocspecies/SPEC_ReadSpecTypeSection.F90
+  ../rocspecies/SPEC_UpdateDependentVars.F90
+  ../rocspecies/SPEC_UserInput.F90
+  ../rocspecies/SPEC_RFLU_AllocateMemory.F90
+  ../rocspecies/SPEC_RFLU_AllocateMemoryEEv.F90
+  ../rocspecies/SPEC_RFLU_AllocateMemorySol.F90
+  ../rocspecies/SPEC_RFLU_AllocateMemoryTStep.F90
+  ../rocspecies/SPEC_RFLU_AllocateMemoryVert.F90
+  ../rocspecies/SPEC_RFLU_DeallocateMemory.F90
+  ../rocspecies/SPEC_RFLU_DeallocateMemoryEEv.F90
+  ../rocspecies/SPEC_RFLU_DeallocateMemorySol.F90
+  ../rocspecies/SPEC_RFLU_DeallocateMemoryTStep.F90
+  ../rocspecies/SPEC_RFLU_DeallocateMemoryVert.F90
+  ../rocspecies/SPEC_RFLU_EnforceBounds.F90
+  ../rocspecies/SPEC_RFLU_InitFlowHardCode.F90
+  ../rocspecies/SPEC_RFLU_InitFlowScratch.F90
+  ../rocspecies/SPEC_RFLU_PrintFlowInfo.F90
+  ../rocspecies/SPEC_RFLU_ReadBcFarfSection.F90
+  ../rocspecies/SPEC_RFLU_ReadBcInflowSection.F90
+  ../rocspecies/SPEC_RFLU_ReadBcInjectSection.F90
+  ../rocspecies/SPEC_RFLU_ReadBcInputFile.F90
+  ../rocspecies/SPEC_RFLU_ReadBcSectionDummy.F90
+  ../rocspecies/SPEC_RFLU_SetEEv.F90
+  ../rocspecies/SPEC_RFLU_SetVarInfo.F90
+  ../rocspecies/SPEC_RFLU_SourceTerms_GL.F90)
+  
 SET(LIB_SRCS ${MODFLU_SRCS} ${MODFLOFLU_SRCS} ${LIBFLU_SRCS} ${LIBFLOFLU_SRCS}
   ${CORE_SRCS})
 IF(ROCSTAR)
   add_definitions(-DROCSTAR -DGENX)
   LIST(APPEND LIB_SRCS ${ROCSTAR_SRCS})
 ENDIF()
-IF(RADI)
+IF(ENABLE_RADI)
   add_definitions(-DRADI)
   LIST(APPEND LIB_SRCS ${RADI_SRCS})
 ENDIF()
-IF(TURB)
+IF(ENABLE_TURB)
   add_definitions(-DTURB)
   LIST(APPEND LIB_SRCS ${TURB_SRCS})
 ENDIF()
-IF(PLAG)
+IF(ENABLE_PLAG)
   add_definitions(-DPLAG)
   LIST(APPEND LIB_SRCS ${PLAG_SRCS})
 ENDIF()
-IF(PEUL)
-  add_definitions(-DPEUL)
-  LIST(APPEND LIB_SRCS ${PEUL_SRCS})
-ENDIF()
-IF(INRT)
+IF(ENABLE_INRT)
   add_definitions(-DINRT)
   LIST(APPEND LIB_SRCS ${INRT_SRCS})
 ENDIF()
-IF(STATS)
+IF(ENABLE_STATS)
   add_definitions(-DSTATS)
 ENDIF()
-IF(PERI)
+IF(ENABLE_PERI)
   add_definitions(-DPERI)
+  LIST(APPEND LIB_SRCS ${PERI_SRCS})
 ENDIF()
-IF(SPEC)
+IF(ENABLE_SPEC)
   add_definitions(-DSPEC)
+  LIST(APPEND LIB_SRCS ${SPEC_SRCS})
 ENDIF()
 
 SET(ALL_SRCS ${LIB_SRCS} ${INIT_SRCS} ${PART_SRCS} ${MAP_SRCS})

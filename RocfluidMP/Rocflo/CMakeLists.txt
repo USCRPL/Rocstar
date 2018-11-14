@@ -1,14 +1,6 @@
 project(Rocflo)
 
 set(ROCSTAR TRUE)
-set (TURB FALSE CACHE BOOL "Enable Turbulence")
-set (STATS FALSE CACHE BOOL "Enable Statistics")
-set (PLAG FALSE CACHE BOOL "Enable Lagrangian Particles Multiphase Flow")
-set (PEUL FALSE CACHE BOOL "Enable Eulerian Multiphase Flow")
-set (PERI FALSE CACHE BOOL "Enabled Periodic")
-set (INRT FALSE CACHE BOOL "Enable Particle Interactions")
-set (RADI FALSE CACHE BOOL "Enable Radiation")
-set (SPEC FALSE CACHE BOOL "Enable Species")
 
 add_definitions(-DNO_TECPLOT -DRFLO)
 
@@ -100,7 +92,7 @@ SET (LIBFLOFLU_SRCS
   ../libfloflu/WriteTotalMass.F90
   ../libfloflu/ZeroDummyCellsMP.F90
   ../libfloflu/ZeroResidualsMP.F90 )
-IF(STATS)
+IF(ENABLE_STATS)
   SET (LIBFLOFLU_SRCS ${LIBFLOFLU_SRCS} ../libfloflu/ReadStatisticSection.F90)
 ENDIF()
 SET (LIBFLO_SRCS 
@@ -168,7 +160,7 @@ SET (LIBFLO_SRCS
   ../libflo/RFLO_WriteSolution.F90
   ../libflo/RFLO_WriteSolutionRegion.F90
   ../libflo/RFLO_ZeroDummyCells.F90)
-IF (STATS)
+IF (ENABLE_STATS)
   SET (LIBFLO_SRCS ${LIBFLO_SRCS} ../libflo/RFLO_ReadStat.F90
     ../libflo/RFLO_ReadStatRegion.F90
     ../libflo/RFLO_WriteStat.F90)
@@ -206,29 +198,29 @@ SET ( MODFLOFLU_SRCS
 IF(ROCSTAR)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModRocstar.F90 )
 ENDIF()
-IF(INRT)                
+IF(ENABLE_INRT)                
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesInteract.F90 )
 ENDIF()
-IF(PEUL)
+IF(ENABLE_PEUL)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesEulerian.F90 )
 ENDIF()
-IF(PLAG)
+IF(ENABLE_PLAG)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesLagrangian.F90 )
 ENDIF()
-IF(PERI)
+IF(ENABLE_PERI)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesPeriodic.F90 ) 		
 ENDIF()
-IF(RADI)
+IF(ENABLE_RADI)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesRadiation.F90 )
 ENDIF()
-IF(SPEC)
+IF(ENABLE_SPEC)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesSpecies.F90 )
 ENDIF()
-IF(STATS)
+IF(ENABLE_STATS)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesStatistics.F90
     ../modfloflu/ModStatsRoutines.F90 )
 ENDIF()
-IF(TURB)
+IF(ENABLE_TURB)
   LIST (APPEND MODFLOFLU_SRCS ../modfloflu/ModInterfacesTurbulence.F90 )  		
 ENDIF()
 
@@ -256,7 +248,7 @@ SET (MODFLO_SRCS
   ../modflo/RFLO_ModRestartInfo.F90
   ../modflo/RFLO_ModVectorTensor.F90
   ../modflo/RFLO_ModVolMeshSmoothing.F90 )
-IF(STATS)
+IF(ENABLE_STATS)
   LIST (APPEND MODFLO_SRCS ../modflo/RFLO_ModStatsBoundaryConditions.F90 )
 ENDIF()
 
@@ -388,7 +380,7 @@ SET (TURB_SRCS
   ../rocturb/TURB_rFLO_ReadSolutionRegion.F90
   ../rocturb/TURB_rFLO_WriteSolution.F90 )
 
-IF(STATS)
+IF(ENABLE_STATS)
   LIST (APPEND TURB_SRCS   ../rocturb/TURB_StatCCollector.F90
     ../rocturb/TURB_StatFCollector.F90
     ../rocturb/TURB_StatMapping.F90 )                
@@ -483,9 +475,31 @@ SET(PLAG_SRCS
   ../rocpart/PLAG_RFLO_FindGridMapping.F90
   ../rocpart/PLAG_RFLO_RecvMetrics.F90
   ../rocpart/PLAG_RFLO_SendMetrics.F90
-  ../rocpart/PLAG_RFLO_SendRecvMetrics.F90)              
+  ../rocpart/PLAG_RFLO_SendRecvMetrics.F90)        
 
-IF(STATS)
+ SET(PERI_SRCS
+  ../rocperi/PERI_ModInterfaces.F90
+  ../rocperi/PERI_ModParameters.F90
+  ../rocperi/PERI_AllocateMemory.F90 
+  ../rocperi/PERI_BuildVersionString.F90
+  ../rocperi/PERI_CheckParamInput.F90 
+  ../rocperi/PERI_CnlForceTerm.F90 
+  ../rocperi/PERI_DerivedInputValues.F90 
+  ../rocperi/PERI_InitInputValues.F90 
+  ../rocperi/PERI_InitSolution.F90 
+  ../rocperi/PERI_ModHybridDES.F90 
+  ../rocperi/PERI_PrintUserInput.F90 
+  ../rocperi/PERI_ReadInputFile.F90 
+  ../rocperi/PERI_ReadPeriSection.F90 
+  ../rocperi/PERI_SolutionUpdate.F90 
+  ../rocperi/PERI_SourceTerms.F90 
+  ../rocperi/PERI_UserInput.F90 
+  ../rocperi/PERI_coCnlInitSolutionFlo.F90 
+  ../rocperi/PERI_coCprInitSolutionFlo.F90 
+  ../rocperi/PERI_coCprSlowTermsFlo.F90 
+  ../rocperi/PERI_coPgradUpdateFlo.F90)  
+
+IF(ENABLE_STATS)
   LIST(APPEND PLAG_SRCS ../rocpart/PLAG_ModEulerian.F90
     ../rocpart/PLAG_ModStats.F90
     ../rocpart/PLAG_RFLO_ModStats.F90
@@ -506,24 +520,24 @@ SET(ROCSTAR_SRCS
   ../rocstar/Fluid_postHdfOutput.F90
   ../rocstar/Rocflo_load_module.F90
   ../rocstar/Rocflo_unload_module.F90)
-IF(PEUL)
+IF(ENABLE_PEUL)
   LIST(APPEND ROCSTAR_SRCS ../rocstar/PEUL_InitRocstarInterface.F90)
 ENDIF()
-if(PLAG)
-  LIST(APPEND ROCSTAR_SRCS ../rocstarPLAG_InitRocstarInterface.F90
+if(ENABLE_PLAG)
+  LIST(APPEND ROCSTAR_SRCS ../rocstar/PLAG_InitRocstarInterface.F90
     ../rocstar/PLAG_SetSizeRocstar.F90)
 endif()
-if(RADI)
+if(ENABLE_RADI)
   LIST(APPEND ROCSTAR_SRCS ../rocstar/RADI_InitRocstarInterface.F90 )
 endif()
-if(TURB)
+if(ENABLE_TURB)
   LIST(APPEND ROCSTAR_SRCS ../rocstar/TURB_InitRocstarInterface.F90)
 endif()
 LIST(APPEND ROCSTAR_SRCS ../rocstar/RandInitRocstarInterface.F90)
-if(STATS)
+if(ENABLE_STATS)
   LIST(APPEND ROCSTAR_SRCS ../rocstar/STAT_RocstarStatNaming.F90)
 endif()
-IF(STATS)
+IF(ENABLE_STATS)
   LIST(APPEND ROCSTAR_SRCS ../rocstar/STAT_RocstarStatNaming.F90)
 ENDIF()
 SET(FLOPREP_SRCS 
@@ -553,34 +567,32 @@ IF(ROCSTAR)
   add_definitions(-DROCSTAR -DGENX)
   LIST(APPEND LIB_SRCS ${ROCSTAR_SRCS})
 ENDIF()
-IF(RADI)
+IF(ENABLE_RADI)
   add_definitions(-DRADI)
   LIST(APPEND LIB_SRCS ${RADI_SRCS})
 ENDIF()
-IF(TURB)
+IF(ENABLE_TURB)
   add_definitions(-DTURB)
   LIST(APPEND LIB_SRCS ${TURB_SRCS})
 ENDIF()
-IF(PLAG)
+IF(ENABLE_PLAG)
   add_definitions(-DPLAG)
   LIST(APPEND LIB_SRCS ${PLAG_SRCS})
 ENDIF()
-IF(PEUL)
+IF(ENABLE_PEUL)
   add_definitions(-DPEUL)
   LIST(APPEND LIB_SRCS ${PEUL_SRCS})
 ENDIF()
-IF(INRT)
+IF(ENABLE_INRT)
   add_definitions(-DINRT)
   LIST(APPEND LIB_SRCS ${INRT_SRCS})
 ENDIF()
-IF(STATS)
+IF(ENABLE_STATS)
   add_definitions(-DSTATS)
 ENDIF()
-IF(PERI)
+IF(ENABLE_PERI)
   add_definitions(-DPERI)
-ENDIF()
-IF(SPEC)
-  add_definitions(-DSPEC)
+  list(APPEND LIB_SRCS ${PERI_SRCS})
 ENDIF()
 
 SET(MAKEFLO_DIR ../utilities/rocflo/makeflo)

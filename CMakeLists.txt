@@ -90,6 +90,18 @@ SET(RUNTEST ${EXECUTABLE_OUTPUT_PATH}/runtest)
 SET(TESTRESULT ${EXECUTABLE_OUTPUT_PATH}/testresults)
 SET(IRAD_LIB IRAD)
 
+# rocflu/rocflo optional part configuration
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+set (ENABLE_TURB    TRUE CACHE BOOL "Rocflu/Rocflo: enable Turbulence")
+set (ENABLE_STATS   TRUE CACHE BOOL "Rocflu/Rocflo: enable Statistics")
+set (ENABLE_PLAG    TRUE CACHE BOOL "Rocflu/Rocflo: enable Lagrangian Particles Multiphase Flow")
+set (ENABLE_PEUL    TRUE CACHE BOOL "Rocflu/Rocflo: enable Eulerian Multiphase Flow")
+set (ENABLE_PERI    TRUE CACHE BOOL "Rocflu/Rocflo: enable Periodic")
+set (ENABLE_INRT    TRUE CACHE BOOL "Rocflu/Rocflo: enable Particle Interaction")
+set (ENABLE_RADI    FALSE CACHE BOOL "Rocflu/Rocflo: enable Radiation") # note: currently has compile errors and doesn't build
+set (ENABLE_SPEC    TRUE CACHE BOOL "Rocflu/Rocflo: enable Species")
+
 # add main subdirectories
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
