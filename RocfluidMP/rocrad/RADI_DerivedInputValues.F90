@@ -60,9 +60,10 @@ SUBROUTINE RADI_DerivedInputValues
   USE RADI_ModParameters
   IMPLICIT NONE
 
-#ifdef RFLO
 ! ... parameters
   TYPE(t_region), POINTER :: regions(:)
+
+#ifdef RFLO
 
 ! ... loop variables
   INTEGER :: iReg, l, m, n

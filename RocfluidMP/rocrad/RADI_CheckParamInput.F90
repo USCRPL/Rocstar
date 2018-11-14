@@ -277,7 +277,7 @@ SUBROUTINE RADI_CheckParamInput
       ENDIF
 #endif
 #ifdef RFLU
-      input => radiInput
+      input => regions(iReg)%radiInput
       IF (input%radiModel /= RADI_MODEL_NONE) THEN
         CALL ErrorStop( global,ERR_RADI_INPUT,__LINE__, &
              'RFLU-RADI is not ready yet' )
