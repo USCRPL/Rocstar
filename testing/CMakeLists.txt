@@ -43,10 +43,13 @@ project(Rocstar)
 #ADD_TEST(RegressionTest:Works ${TESTRESULT} YouRegressionTestNameHere rocstar_testresults.txt)
 
 IF(MPI_CXX_COMPILER)
-  ADD_TEST(ACMRocfluRegressionTest:Runs ${RUNTEST} -f ${PROJECT_SOURCE_DIR}/share/Testing/test_scripts/ACM_Rocflu.csh -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 2 -o rocstar_testresults.txt -a ${IRAD_EXEPATH})
-  ADD_TEST(ACMRocfloRegressionTest:Runs ${RUNTEST} -f ${PROJECT_SOURCE_DIR}/share/Testing/test_scripts/ACM_Rocflo.csh -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 2 -o rocstar_testresults.txt -a ${IRAD_EXEPATH})
-  ADD_TEST(SSSRegressionTest:Runs ${RUNTEST} -f ${PROJECT_SOURCE_DIR}/share/Testing/test_scripts/SSS.csh -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 2 -o rocstar_testresults.txt -a ${IRAD_EXEPATH})
-  ADD_TEST(EPRegressionTest:Runs ${RUNTEST} -f ${PROJECT_SOURCE_DIR}/share/Testing/test_scripts/EP.csh -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 2 -o rocstar_testresults.txt -a ${IRAD_EXEPATH})
+
+  set(IRAD_EXEPATH $<TARGET_FILE_DIR:runtest>)
+
+  ADD_TEST(NAME ACMRocfluRegressionTest:Runs COMMAND ${RUNTEST} -f ${PROJECT_SOURCE_DIR}/share/Testing/test_scripts/ACM_Rocflu.csh -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 2 -o rocstar_testresults.txt -a ${IRAD_EXEPATH})
+  ADD_TEST(NAME ACMRocfloRegressionTest:Runs COMMAND ${RUNTEST} -f ${PROJECT_SOURCE_DIR}/share/Testing/test_scripts/ACM_Rocflo.csh -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 2 -o rocstar_testresults.txt -a ${IRAD_EXEPATH})
+  ADD_TEST(NAME SSSRegressionTest:Runs COMMAND ${RUNTEST} -f ${PROJECT_SOURCE_DIR}/share/Testing/test_scripts/SSS.csh -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 2 -o rocstar_testresults.txt -a ${IRAD_EXEPATH})
+  ADD_TEST(NAME EPRegressionTest:Runs COMMAND ${RUNTEST} -f ${PROJECT_SOURCE_DIR}/share/Testing/test_scripts/EP.csh -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 2 -o rocstar_testresults.txt -a ${IRAD_EXEPATH})
   # The parallel tests are actually run by this command
 #  ADD_TEST(Rocstar::RunParallelPlatformTests ${RUNTEST} -p ${PROJECT_SOURCE_DIR}/share/Platforms/parallel_platforms -s ${PROJECT_SOURCE_DIR} -b ${CMAKE_BINARY_DIR}/bin -v 3 -o rocstar_testresults.txt)
 
