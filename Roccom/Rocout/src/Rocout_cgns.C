@@ -44,6 +44,7 @@
 #include "Rocout_cgns.h"
 #include <unistd.h>
 
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 USE_COM_NAME_SPACE
 #endif
@@ -149,31 +150,31 @@ class AutoCDer
  ** \param dType The Roccom data type. (Input)
  ** \returns The equivalent CGNS data type.
  **/
-static DataType_t COM2CGNS(int dType)
+static CGNS_ENUMT(DataType_t) COM2CGNS(int dType)
 {
   switch (dType) {
     case COM_CHAR:
     case COM_CHARACTER:
-      return Character;
+      return CGNS_ENUMV(Character);
 
     case COM_INT:
     case COM_INTEGER:
-      return Integer;
+      return CGNS_ENUMV(Integer);
 
     case COM_FLOAT:
     case COM_REAL:
-      return RealSingle;
+      return CGNS_ENUMV(RealSingle);
 
     case COM_DOUBLE:
     case COM_DOUBLE_PRECISION:
-      return RealDouble;
+      return CGNS_ENUMV(RealDouble);
 
     default:
       std::cerr << "ROCOUT ERROR: Cannot convert COM type " << dType
                 << " to a CGNS type." << std::endl;
   }
 
-  return DataTypeNull;
+  return CGNS_ENUMV(DataTypeNull);
 }
 
 /**
@@ -199,93 +200,93 @@ static int WriteElements(int fn, int B, int Z, int eType, int nElems,
                          int offset, const std::string& label,
                          const std::string& errorhandle)
 {
-  ElementType_t elemType;
-  int nNodes;
+  CGNS_ENUMT(ElementType_t) elemType = CGNS_ENUMV(ElementTypeNull);
+  int nNodes = 0;
 
   // Determine the number of nodes per element and the CGNS element type.
   switch (eType) {
     case Connectivity::BAR2:
-      elemType = BAR_2;
+      elemType = CGNS_ENUMV(BAR_2);
       nNodes = 2;
       break;
 
     case Connectivity::BAR3:
-      elemType = BAR_3;
+      elemType = CGNS_ENUMV(BAR_3);
       nNodes = 3;
       break;
 
     case Connectivity::TRI3:
-      elemType = TRI_3;
+      elemType = CGNS_ENUMV(TRI_3);
       nNodes = 3;
       break;
 
     case Connectivity::TRI6:
-      elemType = TRI_6;
+      elemType = CGNS_ENUMV(TRI_6);
       nNodes = 6;
       break;
 
     case Connectivity::QUAD4:
-      elemType = QUAD_4;
+      elemType = CGNS_ENUMV(QUAD_4);
       nNodes = 4;
       break;
 
     case Connectivity::QUAD8:
-      elemType = QUAD_8;
+      elemType = CGNS_ENUMV(QUAD_8);
       nNodes = 8;
       break;
 
     case Connectivity::QUAD9:
-      elemType = QUAD_9;
+      elemType = CGNS_ENUMV(QUAD_9);
       nNodes = 9;
       break;
 
     case Connectivity::TET4:
-      elemType = TETRA_4;
+      elemType = CGNS_ENUMV(TETRA_4);
       nNodes = 4;
       break;
 
     case Connectivity::TET10:
-      elemType = TETRA_10;
+      elemType = CGNS_ENUMV(TETRA_10);
       nNodes = 10;
       break;
 
     case Connectivity::PYRIMID5:
-      elemType = PYRA_5;
+      elemType = CGNS_ENUMV(PYRA_5);
       nNodes = 5;
       break;
 
     case Connectivity::PYRIMID14:
-      elemType = PYRA_14;
+      elemType = CGNS_ENUMV(PYRA_14);
       nNodes = 14;
       break;
 
     case Connectivity::PRISM6:
-      elemType = PENTA_6;
+      elemType = CGNS_ENUMV(PENTA_6);
       nNodes = 6;
       break;
 
     case Connectivity::PRISM15:
-      elemType = PENTA_15;
+      elemType = CGNS_ENUMV(PENTA_15);
       nNodes = 15;
       break;
 
     case Connectivity::PRISM18:
-      elemType = PENTA_18;
+      elemType = CGNS_ENUMV(PENTA_18);
       nNodes = 18;
       break;
 
     case Connectivity::HEX8:
-      elemType = HEXA_8;
+      elemType = CGNS_ENUMV(HEXA_8);
       nNodes = 8;
       break;
 
     case Connectivity::HEX20:
-      elemType = HEXA_20;
+      elemType = CGNS_ENUMV(HEXA_20);
       nNodes = 20;
       break;
 
     case Connectivity::HEX27:
-      elemType = HEXA_27;
+      elemType = CGNS_ENUMV(HEXA_27);
       nNodes = 27;
       break;
   };
@@ -585,7 +586,7 @@ void ModifyExponents(const std::string& unit, float* exponents, float dir)
 }
 
 template <typename T>
-static int cg_array_core_write_internal(char const* name, DataType_t dType,
+static int cg_array_core_write_internal(char const* name, CGNS_ENUMT(DataType_t) dType,
                                         int rank, int* rind, int const* size,
                                         T const* data)
 {
@@ -610,7 +611,7 @@ static int cg_array_core_write_internal(char const* name, DataType_t dType,
   return cg_array_write(name, dType, rank, newSize, &buffer[0]);
 }
 
-static int cg_array_core_write(char const* name, DataType_t dType,
+static int cg_array_core_write(char const* name, CGNS_ENUMT(DataType_t) dType,
                                int rank, int* rind, int const* size,
                                void const* data)
 {
@@ -623,18 +624,20 @@ static int cg_array_core_write(char const* name, DataType_t dType,
     return cg_array_write(name, dType, rank, size, data);
 
   switch (dType) {
-    case Character:
+    case CGNS_ENUMV(Character):
        return cg_array_core_write_internal(name, dType, rank, rind, size,
                                            static_cast<char const*>(data));
-    case Integer:
+    case CGNS_ENUMV(Integer):
        return cg_array_core_write_internal(name, dType, rank, rind, size,
                                            static_cast<int const*>(data));
-    case RealSingle:
+    case CGNS_ENUMV(RealSingle):
        return cg_array_core_write_internal(name, dType, rank, rind, size,
                                            static_cast<float const*>(data));
-    case RealDouble:
+    case CGNS_ENUMV(RealDouble):
        return cg_array_core_write_internal(name, dType, rank, rind, size,
                                            static_cast<double const*>(data));
+    default:
+      break;
   }
 
   return CG_ERROR;
@@ -676,7 +679,7 @@ static void cg_exponents_as_string_write(std::string unit,
   if (!bottom.empty() && bottom != "1")
     ModifyExponents(bottom, exponents, -1.f);
 
-  CG_CHECK(cg_exponents_write, (RealSingle, exponents));
+  CG_CHECK(cg_exponents_write, (CGNS_ENUMV(RealSingle), exponents));
 }
 //@}
 
@@ -735,7 +738,7 @@ static int cg_base_find_or_create(int fn, const char* name, int cellDim,
  ** \returns 0 on success, 1 otherwise.
  **/
 static int cg_zone_find_or_create(int fn, int B, const char* name,
-                                  const int* sizes, ZoneType_t zType, int* Z,
+                                  const int* sizes, CGNS_ENUMT(ZoneType_t) zType, int* Z,
                                   const std::string& errorhandle)
 {
   char zoneName[33];
@@ -751,7 +754,7 @@ static int cg_zone_find_or_create(int fn, int B, const char* name,
         return 1;
       }
 
-      ZoneType_t zt;
+      CGNS_ENUMT(ZoneType_t zt);
       CG_CHECK(cg_zone_type, (fn, B, *Z, &zt));
       if (zType == zt)
         return 0;
@@ -761,7 +764,7 @@ static int cg_zone_find_or_create(int fn, int B, const char* name,
     }
   }
 
-  if (zType == Unstructured && sizes[2] > sizes[0])
+  if (zType == CGNS_ENUMV(Unstructured) && sizes[2] > sizes[0])
     std::cerr << "ROCOUT ERROR: Creating unstructured zone \"" << name
               << "\" with invalid dimensions { " << sizes[0] << ", " << sizes[1]
               << ", " << sizes[2] << " }" << std::endl;
@@ -811,11 +814,11 @@ static int cg_integral_find_or_create(const char* name, int* I,
  ** \returns 0 on success, 1 otherwise.
  **/
 static int cg_sol_find_or_create(int fn, int B, int Z, const char* name,
-                                 GridLocation_t location, int* S,
+                                 CGNS_ENUMT(GridLocation_t) location, int* S,
                                  const std::string& errorhandle)
 {
   char solName[33];
-  GridLocation_t loc;
+  CGNS_ENUMT(GridLocation_t) loc;
   int nSols;
   CG_CHECK(cg_nsols, (fn, B, Z, &nSols));
   for (*S=1; *S<=nSols; ++(*S)) {
@@ -843,7 +846,7 @@ static int cg_sol_find_or_create(int fn, int B, int Z, const char* name,
  ** \param size The size of each dimension of the data. (Output)
  ** \returns 0 on success, 1 otherwise.
  **/
-static int cg_array_info_by_name(const char* name, int* A, DataType_t* dType,
+static int cg_array_info_by_name(const char* name, int* A, CGNS_ENUMT(DataType_t)* dType,
                                  int* rank, int* size,
                                  const std::string& errorhandle)
 {
@@ -932,13 +935,13 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
 
   // Write the default Roccom units at the top.
   CG_CHECK(cg_goto, (fn, B, "end"));
-  CG_CHECK(cg_units_write, (Kilogram, Meter, Second, Kelvin, Degree));
+  CG_CHECK(cg_units_write, (CGNS_ENUMV(Kilogram), CGNS_ENUMV(Meter), CGNS_ENUMV(Second), CGNS_ENUMV(Kelvin), CGNS_ENUMV(Degree)));
 
   // Read the time values in the BaseIterativeData_t node.
   if (mode > 0 && cg_biter_read(fn, B, buffer, &nSteps) == 0) {
     CG_CHECK(cg_goto, (fn, B, "BaseIterativeData_t", 1, "end"));
     times.resize(nSteps + 1);
-    CG_CHECK(cg_array_read_as, (1, RealDouble, &(times[0])));
+    CG_CHECK(cg_array_read_as, (1, CGNS_ENUMV(RealDouble), &(times[0])));
   } else {
     times.resize(1);
   }
@@ -957,7 +960,7 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
     // Write/rewrite the time values to the BaseIterativeData_t node.
     CG_CHECK(cg_biter_write, (fn, B, "TimeIterValues", nSteps));
     CG_CHECK(cg_goto, (fn, B, "BaseIterativeData_t", 1, "end"));
-    CG_CHECK(cg_array_write, ("TimeValues", RealDouble, 1, &nSteps,
+    CG_CHECK(cg_array_write, ("TimeValues", CGNS_ENUMV(RealDouble), 1, &nSteps,
                               &(times[0])));
     --nSteps;
   }
@@ -973,7 +976,7 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
 
   // Set up the sizes based on dimensionality and zone type.
   int Z, sizes[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-  ZoneType_t zType;
+  CGNS_ENUMT(ZoneType_t) zType;
   i = 0;
   if (pane.is_structured()) {
     // Sizes should be core nodes/elements only.
@@ -986,11 +989,11 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
     sizes[i++] = sizes[1] - 1;
     if (physDim > 2 && cellDim > 2)
       sizes[i++] = sizes[2] - 1;
-    zType = Structured;
+    zType = CGNS_ENUMV(Structured);
   } else {
     sizes[0] = pane.size_of_real_nodes();
     sizes[1] = pane.size_of_real_elements();
-    zType = Unstructured;
+    zType = CGNS_ENUMV(Unstructured);
   }
 
   CG_CHECK(cg_zone_find_or_create, (fn, B, zoneName.c_str(), sizes,
@@ -1049,13 +1052,13 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
     std::fill_n((char*)nodeNames, 32 * numStr, '\0');
 
     int A;
-    DataType_t dataType;
+    CGNS_ENUMT(DataType_t) dataType;
     // Add the grid coordinates name to the GridCoordinatesPointers array,
     // unless it's already there.
     CG_CHECK(cg_array_info_by_name,
              ("GridCoordinatesPointers", &A, &dataType, &rank, size,
                errorhandle));
-    COM_assertion_msg((dataType == Character && rank == 2
+    COM_assertion_msg((dataType == CGNS_ENUMV(Character) && rank == 2
                        && size[1] == numStr),
                     "GridCoordinatesPointers in ZoneIterativeData is corrupt");
     CG_CHECK(cg_array_read, (A, gridNames));
@@ -1071,7 +1074,7 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
     CG_CHECK(cg_array_info_by_name,
              ("FlowSolutionsPointers", &A, &dataType, &rank, size,
               errorhandle));
-    COM_assertion_msg((dataType == Character && rank == 2
+    COM_assertion_msg((dataType == CGNS_ENUMV(Character) && rank == 2
                        && size[1] == numStr),
                       "FlowSolutionsPointers in ZoneIterativeData is corrupt");
     CG_CHECK(cg_array_read, (A, nodeNames));
@@ -1101,9 +1104,9 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
     // ZoneIterativeData_t node.
     CG_CHECK(cg_goto, (fn, B, "Zone_t", Z, "ZoneIterativeData_t", 1, "end"));
     CG_CHECK(cg_array_write,
-             ("GridCoordinatesPointers", Character, 2, size, gridNames));
+             ("GridCoordinatesPointers", CGNS_ENUMV(Character), 2, size, gridNames));
     CG_CHECK(cg_array_write,
-             ("FlowSolutionsPointers", Character, 2, size, nodeNames));
+             ("FlowSolutionsPointers", CGNS_ENUMV(Character), 2, size, nodeNames));
   }
 
   delete[] (char*)gridNames;
@@ -1398,7 +1401,7 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
       CG_CHECK(cg_nsections, (mfn, mB, mZ, &nS));
 
       char label[33];
-      ElementType_t eType;
+      CGNS_ENUMT(ElementType_t) eType;
       int min, max, nBoundary, parent;
       for (S=1; S<=nS; ++S) {
         CG_CHECK(cg_section_read, (mfn, mB, mZ, S, label, &eType, &min, &max,
@@ -1415,7 +1418,7 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
   // This node is referenced in the FlowSolutionPointers, so we should make
   // sure it exists even if its left empty.
   int T;
-  CG_CHECK(cg_sol_find_or_create, (fn, B, Z, nodeName.c_str(), Vertex, &T,
+  CG_CHECK(cg_sol_find_or_create, (fn, B, Z, nodeName.c_str(), CGNS_ENUMV(Vertex), &T,
                                    errorhandle));
 
   if (attr->id() == COM::COM_CONN || attr->id() == COM::COM_NC
@@ -1718,7 +1721,7 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
                     << ", size_of_components() == "
                     << (*a)->size_of_components() << ", size_of_items() == "
                     << (*a)->size_of_items());
-          if (zType == Unstructured && (*a)->size_of_components() == 2
+          if (zType == CGNS_ENUMV(Unstructured) && (*a)->size_of_components() == 2
               && (*a)->size_of_items() > 0) {
             // Create parallel base and zone with BAR_2 elements.
             std::string newName(material);
@@ -1731,7 +1734,7 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
 
             // Write the default Roccom units at the top.
             CG_CHECK(cg_goto, (fn, RB, "end"));
-            CG_CHECK(cg_units_write, (Kilogram, Meter, Second, Kelvin, Degree));
+            CG_CHECK(cg_units_write, (CGNS_ENUMV(Kilogram), CGNS_ENUMV(Meter), CGNS_ENUMV(Second), CGNS_ENUMV(Kelvin), CGNS_ENUMV(Degree)));
 
             std::string rpath("/");
             rpath += material;
@@ -1755,7 +1758,7 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
             DEBUG_MSG("Creating zone \"" << zoneName << "\", size == [ "
                       << rsizes[0] << ", " << rsizes[1] << " ]");
             CG_CHECK(cg_zone_find_or_create, (fn, RB, zoneName.c_str(), rsizes,
-                                              Unstructured, &RZ, errorhandle));
+                                              CGNS_ENUMV(Unstructured), &RZ, errorhandle));
 
             // Check to see if a ZoneIterativeData node exists.
             if (cg_goto(fn, RB, "Zone_t", RZ,
@@ -1973,11 +1976,11 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
           rind[1] = (*a)->size_of_ghost_items();
         }
 
-        CG_CHECK(cg_sol_find_or_create, (fn, B, Z, nodeName.c_str(), Vertex, &T,
+        CG_CHECK(cg_sol_find_or_create, (fn, B, Z, nodeName.c_str(), CGNS_ENUMV(Vertex), &T,
                                          errorhandle));
 
         CG_CHECK(cg_goto, (fn, B, "Zone_t", Z, "FlowSolution_t", T, "end"));
-        CG_CHECK(cg_gridlocation_write, (Vertex));
+        CG_CHECK(cg_gridlocation_write, (CGNS_ENUMV(Vertex)));
 
         // Write rind data.
         if (writeGhost) {
@@ -2151,11 +2154,11 @@ void write_attr_CGNS(const std::string& fname_in, const std::string& mfile,
           rind[1] = (*a)->size_of_ghost_items();
         }
 
-        CG_CHECK(cg_sol_find_or_create, (fn, B, Z, elemName.c_str(), CellCenter,
+        CG_CHECK(cg_sol_find_or_create, (fn, B, Z, elemName.c_str(), CGNS_ENUMV(CellCenter),
                                          &T, errorhandle));
 
         CG_CHECK(cg_goto, (fn, B, "Zone_t", Z, "FlowSolution_t", T, "end"));
-        CG_CHECK(cg_gridlocation_write, (CellCenter));
+        CG_CHECK(cg_gridlocation_write, (CGNS_ENUMV(CellCenter)));
 
         // Write rind data.
         if (writeGhost) {
