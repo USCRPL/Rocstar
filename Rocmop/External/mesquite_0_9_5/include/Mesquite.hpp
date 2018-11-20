@@ -26,13 +26,10 @@
   ***************************************************************** */
 #ifndef MESQUITE_HPP
 #define MESQUITE_HPP
+
+#include <mesquite_config.h>
+
 #include <cstring>
-#ifdef _MSC_VER
-#  pragma warning ( 4 : 4786)
-//#  include "mesquite_config.win.h"
-//#else
-//#  include "mesquite_config.h"
-#endif
 
 #ifdef MSQ_USE_OLD_C_HEADERS
 #  define msq_stdc 

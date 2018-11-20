@@ -12,3 +12,16 @@
 /* Define to c++ preprocessor macro for function name */
 #define MSQ_FUNCTION __PRETTY_FUNCTION__
 
+// standard config settings
+#define USE_STD_INCLUDES
+#define USE_C_PREFIX_INCLUDES
+
+#cmakedefine HAVE_VSNPRINTF
+
+#cmakedefine HAVE_VSPRINTF
+
+#cmakedefine HAVE_TIMES
+
+#cmakedefine HAVE_CLOCK
+
+#cmakedefine HAVE_CBRT

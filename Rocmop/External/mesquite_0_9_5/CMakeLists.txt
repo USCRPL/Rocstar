@@ -99,9 +99,24 @@ set(MESQUITE_INCLUDE_DIRECTORIES
 
 
 add_definitions(-DMESQUITE)
-add_definitions(-DUSE_STD_INCLUDES -DUSE_C_PREFIX_INCLUDES -DHAVE_VSNPRINTF -DHAVE_VSPRINTF -DHAVE_CLOCK -DHAVE_TIMES -DHAVE_CBRT)
+
+# configure config header
+# -----------------------------------------------------------------------------
+
+check_all_functions(vsprintf vsnprintf cbrt)
+
+check_all_includes(CXX sys/times.h ctime)
+
+test(HAVE_TIMES HAVE_SYS_TIMES_H)
+test(HAVE_CLOCK HAVE_CTIME)
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
+configure_file(include/mesquite_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/mesquite_config.h)
+
+# -----------------------------------------------------------------------------
+
 
 add_library(mesquite_95 SHARED ${MESQUITE_SOURCES})
-target_include_directories(mesquite_95 PUBLIC ${MESQUITE_INCLUDE_DIRECTORIES})
+target_include_directories(mesquite_95 PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include ${MESQUITE_INCLUDE_DIRECTORIES})
 
 INSTALL(TARGETS mesquite_95 RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
