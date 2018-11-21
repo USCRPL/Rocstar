@@ -129,29 +129,29 @@ public:
   /// Interpolates the field data at a given point.
   template < class Field, class Value>
   void interpolate( const Field &f, 
-		    const Nat_coor &nc, Value *v) const throw(int);
+		    const Nat_coor &nc, Value *v) const;
 
   /// Customized interpolation for primitive data types.
   template < class Field>
   void interpolate( const Field &f, 
-		    const Nat_coor &nc, Real *v) const throw(int)
+		    const Nat_coor &nc, Real *v) const
   { interpolate_nopt( f, nc, v); }
 
   /// Interpolates the field data at a given point on an edge.
   template < class Field, class Value>
   void interpolate( const Field &f, 
-		    const Real xi, Value *v) const throw(int);
+		    const Real xi, Value *v) const;
 
   /// Customized interpolation for primitive data types.
   template < class Field>
   void interpolate( const Field &f, 
-		    const Real xi, Real *v) const throw(int)
+		    const Real xi, Real *v) const
   { interpolate_nopt( f, xi, v); }
 
   /// Interpolates the field data at a given point and return the result.
   template < class Field>
   typename Field_traits<Field>::Value 
-  interpolate( const Field &f, const Nat_coor &nc) const throw(int) {
+  interpolate( const Field &f, const Nat_coor &nc) const {
     typename Field_traits<Field>::Value v;
     this->interpolate( f, nc, &v); // Use this-> to get around a stupid bug in SGI C++ compiler
     return v;
@@ -160,7 +160,7 @@ public:
   /// Interpolates the field data at a given point on an edge and return the result.
   template < class Field>
   typename Field_traits<Field>::Value 
-  interpolate( const Field &f, const Real xi) const throw(int) {
+  interpolate( const Field &f, const Real xi) const {
     typename Field_traits<Field>::Value v;
     interpolate( f, xi, &v);
     return v;
@@ -168,12 +168,12 @@ public:
 
   /// Interpolates the field data to the center of the element.
   template < class Field, class Value>
-  void interpolate_to_center( const Field &f, Value *v) const throw(int);
+  void interpolate_to_center( const Field &f, Value *v) const;
 
   /// Interpolates the field data to the center and return the value.
   template < class Field>
   typename Field_traits<Field>::Value 
-  interpolate_to_center( const Field &f) const throw(int) {
+  interpolate_to_center( const Field &f) const {
     typename Field_traits<Field>::Value v;
     interpolate_to_center( f, &v);
     return v;
@@ -225,12 +225,12 @@ protected:
   /// Nonoptimized version of interpolation.
   template < class Field, class Value>
   void interpolate_nopt( const Field &f, 
-			 const Nat_coor &nc, Value *v) const throw(int);
+			 const Nat_coor &nc, Value *v) const;
 
   /// Nonoptimized version of interpolation.
   template < class Field, class Value>
   void interpolate_nopt( const Field &f, 
-			 const Real xi, Value *v) const throw(int);
+			 const Real xi, Value *v) const;
 
 private:
   const Size   _nedges;
@@ -241,7 +241,7 @@ private:
 template < class Field, class Value>
 void Generic_element_2::interpolate( const Field &f,
 				     const Nat_coor &nc, 
-				     Value *v) const throw(int) {
+				     Value *v) const {
   const Real xi = nc[0], eta = nc[1];
 
   if ( eta == 0) // Interpolate on the edge.
@@ -302,7 +302,7 @@ void Generic_element_2::interpolate( const Field &f,
 template < class Field, class Value>
 void Generic_element_2::interpolate_nopt( const Field &f,
 					  const Nat_coor &nc, 
-					  Value *v) const throw(int) {
+					  Value *v) const {
   const Real xi = nc[0], eta = nc[1];
 
   if ( eta == 0) // Interpolate on the edge.
@@ -350,7 +350,7 @@ void Generic_element_2::interpolate_nopt( const Field &f,
 template < class Field, class Value>
 void Generic_element_2::interpolate( const Field &f,
 				     const Real xi, 
-				     Value *v) const throw(int) {
+				     Value *v) const {
   *v = f[0];
   switch ( _nnodes) {
   case 3:
@@ -378,7 +378,7 @@ void Generic_element_2::interpolate( const Field &f,
 template < class Field, class Value>
 void Generic_element_2::interpolate_nopt( const Field &f,
 					  const Real xi, 
-					  Value *v) const throw(int) {
+					  Value *v) const {
   *v = f[0];
   switch ( _nnodes) {
   case 3:
@@ -402,7 +402,7 @@ void Generic_element_2::interpolate_nopt( const Field &f,
 
 template < class Field, class Value>
 void Generic_element_2::
-interpolate_to_center( const Field &f, Value *v) const throw(int) {
+interpolate_to_center( const Field &f, Value *v) const {
   if ( _order == 1) {
     *v = f[0];
     for ( Size i=1; i<_nnodes; ++i) *v += f[i];

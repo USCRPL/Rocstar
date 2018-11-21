@@ -4,11 +4,9 @@ IF(cgns_ENABLED)
   add_definitions ( -DUSE_CGNS )
 ENDIF()
 
-find_library(PTHREAD_LIB pthread)
-
 set (ROCIN_SRCS src/Rocin.C src/read_parameter_file.C)
 IF(NOT HAVE_GLOB_H)
-  list (APPEND ROCIN_SRCS src/Directory.C)
+  list (APPEND ROCIN_SRCS src/Directory.C src/internal_fnmatch.C)
 ENDIF()
 
 set (TEST_SRCS test/intest1.C test/intest2.C test/printin.C test/param_test.C)
@@ -17,6 +15,7 @@ set (RHDF4_SRCS src/HDF4.C)
 IF(pthread_ENABLED)
  list(APPEND RHDF4_SRCS src/Sync.C)
 ENDIF()
+
 
 set (ALL_SRCS "${ROCIN_SRCS} ${TEST_SRCS} ${UTIL_SRCS} ${RHDF4_SRCS}")
 set(LIB_SRCS ${ROCIN_SRCS})
@@ -59,7 +58,7 @@ target_link_libraries(hdf2vtk Rocin)
 #add_executable(hdf2pltV2 util/hdf2pltV2.C)
 #target_link_libraries(hdf2pltV2 Rocin)
 add_executable(sepin util/sepin.C)
-target_link_libraries(sepin Rocin)
+target_link_libraries(sepin Rocin IRAD)
 add_executable(plagprep util/plagprep.C)
 target_link_libraries(plagprep Rocin)
 

@@ -104,7 +104,7 @@ public:
 		     const std::string &intents, 
 		     const COM_Type *types, 
 		     Attribute *a, 
-		     bool if_f90=false) throw(COM_exception);
+		     bool if_f90=false);
 
   /// Initialize a Function record.
   void set_function( const std::string &fname, 
@@ -112,7 +112,7 @@ public:
 		     const std::string &intents, 
 		     const COM_Type *types, 
 		     Attribute *a, 
-		     bool if_f90=false) throw(COM_exception);
+		     bool if_f90=false);
 
   /** Create a new Attribute object with given properties.
    *  \param aname attribute name.
@@ -123,10 +123,10 @@ public:
    */
   Attribute *new_attribute( const std::string &aname, const char loc,
 			    const int type, int ncomp,
-			    const std::string &unit) throw(COM_exception);
+			    const std::string &unit);
 
   /** Delete an existing Attribute object. */
-  void delete_attribute( const std::string &aname) throw(COM_exception);
+  void delete_attribute( const std::string &aname);
 
   /** Set the sizes of an attribute for a specific pane.
    *  \param aname  attribute name
@@ -135,7 +135,7 @@ public:
    *  \param ng     number of ghosts
    */
   void set_size( const std::string &aname, int pane_id,
-		 int nitems, int ng=0) throw( COM_exception);
+		 int nitems, int ng=0);
 
   /** Associate an array with an attribute for a specific pane.
    *  \param aname  attribute name
@@ -146,29 +146,28 @@ public:
    *  \seealso alloc_array, resize_array
    */
   void set_array( const std::string &aname, const int pane_id,
-		  void *addr, int strd=0, int cap=0, bool is_const=false) 
-    throw(COM_exception);
+		  void *addr, int strd=0, int cap=0, bool is_const=false);
 
   /** Allocate memory for an attribute for a specific pane and 
    *  set addr to the address.
    *  \seealso alloc_array, resize_array, append_array
    */
   void alloc_array( const std::string &aname, const int pane_id,
-		    void **addr, int strd=0, int cap=0) throw(COM_exception);
+		    void **addr, int strd=0, int cap=0);
 
   /** Resize memory for an attribute for a specific pane and 
    *  set addr to the address.
    *  \seealso set_array, alloc_array, append_array
    */
   void resize_array( const std::string &aname, const int pane_id,
-		     void **addr, int strd=-1, int cap=0) throw(COM_exception);
+		     void **addr, int strd=-1, int cap=0);
 
   void resize_array( Attribute *a, void **addr, 
-		     int strd=-1, int cap=0) throw(COM_exception) 
+		     int strd=-1, int cap=0) 
   { reinit_attr( a, Pane::OP_RESIZE, addr, strd, cap); }
 
   void resize_array( Connectivity *c, void **addr, 
-		     int strd=-1, int cap=0) throw(COM_exception) 
+		     int strd=-1, int cap=0) 
   { reinit_conn( c, Pane::OP_RESIZE, (int**)addr, strd, cap); }
 
   /** Append the given array to the end of the attribute on a specific
@@ -176,19 +175,19 @@ public:
    *  \seealso set_array, alloc_array, resize_array
    */
   void append_array( const std::string &aname, const int pane_id,
-		     const void *val, int v_strd, int v_size) throw(COM_exception);
+		     const void *val, int v_strd, int v_size);
 
   /** Deallocate memory for an attribute for a specific pane if 
    *  allocated by Roccom.
    *  \seealso alloc_array, resize_array
    */
   void dealloc_array( const std::string &aname,
-		      const int pane_id=0) throw(COM_exception);
+		      const int pane_id=0);
 
-  void dealloc_array( Attribute *a) throw(COM_exception)
+  void dealloc_array( Attribute *a)
   { reinit_attr( a, Pane::OP_DEALLOC); }
 
-  void dealloc_array( Connectivity *c) throw(COM_exception) 
+  void dealloc_array( Connectivity *c) 
   { reinit_conn( c, Pane::OP_DEALLOC); }
 
   /** Inherit the attributes of another window with a different name.
@@ -201,11 +200,11 @@ public:
    *  \param withghost wheather ghost nodes/elements should be ignored */
   Attribute *inherit( Attribute *from, const std::string &aname, 
 		      int inherit_mode, bool withghost,
-		      const Attribute *cond, int val) throw(COM_exception);
+		      const Attribute *cond, int val);
 
   /// Copy an attribute object onto another.
   void copy_attribute( const Attribute *from, 
-		       Attribute *to) throw(COM_exception) {
+		       Attribute *to) {
     inherit( const_cast<Attribute*>(from), to->name(), 
 	     Pane::INHERIT_COPY, true, NULL, 0);
   }
@@ -218,7 +217,7 @@ public:
    *  \param u      unit
    */
   Attribute *get_attribute( const std::string &aname, char *l, int *t, 
-			    int *n, std::string *u) const throw(COM_exception);
+			    int *n, std::string *u) const;
   
   /** Get the sizes of an attribute for a specific pane.
    *  \param aname  attribute name
@@ -227,19 +226,18 @@ public:
    *  \param ng     number of ghosts
    */
   void get_size( const std::string &aname, int pane_id, 
-		 int *nitems, int *ng) const throw( COM_exception);
+		 int *nitems, int *ng) const;
 
   /** Get the status of an attribute or pane.
    *  \seealso Roccom_base::get_status()
    */
-  int get_status( const std::string &aname, int pane_id) const 
-    throw(COM_exception);
+  int get_status( const std::string &aname, int pane_id) const;
 
   /** Get the parent name of an attribute and load into name. 
    *  If the attribute has no parent, then name is empty.
    */
   void get_parent( const std::string &aname, int pane_id,
-		   std::string &name) const throw(COM_exception);
+		   std::string &name) const;
 
   /** Get the address associated with an attribute for a specific pane.
    *  \param aname  attribute name
@@ -251,8 +249,7 @@ public:
    */
   void get_array( const std::string &aname, const int pane_id, 
 		  Pointer_descriptor &addr, 
-		  int *strd=NULL, int *cap=NULL, bool is_const=false) 
-    throw(COM_exception);
+		  int *strd=NULL, int *cap=NULL, bool is_const=false);
 
   /** Copy an attribute on a specific pane into a given array.
    *  \param aname   attribute name
@@ -267,10 +264,10 @@ public:
    */
   void copy_array( const std::string &aname, const int pane_id, 
 		   void *val, int v_strd=0, int v_size=0, 
-		   int offset=0) const throw(COM_exception);
+		   int offset=0) const;
 
   /// Perform some final checking of the window.
-  void init_done( bool pane_changed=true) throw(COM_exception);
+  void init_done( bool pane_changed=true);
 
   //\}
 
@@ -294,7 +291,7 @@ public:
   const Proc_map &proc_map() const { return _proc_map; }
 
   /// Remove the pane with given ID.
-  void delete_pane( const int pane_id) throw(COM_exception) {
+  void delete_pane( const int pane_id) {
     if ( pane_id == 0) { // delete all panes
       _pane_map.clear();
     }
@@ -312,8 +309,8 @@ public:
    *  \{
    */
   /// Find the pane with given ID. If not found, insert a pane with given ID.
-  Pane &pane( const int pane_id, bool insert=false) throw(COM_exception);
-  const Pane &pane( const int pane_id) const throw(COM_exception);
+  Pane &pane( const int pane_id, bool insert=false);
+  const Pane &pane( const int pane_id) const;
 
   /// Obtain all the local panes of the window.
   void panes( std::vector<int> &ps, int rank=-2);
@@ -332,14 +329,14 @@ public:
   { _dummy.attributes( as); }
 
   /// Obtain a pointer to the attribute metadata from its name.
-  Attribute *attribute( const std::string &a) throw(COM_exception);
-  const Attribute *attribute( const std::string &a) const throw(COM_exception)
+  Attribute *attribute( const std::string &a);
+  const Attribute *attribute( const std::string &a) const
   { return const_cast<Window*>(this)->attribute( a); }
 
   /// Obtain a pointer to the attribute metadata from its index.
-  Attribute *attribute( int i) throw(COM_exception) 
+  Attribute *attribute( int i) 
   { return _dummy.attribute( i); }
-  const Attribute *attribute( int i) const throw(COM_exception) 
+  const Attribute *attribute( int i) const 
   { return _dummy.attribute( i); }
 
   /// Obtain the function pointer from its name.
@@ -359,7 +356,7 @@ protected:
    *  \param cap    capacity
    */
   void reinit_attr( Attribute *attr, OP_Init op, void **addr=NULL, 
-		    int strd=0, int cap=0) throw(COM_exception);
+		    int strd=0, int cap=0);
 
   /** Template implementation for setting (op==OP_SET or OP_SET_CONST), 
    *   allocating (op==OP_ALLOC), resizing (op==OP_RESIZE) and deallocating 
@@ -371,7 +368,7 @@ protected:
    *  \param cap    capacity
    */
   void reinit_conn( Connectivity *con, OP_Init op, int **addr=NULL, 
-		    int strd=0, int cap=0) throw(COM_exception);
+		    int strd=0, int cap=0);
 
 protected:
   Pane         _dummy;       ///< Dummy pane.

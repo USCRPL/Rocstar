@@ -51,23 +51,23 @@ public:
   
   /// Insert an object into the table.
   int add_object( std::string name, Object t, 
-		  bool is_const=false) throw(COM_exception);
+		  bool is_const=false);
 
   /// Remove an object from the table.
   void remove_object( std::string name, 
-		      bool is_const=false) throw(COM_exception);
+		      bool is_const=false);
 
   /// whether the object mutable
   bool is_immutable(int i) const
   { return names[i].find(" (const)")!=std::string::npos; }
 
   /// Access an object using its handle.
-  const Object &operator[](int i) const throw(COM_exception) {
+  const Object &operator[](int i) const {
     if ( i>=(int)i2o.size()) throw COM_exception( COM_UNKNOWN_ERROR);
     return i2o[i];
   }
 
-  Object &operator[](int i) throw(COM_exception) {
+  Object &operator[](int i) {
     if ( i>=(int)i2o.size()) throw COM_exception( COM_UNKNOWN_ERROR);
     return i2o[i];
   }
@@ -95,7 +95,7 @@ protected:
 
 template <class Object>
 int Roccom_map<Object>::add_object( std::string name, Object t, 
-				    bool is_const) throw(COM_exception)
+				    bool is_const)
 {
   if (is_const) name.append( " (const)");
 
@@ -117,7 +117,7 @@ int Roccom_map<Object>::add_object( std::string name, Object t,
 
 template <class Object>
 void Roccom_map<Object>::remove_object( std::string name, 
-					bool is_const) throw(COM_exception) {
+					bool is_const) {
   if (is_const) name.append( " (const)");
 
   N2I::iterator it = n2i.find(name);

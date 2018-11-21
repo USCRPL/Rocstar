@@ -36,6 +36,8 @@
 #include <algorithm>
 #include <errno.h>
 
+#include <UnixUtils.h>
+
 #include "Rocout.h"
 #include "Rocout_hdf4.h"
 #ifdef USE_CGNS
@@ -792,7 +794,7 @@ std::string Rocout::get_fname(const std::string& prefix,
   int result = 0;
   std::string::size_type s = pre.find('/', 1);
   while (s != std::string::npos) {
-    result = mkdir(pre.substr(0, s).c_str(), 0755);
+    result = IRAD::Sys::CreateDirectory(pre.substr(0, s).c_str(), 0755);
     s = pre.find('/', s + 1);
   }
   if (result < 0 && errno != EEXIST) {

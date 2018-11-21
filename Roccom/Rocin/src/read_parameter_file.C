@@ -57,7 +57,7 @@ void Rocin::read_parameter_file( const char* file_name,
   // if the parameter window already exists, then only read
   // in attributes which exist in the window
   if(param_window){
-    for(uint i =0, ni = param_list.size(); i<ni; ++i){
+    for(unsigned int i =0, ni = param_list.size(); i<ni; ++i){
 
       param_att = param_window->attribute(param_list[i].first);
 
@@ -130,7 +130,7 @@ void Rocin::read_parameter_file( const char* file_name,
     else
       COM_new_window(window_name);
     std::string wname(window_name);
-    for(uint i =0, ni = param_list.size(); i<ni; ++i){
+    for(unsigned int i =0, ni = param_list.size(); i<ni; ++i){
       COM_new_attribute( (wname+"."+param_list[i].first).c_str(),
 			 'w', COM_CHAR, 1, "");
       int param_size = param_list[i].second.size();

@@ -1,6 +1,17 @@
 
 project(IRAD)
 
+if(TARGET_WINDOWS)
+	add_definitions(-D_WIN32_WINNT=0x0600)
+endif()
+
+# include kwsys
+SET(KWSYS_NAMESPACE iradsys)
+set(KWSYS_USE_SystemInformation TRUE)
+set(KWSYS_USE_SystemTools TRUE)
+set(KWSYS_USE_RegularExpression TRUE)
+add_subdirectory(kwsys)
+
 set (LIB_SOURCES src/ComLine.C src/Parameters.C src/Configuration.C src/Profiler.C src/UnixUtils.C)
 set(UTIL_SOURCES src/TestUtil.C src/TestTCPInterface.C src/TestResults.C src/CheckResults.C src/RunTest.C src/profane.C src/DiffDataFiles.C)
 
@@ -15,8 +26,8 @@ ENDIF()
 FILE(GLOB INC_FILES include/*.H)
 
 add_library(IRAD SHARED ${LIB_SOURCES})
-target_link_libraries(IRAD mpi_cxx)
-target_include_directories(IRAD PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/include)
+target_link_libraries(IRAD iradsys mpi_cxx)
+target_include_directories(IRAD PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR}/kwsys)
 
 add_executable(iradutil_test src/TestUtil.C)
 add_executable(tcpinterface_test src/TestTCPInterface.C)

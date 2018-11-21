@@ -37,8 +37,6 @@ set(REQUIRED_3RDPARTY_TOOLS hdf4)
 include(3rdPartyTools)
 include(NetlibConfig)
 
-set(HDF5_LIB "" CACHE PATH "" FORCE)
-
 # global compile flags
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

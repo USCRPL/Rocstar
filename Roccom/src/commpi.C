@@ -41,7 +41,7 @@
 typedef std::map<int, void*>       Msg_Queue;
 
 /// Get the size of a given MPI data type.
-static int get_sizeof( MPI_Datatype i) throw(int) {
+static int get_sizeof( MPI_Datatype i) {
   if(i == MPI_DOUBLE)
     return(sizeof(double));
   else if(i == MPI_FLOAT)

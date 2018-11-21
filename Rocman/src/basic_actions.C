@@ -1003,8 +1003,8 @@ void SolidPropagateSurface_ALE::run( double t, double dt, double alpha_dummy)
 
     COM_call_function( PROP_propagate, &p_pmesh_hdl, &p_rb_hdl, &dtz, &p_vbar_hdl);
 
-  if(!rank && man_verbose > 2)
-    std::cout << "Rocstar: Rocprop done" << std::endl;
+	if(!rank && man_verbose > 2)
+	  std::cout << "Rocstar: Rocprop done" << std::endl;
 
     COM_call_function( RocBlas::div_scalar, &p_vbar_hdl, &dt, &p_vbar_hdl);
 

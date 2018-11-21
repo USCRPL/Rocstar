@@ -57,13 +57,13 @@ public:
    * \{
    */
   /// Constructor. 
-  Roccom_base( int *argc, char ***argv) throw( COM_exception, int);
+  Roccom_base( int *argc, char ***argv);
 
   /// Destructor.
   ~Roccom_base();
 
-  static void init( int *argc, char ***argv) throw(int);
-  static void finalize() throw(int);
+  static void init( int *argc, char ***argv);
+  static void finalize();
   static void abort( int ierr);
 
   /// Set the default communicator of Roccom. This communicator will be used
@@ -87,11 +87,11 @@ public:
    */
   /// Load a module
   void load_module( const std::string &lname, 
-		    const std::string &wname) throw(int);
+		    const std::string &wname);
   
   /// Unload a module
   void unload_module( const std::string &lname,
-		      const std::string &wname, int dodl=1) throw(int);
+		      const std::string &wname, int dodl=1);
   //\}
 
   /** \name Window and pane management
@@ -99,17 +99,17 @@ public:
    */
   /// Creates a window with given name.
   void new_window( const std::string &wname, 
-		   MPI_Comm comm) throw(int);
+		   MPI_Comm comm);
 
   /// Deletes a window with given name.
-  void delete_window( const std::string &wname) throw(int);
+  void delete_window( const std::string &wname);
   
   /// Marks the end of the registration of a window.
   void window_init_done( const std::string &wname, 
-			 bool panechanged = true) throw(int);
+			 bool panechanged = true);
   
   /// Deletes a pane and its associated data.
-  void delete_pane(const std::string &wname, const int pid) throw(int);
+  void delete_pane(const std::string &wname, const int pid);
 
   //\}
 
@@ -119,52 +119,52 @@ public:
   /// Creates a new attribute for a window.
   void new_attribute( const std::string &wa, const char loc,
 		      const int data_type, int size, 
-		      const std::string &unit) throw(int);
+		      const std::string &unit);
 
   /// Delete an existing attribute from a window.
-  void delete_attribute( const std::string &wa) throw(int);
+  void delete_attribute( const std::string &wa);
 
   /// Set the sizes of an attribute. Note that for nodal or elemental data,
   /// setting sizes for one such attributes affects all other attributes.
   void set_size( const std::string &wa_str, 
-		 int pane_id, int nitems, int ng=0) throw(int);
+		 int pane_id, int nitems, int ng=0);
 
   /// Associates an object with a specific window.
   void set_object( const std::string &wa, const int pane_id,
-		   void *obj_addr, void *casted_obj) throw(int);
+		   void *obj_addr, void *casted_obj);
 
   /// Associates an object with a specific window.
   void get_object( const std::string &wa, const int pane_id,
-		   void **ptr) throw(int);
+		   void **ptr);
 
   /// Associates an array with an attribute for a specific pane.
   void set_array( const std::string &wa, const int pane_id,
 		  void *addr, int strd=0, int cap=0, 
-		  bool is_const=false) throw(int);
+		  bool is_const=false);
 
   template <class T>
   void set_bounds( const std::string &wa, const int pane_id,
-		   T lbnd, T ubnd) throw(int)
+		   T lbnd, T ubnd)
   { set_bounds( wa, pane_id, (const void*)&lbnd, (const void*)&ubnd); }
 
   template <class T>
   void set_bounds( const std::string &wa, const int pane_id,
-		   const T* lbnd, const T* ubnd) throw(int)
+		   const T* lbnd, const T* ubnd)
   { set_bounds( wa, pane_id, (const void*)&lbnd, (const void*)&ubnd); }
 
   void set_bounds( const std::string &wa, const int pane_id,
-		   const void *lbnd, const void *ubnd) throw(int);
+		   const void *lbnd, const void *ubnd);
 
   void get_bounds( const std::string &wa, const int pane_id,
-		   void *lbnd, void *ubnd) throw(int);
+		   void *lbnd, void *ubnd);
 
-  int check_bounds( const std::string &wa, int pane_id) throw(int);
+  int check_bounds( const std::string &wa, int pane_id);
 
   /// Allocate space for an attribute on a specific pane and return the
   /// address by setting addr. Allocate for all panes if pane-id is 0,
   /// in which case, do not set addr.
   void allocate_array( const std::string &wa, const int pane_id=0,
-		       void **addr=NULL, int strd=0, int cap=0) throw(int);
+		       void **addr=NULL, int strd=0, int cap=0);
 
   /// Resize an attribute on a specific pane and return the
   /// address by setting addr. Resize for all panes if pane-id is 0,
@@ -172,12 +172,12 @@ public:
   /// allocate is that resize will reallocate memory only if the current
   /// array cannot accomodate the requested capacity.
   void resize_array( const std::string &wa, const int pane_id=0,
-		     void **addr=NULL, int strd=-1, int cap=0) throw(int);
+		     void **addr=NULL, int strd=-1, int cap=0);
 
   /// Append an array to the end of the attribute on a specific pane and 
   /// return the new address by setting addr. 
   void append_array( const std::string &wa, const int pane_id,
-		     const void *val, int v_strd, int v_size) throw(int);
+		     const void *val, int v_strd, int v_size);
 
   /// Use the subset of panes of another window 
   /// of which the given pane attribute has value val.
@@ -185,7 +185,7 @@ public:
 		      const std::string &pwname,
 		      int withghost=1,
 		      const char *cndname=NULL,
-		      int val=0) throw(int);
+		      int val=0);
   
   /// Clone the subset of panes of another window 
   /// of which the given pane attribute has value val.
@@ -193,35 +193,35 @@ public:
 			const std::string &pwname,
 			int withghost=1,
 			const char *cndname=NULL,
-			int val=0) throw(int);
+			int val=0);
 
   /// Copy an attribute onto another
   void copy_attribute( const std::string &wname, 
 		       const std::string &pwname,
 		       int withghost=1,
 		       const char *cndname=NULL,
-		       int val=0) throw(int);
+		       int val=0);
 
   /// Copy an attribute onto another
   void copy_attribute( int trg_hdl, 
 		       int src_hdl,
 		       int withghost=1,
 		       int ptn_hdl=0,
-		       int val=0) throw(int);
+		       int val=0);
 
   /// Deallocate space for an attribute in a pane, asuming the memory was
   /// allocated allocate_mesh or allocate_attribute.
   void deallocate_array( const std::string &wa,
-			 const int pid=0) throw(int);
+			 const int pid=0);
 
   /// Information retrieval
   /// Get the information about an attribute. The opposite of new_attribute.
   void get_attribute( const std::string &wa_str, char *loc, int *type, 
-		      int *size, std::string *unit) throw(int);
+		      int *size, std::string *unit);
 
   /// Get the sizes of an attribute. The opposite of set_size.
   void get_size( const std::string &wa_str, int pane_id, 
-		 int *size, int *ng=0) throw(int);
+		 int *size, int *ng=0);
 
   /** Get the status of an attribute. If the attribute name is empty, and pane
    *  ID is 0, then checks whether the window exist (return 0 if does and -1
@@ -236,77 +236,77 @@ public:
    *   3:  inherited from (i.e., use) another attribute.
    *   4:  allocated by Roccom.
    */
-  int get_status( const std::string &wa_str, int pane_id) throw(int);
+  int get_status( const std::string &wa_str, int pane_id);
 
   /// Get the address for an attribute on a specific pane.
   void get_array( const std::string &wa, const int pane_id,
 		  void **addr, int *strd=NULL, 
-		  int *cap=0, bool is_const=false) throw(int);
+		  int *cap=0, bool is_const=false);
 
   /// Get the address for an attribute on a specific pane.
   void get_array( const std::string &wa, const int pane_id,
 		  Pointer_descriptor &addr, int *strd=NULL, 
-		  int *cap=0, bool is_const=false) throw(int);
+		  int *cap=0, bool is_const=false);
 
   /// Copy an array from an attribute on a specific pane into a given buffer.
   void copy_array( const std::string &wa, const int pane_id,
 		   void *val, int v_strd=0, int v_size=0, 
-		   int offset=0) throw(int);
+		   int offset=0);
 
   void set_f90pointer( const std::string &waname, void *ptr,
-		       Func_ptr f, long int l) throw(int);
+		       Func_ptr f, long int l);
   
   void get_f90pointer( const std::string &waname, void *ptr, 
-		       Func_ptr f, long int l) throw(int);
+		       Func_ptr f, long int l);
   //\}
 
   /** \name Information retrieval
    * \{
    */
-  MPI_Comm get_communicator( const std::string &wname) throw(int);
+  MPI_Comm get_communicator( const std::string &wname);
 
   /// Obtain a list of all window names
-  void get_windows(std::vector<std::string> &) throw(int);
+  void get_windows(std::vector<std::string> &);
 
   /// Obtain a list of all module names
-  void get_modules(std::vector<std::string> &) throw(int);
+  void get_modules(std::vector<std::string> &);
 
   /// Obtain the panes of a given window on a specific process. If rank is -2,
   /// then the current process is assumed. If rank is -1, then get the panes
   /// on all processes within the window's communicator.
   void get_panes( const std::string &wname, std::vector<int> &paneids_vec, 
-		  int rank=-2, int **pane_ids=NULL) throw(int);
+		  int rank=-2, int **pane_ids=NULL);
 
 
   /// Obtain the user-defined attributes of the given window.  
   void get_attributes( const std::string &wname, int *na,
-		       std::string &str, char **names=NULL) throw(int);
+		       std::string &str, char **names=NULL);
   
   /// Obtain the connectivity tables of a pane of the given window.  
   void get_connectivities( const std::string &wname, int pane_id, int *nc, 
-			   std::string &str, char **names=NULL) throw(int);
+			   std::string &str, char **names=NULL);
 
   /// Obtain the parent attribute's name of a given attribute on a given pane.
   /// If the attribute has no parent, then set name to empty.
   void get_parent( const std::string &waname, int pane_id,
-		   std::string &str, char **name=NULL) throw(int);
+		   std::string &str, char **name=NULL);
 
   void free_buffer( int **buf);
   void free_buffer( char **buf);
 
-  int get_window_handle( const std::string &wname) throw(int);
-  Window *get_window_object( int hdl) throw(int);
-  const Window *get_window_object( int hdl) const throw(int);
+  int get_window_handle( const std::string &wname);
+  Window *get_window_object( int hdl);
+  const Window *get_window_object( int hdl) const;
 
-  Window *get_window_object( const std::string &wname) throw(int) 
+  Window *get_window_object( const std::string &wname) 
   { return get_window_object( get_window_handle( wname)); }
-  const Window *get_window_object( const std::string &wname) const throw(int)
+  const Window *get_window_object( const std::string &wname) const
   { return get_window_object( const_cast<Roccom_base*>(this)->
 			      get_window_handle( wname)); }
 
-  int get_attribute_handle( const std::string &waname) throw(int);
-  int get_attribute_handle_const( const std::string &waname) throw(int);
-  int get_function_handle( const std::string &wfname) throw(int);
+  int get_attribute_handle( const std::string &waname);
+  int get_attribute_handle_const( const std::string &waname);
+  int get_function_handle( const std::string &wfname);
   //\}
 
   /** \name Function management
@@ -322,27 +322,27 @@ public:
 		     Func_ptr ptr, 
 		     const std::string &intents,
 		     const COM_Type *types, 
-		     bool ff=false) throw(int);
+		     bool ff=false);
 
   void set_member_function( const std::string &wf, 
 			    Func_ptr ptr, 
 			    const std::string &wa,
 			    const std::string &intents,
 			    const COM_Type *types, 
-			    bool ff=false) throw(int);
+			    bool ff=false);
 
   void set_member_function( const std::string &wf, 
 			    Member_func_ptr ptr, 
 			    const std::string &wa,
 			    const std::string &intents,
 			    const COM_Type *types, 
-			    bool ff=false) throw(int);
+			    bool ff=false);
 
   /// Get the number of arguments of a given function "window.function".
-  int get_num_arguments( const std::string &wf) throw(COM_exception);
+  int get_num_arguments( const std::string &wf);
 
   /// Get the number of arguments of a given function from its handle
-  int get_num_arguments( const int wf) throw(COM_exception);
+  int get_num_arguments( const int wf);
 
   /** Invoke a function with given arguments.
    *  \param wf the handle to the function.
@@ -352,7 +352,7 @@ public:
    */
   void call_function( int wf, int count, void **args, 
 		      const int *lens=NULL, 
-		      bool from_c=true) throw(int);
+		      bool from_c=true);
 
   /** Nonblockingly invoke a function with given arguments.
    *  \param wf the handle to the function.
@@ -362,7 +362,7 @@ public:
    *  \param lens the lengths of character strings.
    */
   void icall_function( int wf, int count, void *args[], 
-		       int *reqid, const int *lens=NULL) throw(int)
+		       int *reqid, const int *lens=NULL)
   { *reqid = 0; call_function( wf, count, args, lens); }
 
   /** Wait for the completion of a nonblocking call */
@@ -390,7 +390,7 @@ public:
     _debug = debug;
   }
 
-  void set_function_verbose( int i, int level) throw(int);
+  void set_function_verbose( int i, int level);
 
   /// This subroutine turns on (or off) profiling if i==1 (or ==0).
   /// It (re-)initializes all profiling info to 0.
@@ -422,7 +422,7 @@ protected:
 				   const std::string &wa,
 				   const std::string &intents,
 				   const COM_Type *types, 
-				   bool ff=false) throw(int);
+				   bool ff=false);
 
   std::pair<int,int> get_f90pntoffsets( const Attribute *a);
 
@@ -430,21 +430,21 @@ protected:
    * \{
    */
   /// Obtains a reference to the Window object from its name.
-  Window &get_window( const std::string &wname) throw(COM_exception);
+  Window &get_window( const std::string &wname);
 
   /// Obtains a constant reference to the Window object from its name.
-  const Window &get_window( const std::string &wname) const throw(COM_exception)
+  const Window &get_window( const std::string &wname) const
   { return const_cast<Roccom_base*>(this)->get_window(wname); }
 
   /// Obtains a reference to an attribute from its handle.
-  Attribute &get_attribute( const int) throw(COM_exception);
+  Attribute &get_attribute( const int);
   /// Obtains a const reference to an attribute from its handle.
-  const Attribute &get_attribute( const int) const throw(COM_exception);
+  const Attribute &get_attribute( const int) const;
 
   /// Obtains a reference to an attribute from its handle.
-  Function &get_function( const int) throw(COM_exception);
+  Function &get_function( const int);
   /// Obtains a const reference to an attribute from its handle.
-  const Function &get_function( const int) const throw(COM_exception);
+  const Function &get_function( const int) const;
 
   // \}
 
@@ -458,9 +458,9 @@ protected:
   /// Extracts the window and attribute names from "window.attribute".
   /// Returns nonzero if fails.
   int split_name( const std::string &wa, std::string &wname, 
-		  std::string &aname, bool tothrow=true) throw(COM_exception);
+		  std::string &aname, bool tothrow=true);
 
-  void proc_exception( const COM_exception &, const std::string &) throw( int);
+  void proc_exception( const COM_exception &, const std::string &);
   //\}
 
 protected:

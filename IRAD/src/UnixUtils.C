@@ -6,6 +6,9 @@
 #include <sstream>
 #include <cstdlib>
 
+#include <iradsys/SystemInformation.hxx>
+#include <iradsys/SystemTools.hxx>
+
 #include "UnixUtils.H"
 
 extern char **environ;
@@ -13,40 +16,40 @@ extern char **environ;
 namespace IRAD {
   namespace Sys {
 
+	iradsys::SystemInformation sysInfo;
+	
     int Rename(const std::string &source_file,const std::string &target_file)
     {
       return(rename(source_file.c_str(),target_file.c_str()));
     }
     int SymLink(const std::string &source,const std::string &target)
     {
-      return(symlink(source.c_str(),target.c_str()));
+	  return iradsys::SystemTools::CreateSymlink(source, target) ? 0 : -1;
     }
 
     const std::string Hostname(bool longname)
     {
-      char buf[64];
-      gethostname(buf,64);
-      return(std::string(buf));
+      return(std::string(sysInfo.GetHostname()));
     }
+	
+	
     int Remove(const std::string &fname)
     {
       std::cout << fname << std::endl;
       if(ISDIR(fname)){
-        Directory RemoveDir(fname);
-        if(RemoveDir.size() != 0){
-          for(std::vector<std::string>::iterator it = RemoveDir.begin() ; it != RemoveDir.end(); ++it){
-            if(Remove(fname + "/" + *it) < 0)
-              return -1;
-          }
-        }
+  
         std::cout << "removing directory" << std::endl;
-        return(rmdir(fname.c_str()));
+		
+		return iradsys::SystemTools::RemoveADirectory(fname) ? 0 : -1;		
       }
       else{
         std::cout << "removing file" << std::endl;
-        return(unlink(fname.c_str()));
-      } 
+		
+		return iradsys::SystemTools::RemoveFile(fname) ? 0 : -1;
+	  } 
     }
+	
+	
     std::string LogTime()
     {
       time_t t_ptr;
@@ -57,6 +60,7 @@ namespace IRAD {
       std::string retval(timesbuf);
       return(retval);
     }
+	
     void SafeRemove(const std::string &fname,const std::string &ext)
     {
       if(!FILEEXISTS(fname))
@@ -75,56 +79,41 @@ namespace IRAD {
       }
       rename(fname.c_str(),savename.c_str());
     }
-
+	
     bool FILEEXISTS(const std::string &fname)
     {
-      struct stat fstat;
-      if(lstat(fname.c_str(),&fstat))
-	return false;
-      return true;
+      return iradsys::SystemTools::FileExists(fname);
     }
 
     bool ISDIR(const std::string &fname)
     {
-      struct stat fstat;
-      if(stat(fname.c_str(),&fstat))
-	return false;
-      if(S_ISDIR(fstat.st_mode))
-	return true;
-      return false;
+      return iradsys::SystemTools::FileIsDirectory(fname);
     }
 
     bool ISLINK(const std::string &fname)
     {
-      struct stat fstat;
-      if(lstat(fname.c_str(),&fstat))
-	return false;
-      if(S_ISLNK(fstat.st_mode))
-	return true;
-      return(false);
+      return iradsys::SystemTools::FileIsSymlink(fname);
     }
-
+	
     int CreateDirectory(const std::string &fname)
     {
-      return(mkdir(fname.c_str(),S_IRGRP | S_IXGRP  | S_IRWXU));
+	  return iradsys::SystemTools::MakeDirectory(fname) ? 0 : -1;
     }
+	
+	int CD(const std::string &path,std::ostream * ostream)
+	{
+	  return iradsys::SystemTools::ChangeDirectory(path);
+	}
 
+	
     const std::string ResolveLink(const std::string &path)
     {
       std::string retVal;
-      char buf[1024];
-      size_t s = readlink(path.c_str(),buf,1024);
-      if(!(s <= 0)){
-	buf[s] = '\0';
-	retVal.assign(buf);
-      }
-      std::string::size_type x = retVal.find_last_of("/");
-      if(x != std::string::npos)
-	retVal.erase(x);
-      return (retVal);
+	  iradsys::SystemTools::ReadSymlink(path, retVal);
+	  return retVal;
     }
 
-
+	
     Directory::Directory(const std::string &path)
     {
       _good = false;
@@ -178,17 +167,18 @@ namespace IRAD {
       return(0);
     }
 
+	
     const std::string CWD()
     {
-      char buf[1024];
-      return(std::string(getcwd(buf,1024)));
+      return iradsys::SystemTools::GetCurrentWorkingDirectory();
     }
 
     int ChDir(const std::string &path)
     {
-      return(chdir(path.c_str()));
+      return iradsys::SystemTools::ChangeDirectory(path);
     }
 
+	
     const std::string
     StripDirs(const std::string &pname)
     {
@@ -198,7 +188,7 @@ namespace IRAD {
 	return(pname);
       return(pname.substr(pname.find_last_of("/")+1));
     }
-
+	
     std::string
     TempFileName(const std::string &stub)
     {
@@ -219,7 +209,7 @@ namespace IRAD {
       IRAD::Sys::Remove(tstub);
       return (tstub);
     }
-
+	/*
     int OpenTemp(std::string &stub)
     {
       int fd;
@@ -350,6 +340,8 @@ namespace IRAD {
       }
       return(output);
     }
+	
+	*/
   };
 };
 

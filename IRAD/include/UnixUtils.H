@@ -21,6 +21,17 @@
 #include <cstdlib>
 #include <errno.h>
 
+// On Windows, CreateDirectory is #define-d to CreateDirectory{A,W} in Windows.h
+// Explicitly undef it here.
+#ifdef WIN32
+# include <winsock2.h>
+# include <Windows.h>
+# ifdef CreateDirectory
+#   undef CreateDirectory
+# endif
+#endif
+
+
 namespace IRAD {
 
   /// Unix system utilities

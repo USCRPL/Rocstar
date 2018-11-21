@@ -144,7 +144,7 @@ public:
 protected:
 
   template <class T>
-  static void normalize( T *a, int size) throw(int) {
+  static void normalize( T *a, int size) {
     T tmp(0);
     for (int i=0; i<size; ++i) tmp += a[i]*a[i]; 
     

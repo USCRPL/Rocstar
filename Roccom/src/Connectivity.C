@@ -61,7 +61,7 @@ const int Connectivity::_sizes[TYPE_MAX_CONN][SIZE_MAX_CONN] =
   {HEX27,    3, 2,     27,     8,    12,     6}
 };
 
-const int *Connectivity::get_addr( int i, int j) const throw(COM_exception) {
+const int *Connectivity::get_addr( int i, int j) const {
   if ( _parent)  return root()->get_addr( i,j);
 
   // Check that i is between 0 and size_of_items-1.
@@ -73,7 +73,7 @@ const int *Connectivity::get_addr( int i, int j) const throw(COM_exception) {
   return  ((const int*)_ptr)+offset+i*_strd;
 }
 
-void Connectivity::set_size( int nitems, int ngitems) throw(COM_exception) {
+void Connectivity::set_size( int nitems, int ngitems) {
   if ( _parent)
     throw COM_exception( COM_ERR_CHANGE_INHERITED,
 			 append_frame( fullname(), Connectivity::set_size));
@@ -89,7 +89,7 @@ void Connectivity::set_size( int nitems, int ngitems) throw(COM_exception) {
 }
 
 /// Set the index of the first element.
-void Connectivity::set_offset( Size offset) throw(COM_exception) { 
+void Connectivity::set_offset( Size offset) { 
   _offset = offset; 
 }
 
@@ -214,7 +214,6 @@ Connectivity::Size Connectivity::size_of_real_nodes() const
 }
 
 void Connectivity::set_pointer(void *p, int strd, int cap, bool is_const) 
-  throw(COM_exception)
 {
   if ( !is_structured()) {
     Attribute::set_pointer( p, strd, cap, 0, is_const);

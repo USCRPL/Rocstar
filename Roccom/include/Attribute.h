@@ -149,7 +149,7 @@ public:
   /// Obtain a constant pointer to the physical address.
   const void *pointer()   const { return _status?_ptr:root()->_ptr; }
   /// Obtain a modifiable pointer to the physical address.
-  void       *pointer() throw(COM_exception) { 
+  void       *pointer() { 
     if ( is_const()) throw COM_exception( COM_ERR_ATTRIBUTE_CONST);
     return _status?_ptr:root()->_ptr; 
   }
@@ -157,9 +157,9 @@ public:
   /// Obtain the address of the jth component of the ith item, where
   /// 0<=i<size_of_items. This function is recursive and relatively expensive, 
   /// and hence should be used only for performance-insenstive tasks. 
-  const void *get_addr( int i, int j=0) const throw(COM_exception);
+  const void *get_addr( int i, int j=0) const;
 
-  void *get_addr( int i, int j=0) throw(COM_exception) {
+  void *get_addr( int i, int j=0) {
     if ( is_const()) throw COM_exception( COM_ERR_ATTRIBUTE_CONST);
     return (void*)(((const Attribute*)this)->get_addr(i,j));
   }
@@ -266,33 +266,33 @@ public:
 
   /// Set the size of items and ghost items. Can be changed only if the 
   /// attribute is a root.
-  void set_size( int nitems, int ngitems=0) throw(COM_exception);
+  void set_size( int nitems, int ngitems=0);
 
   /// Allocate memory for the attribute. 
   /// The attribute must be a root if the attribute is to be allocated.
   /// If from is not NULL, copy its value to the newly allocated array.
-  void *allocate( int strd, int cap, bool force) throw(COM_exception);
+  void *allocate( int strd, int cap, bool force);
 
   /// Deallocate memory if it was allocated by allocate(). 
   /// Return 0 if deallocation is successful.
-  int deallocate() throw(COM_exception);
+  int deallocate();
 
   enum Copy_dir { COPY_IN, COPY_OUT };
   // Copy n _ncomp-vectors from "buf" to the array if direction is COPY_IN
   // or copy to "buf" if direction is COPY_OUT.
   void copy_array( void *buf, int strd, int nitem,
-		   int offset=0, int direction=COPY_IN) throw(COM_exception);
+		   int offset=0, int direction=COPY_IN);
 
   // Append n _ncomp-vectors from "from" to the array.
-  void append_array( const void *from, int strd, int nitem) throw(COM_exception);
+  void append_array( const void *from, int strd, int nitem);
 
 protected:
   /// Set the physical address of the attribute values.
   void set_pointer( void *p, int strd, int cap, 
-		    int offset, bool is_const) throw(COM_exception);
+		    int offset, bool is_const);
     
   /// Inherit from parent. If depth>0, then the procedure is for the subcomponents.
-  void inherit( Attribute *a, bool clone, bool withghost, int depth=0) throw(COM_exception);
+  void inherit( Attribute *a, bool clone, bool withghost, int depth=0);
 
 protected:
   Pane        *_pane;       ///< Pointer to its owner pane.

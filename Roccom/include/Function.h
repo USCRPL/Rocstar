@@ -354,7 +354,7 @@ public:
 #endif
 
   /// invoke with an array of arguments
-  void operator()( int n, void **ps) throw (COM_exception)
+  void operator()( int n, void **ps)
   {
 
   	switch ( n)

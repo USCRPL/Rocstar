@@ -61,7 +61,7 @@ void Window::set_function( const std::string &fname,
 			   const std::string &intents, 
 			   const COM_Type *types, 
 			   Attribute *a, 
-			   bool is_f90) throw(COM_exception) {
+			   bool is_f90) {
   if ( _func_map.find( fname) != _func_map.end()) 
     throw COM_exception(COM_WARN_DUP_FUNC, append_frame
 			(_name+"."+fname,Window::init_function));
@@ -74,7 +74,7 @@ void Window::set_function( const std::string &fname,
 			   const std::string &intents, 
 			   const COM_Type *types, 
 			   Attribute *a, 
-			   bool) throw(COM_exception) {
+			   bool) {
   if ( _func_map.find( fname) != _func_map.end()) 
     throw COM_exception(COM_WARN_DUP_FUNC, append_frame
 			(_name+"."+fname,Window::init_function));
@@ -84,7 +84,7 @@ void Window::set_function( const std::string &fname,
 
 Attribute *Window::
 new_attribute( const std::string &aname, const char loc, const int type, 
-	       int ncomp, const std::string &unit) throw(COM_exception) 
+	       int ncomp, const std::string &unit) 
 {
   // Special handing for connectivity
   if ( Connectivity::is_element_name( aname) || 
@@ -134,7 +134,7 @@ new_attribute( const std::string &aname, const char loc, const int type,
 }
 
 void Window::
-delete_attribute( const std::string &aname) throw(COM_exception)
+delete_attribute( const std::string &aname)
 {
   Attr_map::iterator it = _attr_map.find( aname);
   if ( it == _attr_map.end())
@@ -180,7 +180,7 @@ delete_attribute( const std::string &aname) throw(COM_exception)
 }
 
 void Window::set_size( const std::string &aname, int pid,
-		       int nitems, int ng) throw( COM_exception) 
+		       int nitems, int ng) 
 { 
   if ( Connectivity::is_element_name( aname)) {
     Pane_friend &pn = (Pane_friend&)pane(pid,true);
@@ -211,7 +211,6 @@ void Window::set_size( const std::string &aname, int pid,
 
 void Window::set_array(const std::string &aname, const int pane_id,
 		       void *addr, int strd, int cap, bool is_const) 
-  throw(COM_exception)
 {
   if ( Connectivity::is_element_name( aname)) {
     Pane &pn = pane(pane_id,true);
@@ -236,7 +235,7 @@ void Window::set_array(const std::string &aname, const int pane_id,
 }
 
 void Window::alloc_array(const std::string &aname, const int pane_id,
-			 void **addr, int strd, int cap) throw(COM_exception)
+			 void **addr, int strd, int cap)
 {
   if ( Connectivity::is_element_name( aname)) {
     Pane &pn = pane(pane_id,true);
@@ -259,7 +258,7 @@ void Window::alloc_array(const std::string &aname, const int pane_id,
 }
 
 void Window::resize_array(const std::string &aname, const int pane_id,
-			  void **addr, int strd, int cap) throw(COM_exception)
+			  void **addr, int strd, int cap)
 {
   if ( Connectivity::is_element_name( aname)) {
     Pane &pn = pane(pane_id,true);
@@ -282,7 +281,7 @@ void Window::resize_array(const std::string &aname, const int pane_id,
 }
 
 void Window::append_array( const std::string &aname, const int pane_id,
-			   const void *val, int v_strd, int v_size) throw(COM_exception)
+			   const void *val, int v_strd, int v_size)
 {
   COM_assertion_msg( !Connectivity::is_element_name( aname),
 		     "append_array supports only window and pane attributes");
@@ -309,7 +308,7 @@ void Window::append_array( const std::string &aname, const int pane_id,
 }
 
 void Window::dealloc_array( const std::string &aname, 
-			    const int pane_id) throw(COM_exception)
+			    const int pane_id)
 {
   if ( Connectivity::is_element_name( aname)) {
     Pane &pn = pane(pane_id);
@@ -334,7 +333,6 @@ void Window::dealloc_array( const std::string &aname,
 Attribute *Window::inherit( Attribute *from, const std::string &aname,
 			    int mode, bool withghost,
 			    const Attribute *cond, int val) 
-  throw(COM_exception) 
 {
   Attribute *a = ((Pane_friend&)_dummy).inherit(from, aname, mode, withghost);
   if ( from->is_windowed()) return a;
@@ -385,7 +383,7 @@ Attribute *Window::inherit( Attribute *from, const std::string &aname,
   return a;
 }
 
-void Window::init_done( bool pane_changed) throw(COM_exception) {
+void Window::init_done( bool pane_changed) {
   // Loop through the attributes.
   if ( _status == STATUS_SHRUNK) {
     int max_id=0;
@@ -460,7 +458,7 @@ int Window::owner_rank( const int pane_id) const {
 
 Attribute *Window::
 get_attribute( const std::string &aname, char *loc, int *type, 
-	       int *ncomp, std::string *unit) const throw(COM_exception) {
+	       int *ncomp, std::string *unit) const {
   // Special handing for connectivity tables
   if ( Connectivity::is_element_name( aname)) {
     // Set the arguments if not NULL.
@@ -491,7 +489,6 @@ get_attribute( const std::string &aname, char *loc, int *type,
 
 template <class Attr>
 void get_size_common( const Attr *a, int pid, int *nitem, int *ng) 
-  throw( COM_exception)
 {
   if ( pid==0 && a->location() != 'w')
     throw COM_exception( COM_ERR_NOT_A_WINDOW_ATTRIBUTE, append_frame
@@ -503,7 +500,7 @@ void get_size_common( const Attr *a, int pid, int *nitem, int *ng)
 
 void Window::
 get_size( const std::string &aname, int pid,
-	  int *nitem, int *ng) const throw( COM_exception) {
+	  int *nitem, int *ng) const {
   const Pane_friend *pn;
   try { pn = &(Pane_friend&)pane(pid); }
   catch ( COM_exception ex) {
@@ -532,7 +529,7 @@ get_size( const std::string &aname, int pid,
 }
 
 int Window::
-get_status( const std::string &aname, int pid) const throw( COM_exception) {
+get_status( const std::string &aname, int pid) const {
   // If aname is empty, then check the status of the pane.
   if ( aname.empty()) {
     Pane_map::const_iterator pit = _pane_map.find( pid);
@@ -564,7 +561,7 @@ get_status( const std::string &aname, int pid) const throw( COM_exception) {
 
 void Window::
 get_parent( const std::string &aname, int pid, 
-	    std::string &parent) const throw( COM_exception) {
+	    std::string &parent) const {
 
   const Pane_friend *pn;
   try { 
@@ -601,7 +598,7 @@ get_parent( const std::string &aname, int pid,
 template <class Attr>
 void get_array_common( const Attr *a, int pid, 
 		       Window::Pointer_descriptor &addr, 
-		       int *strd, int *cap, bool is_const) throw(COM_exception) {
+		       int *strd, int *cap, bool is_const) {
   if ( !is_const && a->is_const() )
     throw COM_exception( COM_ERR_ATTRIBUTE_CONST, append_frame
 			 (a->fullname(),Window::get_array));
@@ -640,7 +637,7 @@ void get_array_common( const Attr *a, int pid,
 
 void Window::get_array(const std::string &aname, const int pane_id,
 		       Pointer_descriptor &addr,
-		       int *strd, int *cap, bool is_const) throw(COM_exception)
+		       int *strd, int *cap, bool is_const)
 {
   Pane_friend *pn;
   try { pn = &(Pane_friend&)pane(pane_id); }
@@ -672,7 +669,7 @@ void Window::get_array(const std::string &aname, const int pane_id,
 
 template <class Attr>
 inline void copy_array_common( const Attr *a, int pid, void *val, int v_strd, 
-			       int v_size, int offset) throw(COM_exception) {
+			       int v_size, int offset) {
 
   if ( pid==0 && a->location() != 'w')
     throw COM_exception( COM_ERR_NOT_A_WINDOW_ATTRIBUTE, append_frame
@@ -684,7 +681,7 @@ inline void copy_array_common( const Attr *a, int pid, void *val, int v_strd,
 
 void Window::copy_array(const std::string &aname, const int pane_id,
 			void *val, int v_strd, int v_size, 
-			int offset) const throw(COM_exception)
+			int offset) const
 {
   const Pane_friend *pn;
   try { pn = &(Pane_friend&)pane(pane_id); }
@@ -715,7 +712,7 @@ void Window::copy_array(const std::string &aname, const int pane_id,
 
 void Window::
 reinit_attr( Attribute *a, OP_Init op, void **addr, 
-	     int strd, int cap) throw (COM_exception)
+	     int strd, int cap)
 {
   int aid = a->id();
 
@@ -745,7 +742,7 @@ reinit_attr( Attribute *a, OP_Init op, void **addr,
 
 void Window::
 reinit_conn( Connectivity *con, OP_Init op, int **addr, 
-	     int strd, int cap) throw (COM_exception)
+	     int strd, int cap)
 {
 
   Pane *pn = con->pane();
@@ -766,7 +763,7 @@ reinit_conn( Connectivity *con, OP_Init op, int **addr,
   }
 }
 
-Pane &Window::pane( const int pid, bool insert) throw( COM_exception)
+Pane &Window::pane( const int pid, bool insert)
 {
   if ( pid==0) return _dummy;
 
@@ -791,7 +788,7 @@ Pane &Window::pane( const int pid, bool insert) throw( COM_exception)
   return *pit->second;
 }
 
-const Pane &Window::pane( const int pid) const throw( COM_exception)
+const Pane &Window::pane( const int pid) const
 {
   if ( pid==0) return _dummy;
 
@@ -839,7 +836,7 @@ void Window::panes( std::vector<Pane*> &ps)
 }
 
 Attribute* Window::
-attribute( const std::string &aname) throw(COM_exception) 
+attribute( const std::string &aname) 
 {
   if ( !Attribute::is_digit(aname[0])) {
     Attr_map::iterator it = _attr_map.find( aname);

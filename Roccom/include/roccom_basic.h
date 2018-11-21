@@ -47,7 +47,7 @@
 class COM_Object {
 public:
   COM_Object() : _cookie( COM_COOKIE) {}
-  COM_Object( const COM_Object &m) : _cookie( &m? m._cookie : COM_COOKIE) {}
+  COM_Object( const COM_Object &m) : _cookie(m._cookie) {}
   virtual ~COM_Object() {}
 
   /** Return 0 if there is no error.

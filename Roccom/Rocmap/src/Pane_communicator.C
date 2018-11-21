@@ -362,7 +362,7 @@ void Pane_communicator::end_update() {
 
 /// Local level implementation of reduce operations 
 template <class T>
-void reduce_int( MPI_Op op, T *a, T *b, int size) throw(int) {
+void reduce_int( MPI_Op op, T *a, T *b, int size) {
   if (op == MPI_SUM)
     { for (int i=0; i<size; ++i) b[i] += a[i]; }
   else if ( op == MPI_PROD)
@@ -384,7 +384,7 @@ void reduce_int( MPI_Op op, T *a, T *b, int size) throw(int) {
 
 /// Local level implementation of reduce operations 
 template <class T>
-void reduce_real( MPI_Op op, T *a, T *b, int size) throw(int) {
+void reduce_real( MPI_Op op, T *a, T *b, int size) {
   if (op == MPI_SUM)
     { for (int i=0; i<size; ++i) b[i] += a[i]; }
   else if ( op == MPI_PROD)
@@ -461,21 +461,21 @@ void Pane_communicator::reduce_on_shared_nodes( MPI_Op op) {
 }
 
 template <class T>
-void reduce_maxabs( T *a, T *b, int size) throw(int) {
+void reduce_maxabs( T *a, T *b, int size) {
   for (int i=0; i<size; ++i) {
     if ( std::abs( a[i])>std::abs(b[i])) b[i] = a[i];
   }
 }
 
 template <class T>
-void reduce_minabs( T *a, T *b, int size) throw(int) {
+void reduce_minabs( T *a, T *b, int size) {
   for (int i=0; i<size; ++i) {
     if ( std::abs( a[i])<std::abs(b[i])) b[i] = a[i];
   }
 }
 
 template <class T>
-void reduce_diff( T *a, T *b, int size) throw(int) {
+void reduce_diff( T *a, T *b, int size) {
   bool isa_nonzero=0;
 
   for (int i=0; ; ++i) {
@@ -683,7 +683,7 @@ void Pane_communicator::reduce_diff_on_shared_nodes() {
 }
 
 template <class T>
-void update_value( T *a, T *b, int size) throw(int) {
+void update_value( T *a, T *b, int size) {
   for (int i=0; i<size; ++i) {
     b[i] = a[i];
   }

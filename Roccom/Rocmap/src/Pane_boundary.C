@@ -37,7 +37,7 @@ void Pane_boundary::
 determine_border_nodes( std::vector<bool> &is_border,
 			std::vector<bool> &is_isolated,
 			std::vector<Facet_ID > *b,
-			int ghost_level) throw(int) {
+			int ghost_level) {
   if ( _pane.dimension() == 2) {
     int ng;
     int *ng_ptr = ghost_level ? &ng : (int*)NULL;
@@ -105,7 +105,7 @@ check_face_unique( const Four_tuple &face_corners,
 void Pane_boundary::
 determine_border_nodes_3( std::vector<bool> &is_border,
 			  std::vector<Facet_ID > *b, 
-			  int ghost_level ) throw(int) {
+			  int ghost_level ) {
   int num_nodes, num_elmts;
 
   if (ghost_level == 0){
@@ -215,7 +215,7 @@ determine_border_nodes_3( std::vector<bool> &is_border,
 
 void Pane_boundary::
 determine_isolated_nodes( std::vector<bool> &is_isolated,
-			  int ghost_level) throw(int) {
+			  int ghost_level) {
   // Initialize to true
   is_isolated.clear();
 
@@ -243,7 +243,7 @@ determine_isolated_nodes( std::vector<bool> &is_isolated,
 inline double square( double x) { return x*x; }
 
 double Pane_boundary::
-min_squared_edge_len( const std::vector<Facet_ID > &be) throw(int) {
+min_squared_edge_len( const std::vector<Facet_ID > &be) {
   const COM::Attribute *attr = _pane.attribute( COM::COM_NC);
 
   double sql = HUGE_VAL;

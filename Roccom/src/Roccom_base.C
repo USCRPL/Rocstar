@@ -82,7 +82,7 @@ inline static void remove_arg( int *argc, char ***argv, int i) {
 }
 #endif
 
-Roccom_base::Roccom_base( int *argc, char ***argv) throw( COM_exception, int)
+Roccom_base::Roccom_base( int *argc, char ***argv)
   : _depth(0), _verbose(0), _verb1(0), _debug(false), _comm(MPI_COMM_WORLD),
     _mpi_initialized(false), _errorcode(0), _exception_on(true), _profile_on(0)
 {
@@ -183,20 +183,20 @@ Roccom_base::~Roccom_base() {
   if (_mpi_initialized) MPI_Finalize();
 }
 
-void Roccom_base::init( int *argc, char ***argv ) throw( int) {
+void Roccom_base::init( int *argc, char ***argv ) {
   extern void printStackBacktrace();
 
   COM::Roccom_base *ptr = get_roccom();
-  if ( ptr) throw( COM_ERR_WAS_INITIALIZED);
+  if ( ptr);
 
   ptr = new COM::Roccom_base( argc, argv);
   
   set_roccom( ptr);
 }
 
-void Roccom_base::finalize() throw( int) {
+void Roccom_base::finalize() {
   COM::Roccom_base *ptr = get_roccom();
-  if ( !ptr) throw( COM_ERR_WASNOT_INITIALIZED);
+  if ( !ptr);
 
   delete ptr;
   set_roccom( NULL);
@@ -209,7 +209,7 @@ void Roccom_base::abort( int ierr) {
 
 void
 Roccom_base::load_module( const std::string &lname, 
-			  const std::string &wname) throw(int)
+			  const std::string &wname)
 {
 #ifndef STATIC_LINK
   if ( _debug) 
@@ -322,7 +322,7 @@ Roccom_base::load_module( const std::string &lname,
 
 void
 Roccom_base::unload_module( const std::string &lname,
-			    const std::string &wname, int dodl) throw(int) {
+			    const std::string &wname, int dodl) {
 
 #ifndef STATIC_LINK
   if ( _debug) 
@@ -396,7 +396,7 @@ Roccom_base::unload_module( const std::string &lname,
 }
 
 // Create a window with given name
-void Roccom_base::new_window( const std::string &name, MPI_Comm comm) throw(int) 
+void Roccom_base::new_window( const std::string &name, MPI_Comm comm) 
 {
   // If MPI_COMM_NULL is used, then use the default communicator.
   if ( comm == MPI_COMM_NULL) comm = _comm;
@@ -421,7 +421,7 @@ void Roccom_base::new_window( const std::string &name, MPI_Comm comm) throw(int)
 }
 
 void Roccom_base::
-window_init_done( const std::string &wname, bool panechanged) throw(int) 
+window_init_done( const std::string &wname, bool panechanged) 
 {
   try {
     get_window( wname).init_done(panechanged);
@@ -438,7 +438,7 @@ window_init_done( const std::string &wname, bool panechanged) throw(int)
 	      << '"' << std::endl;
 }
 
-void Roccom_base::delete_window( const std::string &name) throw(int) 
+void Roccom_base::delete_window( const std::string &name) 
 {
   try {
     if ( _debug)
@@ -457,7 +457,7 @@ void Roccom_base::delete_window( const std::string &name) throw(int)
 }
 
 void Roccom_base::delete_pane( const std::string &wname,
-			       const int pane_id) throw(int) 
+			       const int pane_id) 
 {
   try {
     if ( _debug)
@@ -517,7 +517,7 @@ new_attribute( const std::string &wa,
 	       const char loc,
 	       const int type, 
 	       int size,
-	       const std::string &unit) throw(int) 
+	       const std::string &unit) 
 {
   try {
     if ( _debug) {
@@ -545,7 +545,7 @@ new_attribute( const std::string &wa,
 
 // Register a new attribute with given name
 void Roccom_base::
-delete_attribute( const std::string &wa) throw(int) 
+delete_attribute( const std::string &wa) 
 {
   try {
     if ( _debug)
@@ -567,7 +567,7 @@ delete_attribute( const std::string &wa) throw(int)
 }
 
 void Roccom_base::set_size( const std::string &wa, int pid,
-			    int nitems, int ng) throw(int)
+			    int nitems, int ng)
 {
   try {
     if ( _debug) {
@@ -623,7 +623,7 @@ protected:
 
 // Associates an object with a specific window.
 void Roccom_base::set_object( const std::string &wa, const int pid,
-			      void *obj_addr, void *casted_addr) throw(int) 
+			      void *obj_addr, void *casted_addr) 
 {
   COM_assertion_msg( obj_addr, "Caught NULL pointer");
   int size;
@@ -646,7 +646,7 @@ void Roccom_base::set_object( const std::string &wa, const int pid,
 
 // Associates an object with a specific window.
 void Roccom_base::get_object( const std::string &wa, const int pid, 
-			      void **ptr) throw(int) 
+			      void **ptr) 
 {
   int strd;
   get_array( wa, pid, ptr, &strd);
@@ -657,7 +657,7 @@ void Roccom_base::get_object( const std::string &wa, const int pid,
 // Register the address of an arrays for a data field.
 void Roccom_base::set_array( const std::string &wa, const int pid,
 			     void *addr, int strd, int cap, 
-			     bool is_const) throw(int) 
+			     bool is_const) 
 {
   try {
     if ( _debug) {
@@ -689,11 +689,11 @@ void Roccom_base::set_array( const std::string &wa, const int pid,
 }
 
 void Roccom_base::set_bounds( const std::string &wa, const int pane_id,
-			      const void *lbnd, const void *ubnd) throw(int) 
+			      const void *lbnd, const void *ubnd) 
 {}
 
 void Roccom_base::allocate_array( const std::string &wa, const int pid, 
-				  void **addr, int strd, int cap) throw(int) 
+				  void **addr, int strd, int cap) 
 {
   try {
     if ( _debug) {
@@ -725,7 +725,7 @@ void Roccom_base::allocate_array( const std::string &wa, const int pid,
 }
 
 void Roccom_base::resize_array( const std::string &wa, const int pid, 
-				void **addr, int strd, int cap) throw(int) {
+				void **addr, int strd, int cap) {
   try {
     if ( _debug) {
       std::cerr << "Roccom: Resize array for \"" << wa << "\" on pane " 
@@ -757,7 +757,7 @@ void Roccom_base::resize_array( const std::string &wa, const int pid,
 }
 
 void Roccom_base::append_array( const std::string &wa, const int pid, 
-				const void *val, int v_strd, int v_size) throw(int)
+				const void *val, int v_strd, int v_size)
 {
   try {
     if ( _debug)
@@ -780,7 +780,7 @@ void Roccom_base::append_array( const std::string &wa, const int pid,
 
 void Roccom_base::
 use_attribute( const std::string &waname, const std::string &pwaname, 
-	       int withghost,const char *cndname, int val) throw(int)
+	       int withghost,const char *cndname, int val)
 {
   try {
     if ( _debug) {
@@ -820,7 +820,7 @@ use_attribute( const std::string &waname, const std::string &pwaname,
 
 void Roccom_base::
 clone_attribute( const std::string &waname, const std::string &pwaname,
-		 int withghost, const char *cndname, int val) throw(int)
+		 int withghost, const char *cndname, int val)
 {
   try {
     if ( _debug) {
@@ -860,7 +860,7 @@ clone_attribute( const std::string &waname, const std::string &pwaname,
 
 void Roccom_base::
 copy_attribute( const std::string &waname, const std::string &pwaname,
-		int withghost, const char *cndname, int val) throw(int)
+		int withghost, const char *cndname, int val)
 {
   try {
     if ( _debug) {
@@ -900,7 +900,7 @@ copy_attribute( const std::string &waname, const std::string &pwaname,
 
 void Roccom_base::
 copy_attribute( int trg_hdl, int src_hdl,
-		int withghost, int ptn_hdl, int val) throw(int)
+		int withghost, int ptn_hdl, int val)
 {
   try {
     if ( _debug) {
@@ -932,7 +932,7 @@ copy_attribute( int trg_hdl, int src_hdl,
 
 
 void Roccom_base::deallocate_array( const std::string &wa, 
-				    const int pid) throw(int) 
+				    const int pid) 
 {
   try {
     if ( _debug)
@@ -956,7 +956,7 @@ void Roccom_base::deallocate_array( const std::string &wa,
 // Register a new attribute with given name
 void Roccom_base::
 get_attribute( const std::string &wa, char *loc,
-	       int *type, int *size, std::string *unit) throw(int) 
+	       int *type, int *size, std::string *unit) 
 {
   try {
     if ( _debug) // Print debugging info
@@ -986,7 +986,7 @@ get_attribute( const std::string &wa, char *loc,
 }
 
 void Roccom_base::get_size( const std::string &wa, int pid,
-			    int *nitems, int *ng) throw(int) 
+			    int *nitems, int *ng) 
 {
   try {
     if ( _debug) {
@@ -1011,7 +1011,7 @@ void Roccom_base::get_size( const std::string &wa, int pid,
 
 void Roccom_base::get_array( const std::string &wa, const int pane_id,
 			     void **addr, int *strd, int *cap, 
-			     bool is_const) throw(int) 
+			     bool is_const) 
 {
   Pointer_descriptor ptr(NULL);
   get_array( wa, pane_id, ptr, strd, cap, is_const);
@@ -1021,7 +1021,7 @@ void Roccom_base::get_array( const std::string &wa, const int pane_id,
 // Get the address for an attribute on a specific pane.
 void Roccom_base::get_array( const std::string &wa, const int pid,
 			     Pointer_descriptor &addr, 
-			     int *strd, int *cap, bool is_const) throw(int) {
+			     int *strd, int *cap, bool is_const) {
   try {
     if ( _debug) {
       std::cerr << "Roccom: Get array for attribute \"" 
@@ -1052,7 +1052,7 @@ void Roccom_base::get_array( const std::string &wa, const int pid,
 }
 
 // Get the status of an attribute.
-int Roccom_base::get_status( const std::string &wa, int pid) throw(int) 
+int Roccom_base::get_status( const std::string &wa, int pid) 
 {
   try {
     if ( _debug) {
@@ -1092,7 +1092,7 @@ int Roccom_base::get_status( const std::string &wa, int pid) throw(int)
 
 void Roccom_base::copy_array( const std::string &wa, const int pid,
 			      void *val, int v_strd, int v_size, 
-			      int offset) throw(int) 
+			      int offset) 
 {
   try {
     if ( _debug) {
@@ -1124,11 +1124,11 @@ void Roccom_base::copy_array( const std::string &wa, const int pid,
 }
 
 void Roccom_base::get_bounds( const std::string &wa, const int pane_id,
-			      void *lbnd, void *ubnd) throw(int) 
+			      void *lbnd, void *ubnd) 
 {}
 
 int Roccom_base::check_bounds( const std::string &wa, 
-			       int pane_id) throw(int) 
+			       int pane_id) 
 { return 0; }
 
 std::pair<int,int> // The pair of offset1 and offset2
@@ -1145,7 +1145,7 @@ Roccom_base::get_f90pntoffsets( const Attribute *a) {
 
 void Roccom_base::
 set_f90pointer( const std::string &waname, void *ptr, 
-		Func_ptr f, long int len) throw(int) {
+		Func_ptr f, long int len) {
   try {
     if ( _debug) 
       std::cerr << "Roccom: set pointer \"" << waname 
@@ -1166,7 +1166,7 @@ set_f90pointer( const std::string &waname, void *ptr,
 
       if ( offs.second<n) {
 	*(void**)((char*)a->pointer()+offs.second) = 
-	  (char*)a->pointer()+offs.first+((char*)len-(char*)ptr);
+	  (char*)a->pointer()+offs.first+(len-reinterpret_cast<ptrdiff_t>(ptr));
       }
       
       COM_assertion_msg( _f90ptr_treat>=0, "No F90 pointer initalized");
@@ -1200,7 +1200,7 @@ set_f90pointer( const std::string &waname, void *ptr,
 
 void Roccom_base::
 get_f90pointer( const std::string &waname, void *ptr, 
-		Func_ptr f, long int len) throw(int) {
+		Func_ptr f, long int len) {
   try {
     if ( _debug) 
       std::cerr << "Roccom: get pointer \"" << waname 
@@ -1238,7 +1238,7 @@ get_f90pointer( const std::string &waname, void *ptr,
 }
 
 MPI_Comm Roccom_base::
-get_communicator( const std::string &wname) throw(int) {
+get_communicator( const std::string &wname) {
   try {
     if ( _debug) 
       std::cerr << "Roccom: get the communicator of window \"" 
@@ -1262,7 +1262,7 @@ get_communicator( const std::string &wname) throw(int) {
 
 void Roccom_base::
 get_panes( const std::string &wname, std::vector<int> &paneids_vec, 
-	   int rank, int **pane_ids) throw(int){
+	   int rank, int **pane_ids){
   try {
     if ( _debug) {
       std::cerr << "Roccom: get pane ids of window \"" 
@@ -1291,7 +1291,7 @@ get_panes( const std::string &wname, std::vector<int> &paneids_vec,
 }
 
 void Roccom_base::
-get_windows(std::vector<std::string> &names) throw(int){
+get_windows(std::vector<std::string> &names){
   try {
     if ( _debug) {
       std::cerr << "Roccom: get windows";
@@ -1319,7 +1319,7 @@ get_windows(std::vector<std::string> &names) throw(int){
 }
 
 void Roccom_base::
-get_modules(std::vector<std::string> &names) throw(int){
+get_modules(std::vector<std::string> &names){
   try {
     if ( _debug) {
       std::cerr << "Roccom: get modules";
@@ -1347,7 +1347,7 @@ get_modules(std::vector<std::string> &names) throw(int){
 }
 
 void Roccom_base::get_attributes( const std::string &wname, int *natts, 
-				  std::string &str, char **names) throw(int)
+				  std::string &str, char **names)
 {
   try {
     if ( _debug) 
@@ -1388,7 +1388,7 @@ void Roccom_base::get_attributes( const std::string &wname, int *natts,
 
 void Roccom_base::
 get_connectivities( const std::string &wname, int pane_id, int *natts, 
-		    std::string &str, char **names) throw(int)
+		    std::string &str, char **names)
 {
   try {
     if ( _debug) 
@@ -1429,7 +1429,7 @@ get_connectivities( const std::string &wname, int pane_id, int *natts,
 
 void Roccom_base::
 get_parent( const std::string &waname, int pane_id, 
-	    std::string &str, char **name) throw(int)
+	    std::string &str, char **name)
 {
   try {
     if ( _debug) 
@@ -1468,7 +1468,7 @@ void Roccom_base::free_buffer( int **buf)
 { if ( buf) delete [] *buf; *buf = NULL; }
 
 int Roccom_base::
-get_window_handle( const std::string &wname) throw(int) { 
+get_window_handle( const std::string &wname) { 
   int n(-1);
   try {
     if ( _debug) 
@@ -1492,7 +1492,7 @@ get_window_handle( const std::string &wname) throw(int) {
 }
 
 Window * Roccom_base::
-get_window_object( int hdl) throw(int)
+get_window_object( int hdl)
 {
   if ( hdl <= 0) 
     throw COM_exception( COM_ERR_INVALID_WINDOW_HANDLE,
@@ -1501,7 +1501,7 @@ get_window_object( int hdl) throw(int)
 }
 
 const Window * Roccom_base::
-get_window_object( int hdl) const throw(int)
+get_window_object( int hdl) const
 {
   if ( hdl <= 0) 
     throw COM_exception( COM_ERR_INVALID_WINDOW_HANDLE,
@@ -1510,7 +1510,7 @@ get_window_object( int hdl) const throw(int)
 }
 
 int Roccom_base::
-get_attribute_handle_const( const std::string &waname) throw(int) {
+get_attribute_handle_const( const std::string &waname) {
   int n(-1);
   try {
     if ( _debug) 
@@ -1537,7 +1537,7 @@ get_attribute_handle_const( const std::string &waname) throw(int) {
 }
 
 int Roccom_base::
-get_attribute_handle( const std::string &waname) throw(int) {
+get_attribute_handle( const std::string &waname) {
   int n(-1);
   try {
     if ( _debug) 
@@ -1562,7 +1562,7 @@ get_attribute_handle( const std::string &waname) throw(int) {
 }
 
 int Roccom_base::
-get_function_handle( const std::string &wfname) throw(int) {
+get_function_handle( const std::string &wfname) {
   int n(-1);
   try {
     if ( _debug) 
@@ -1589,7 +1589,7 @@ get_function_handle( const std::string &wfname) throw(int) {
 void Roccom_base::set_function( const std::string &wfname, 
 				Func_ptr ptr,
 				const std::string &intents,
-				const COM_Type *types, bool ff) throw(int) {
+				const COM_Type *types, bool ff) {
   int rank = COMMPI_Comm_rank( MPI_COMM_WORLD);
   try { 
     if ( _debug) {
@@ -1638,7 +1638,7 @@ set_member_function_helper( const std::string &wfname,
 			    const std::string &waname,
 			    const std::string &intents,
 			    const COM_Type *types, 
-			    bool ff) throw(int) {
+			    bool ff) {
   try {
     if ( _debug) {
       int n=intents.size();
@@ -1697,7 +1697,7 @@ void Roccom_base::set_member_function( const std::string &wfname,
 				       const std::string &waname,
 				       const std::string &intents,
 				       const COM_Type *types, 
-				       bool ff) throw(int) {
+				       bool ff) {
   set_member_function_helper( wfname, ptr, waname, 
 			      intents, types, ff);
 }
@@ -1707,13 +1707,13 @@ void Roccom_base::set_member_function( const std::string &wfname,
 				       const std::string &waname,
 				       const std::string &intents,
 				       const COM_Type *types, 
-				       bool ff) throw(int) {
+				       bool ff) {
   set_member_function_helper( wfname, ptr, waname, 
 			      intents, types, ff);
 }
 
 int Roccom_base::
-get_num_arguments( const std::string &wf) throw(COM_exception) {
+get_num_arguments( const std::string &wf) {
   std::string wname, fname;
   split_name(wf, wname, fname);
   
@@ -1725,7 +1725,7 @@ get_num_arguments( const std::string &wf) throw(COM_exception) {
 }
 
 int Roccom_base::
-get_num_arguments( const int wf) throw(COM_exception) {
+get_num_arguments( const int wf) {
   Function *func = &get_function( wf);
   return func->num_of_args();
 }
@@ -1742,7 +1742,7 @@ inline static double get_wtime() {
 
 void Roccom_base::
 call_function( int wf, int count, 
-	       void **args, const int *lens, bool from_c) throw(int) {
+	       void **args, const int *lens, bool from_c) {
   // Roccom prints out the trace upto (verb-1)/2 depth.
   // If verb is even, then it will also print the arguments.
   try {
@@ -1851,7 +1851,7 @@ call_function( int wf, int count,
 	else if ( type == COM_MPI_COMMC && !from_c) {
 	  strs[i].resize( 2*sizeof( MPI_Comm));
 	  ps[i] = &strs[i][0]+(sizeof( MPI_Comm)-
-			       ((long int)&strs[i][0])%sizeof(MPI_Comm));
+			       reinterpret_cast<ptrdiff_t>(&strs[i][0])%sizeof(MPI_Comm));
 	  if (intent=='i' || intent=='I' || intent=='b' || intent=='B')
 	    *(MPI_Comm*)ps[i] = COMMPI_Comm_f2c( *(int*)args[i], MPI_Comm());
 	  if (intent=='o' || intent=='O' || intent=='b' || intent=='B') 
@@ -1859,7 +1859,7 @@ call_function( int wf, int count,
 	}
 	else if ( type == COM_MPI_COMMF && from_c) {
 	  strs[i].resize( 2*sizeof( int));
-	  ps[i] = &strs[i][0]+(sizeof(int)-((long int)&strs[i][0])%sizeof(int));
+	  ps[i] = &strs[i][0]+(sizeof(int)-reinterpret_cast<ptrdiff_t>(&strs[i][0])%sizeof(int));
 	  if (intent=='i' || intent=='I' || intent=='b' || intent=='B')
 	    *(int*)ps[i] = COMMPI_Comm_c2f( *(MPI_Comm*)args[i]);
 	  if (intent=='o' || intent=='O' || intent=='b' || intent=='B') 
@@ -1985,9 +1985,9 @@ call_function( int wf, int count,
       std::cerr << "Roccom: Invoking function with " << lcount 
 		<< " additional implicit arguments: " << std::endl;
       for ( int i=0; i<lcount; ++i) {
-	long int p=(long int)ps[func->num_of_args()+i];
+	ptrdiff_t p=reinterpret_cast<ptrdiff_t>(ps[func->num_of_args()+i]);
 	if ( p<0 || p>MAX_NAMELEN)
-	  std::cerr << "Roccom:\t@" << (void *)p << std::endl;
+	  std::cerr << "Roccom:\t@" << reinterpret_cast<void *>(p) << std::endl;
 	else
 	  std::cerr << "Roccom:\t" << (long int)p << std::endl;
       }
@@ -2061,7 +2061,7 @@ call_function( int wf, int count,
 }
 
 void Roccom_base::
-set_function_verbose( int i, int level) throw(int) {
+set_function_verbose( int i, int level) {
   _func_map.verbs[i] = level;
 }
 
@@ -2163,7 +2163,7 @@ int Roccom_base::get_sizeof( COM_Type type, int count)
 { return Attribute::get_sizeof( type, count); }
 
 Window &Roccom_base::
-get_window( const std::string &wname) throw(COM_exception)  
+get_window( const std::string &wname)  
 {
   Window **w = _window_map.find( wname).second;
   if ( w ==NULL) 
@@ -2173,7 +2173,7 @@ get_window( const std::string &wname) throw(COM_exception)
 }
 
 Attribute &Roccom_base::
-get_attribute( const int handle) throw(COM_exception) {
+get_attribute( const int handle) {
   Attribute *attr=NULL;
 
   if ( handle > 0 && handle<_attr_map.size()) 
@@ -2188,7 +2188,7 @@ get_attribute( const int handle) throw(COM_exception) {
 }
 
 const Attribute &Roccom_base::
-get_attribute( const int handle) const throw(COM_exception) { 
+get_attribute( const int handle) const { 
   const Attribute *attr=NULL;
 
   if ( handle > 0 && handle<_attr_map.size()) 
@@ -2203,7 +2203,7 @@ get_attribute( const int handle) const throw(COM_exception) {
 }
 
 Function &Roccom_base::
-get_function( const int handle) throw(COM_exception) { 
+get_function( const int handle) { 
   Function *func=NULL;
 
   if ( handle > 0 && handle<_func_map.size()) 
@@ -2219,7 +2219,7 @@ get_function( const int handle) throw(COM_exception) {
 }
 
 const Function &Roccom_base::
-get_function( const int handle) const throw(COM_exception) { 
+get_function( const int handle) const { 
   const Function *func=NULL;
 
   if ( handle > 0 && handle<_func_map.size()) 
@@ -2234,7 +2234,7 @@ get_function( const int handle) const throw(COM_exception) {
 }
 
 int Roccom_base::split_name( const std::string &wa, std::string &wname, 
-			     std::string &aname, bool tothrow) throw( COM_exception) 
+			     std::string &aname, bool tothrow) 
 {
   std::string::size_type ni = wa.find(".");
 
@@ -2261,7 +2261,7 @@ int Roccom_base::split_name( const std::string &wa, std::string &wname,
 }
 
 void Roccom_base::
-proc_exception( const COM_exception &ex, const std::string &s) throw( int) 
+proc_exception( const COM_exception &ex, const std::string &s) 
 {
   extern void printStackBacktrace();
   _errorcode = ex.ierr;

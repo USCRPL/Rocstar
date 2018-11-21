@@ -56,10 +56,10 @@ public:
   void determine_border_nodes( std::vector<bool> &is_border,
 			       std::vector<bool> &is_isolated,
 			       std::vector<Facet_ID > *b=NULL,
-			       int ghost_level=0) throw(int);
+			       int ghost_level=0);
 
   /// Compute the minimum squared edge length of given edges.
-  double min_squared_edge_len( const std::vector<Facet_ID > &) throw(int);
+  double min_squared_edge_len( const std::vector<Facet_ID > &);
 
   /** Determine the nodes at pane boundaries of a given mesh. 
    *  The argument isborder must be a nodal attribute of integer type. 
@@ -77,11 +77,11 @@ protected:
   /// (unstructured meshes)
   void determine_border_nodes_3( std::vector<bool> &is_border,
 				 std::vector<Facet_ID > *b,
-				 int ghost_level) throw(int);
+				 int ghost_level);
 
   /// Determine the isolated nodes (i.e. not belonging to any element)
   void determine_isolated_nodes( std::vector<bool> &is_isolated,
-				 int ghost_level) throw(int);
+				 int ghost_level);
 
 private:
   const COM::Pane   &_pane;

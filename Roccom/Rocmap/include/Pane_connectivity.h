@@ -57,7 +57,7 @@ public:
   
   /// Create b2v mapping for nodes and facets (edges or faces) correspondence.
   void compute_pconn( COM::Attribute *pconn_n,
-		      COM::Attribute *pconn_f=NULL) throw(int);
+		      COM::Attribute *pconn_f=NULL);
 
   /// Get the number of communicating panes.
   static void size_of_cpanes( const COM::Attribute *pconn, const int *pane_id,
@@ -85,26 +85,26 @@ protected:
    *    <remote_pane_id 2> .... !repeat the above
    */
   void create_b2map( COM::Attribute *pconn,
-		     bool for_facet) throw(int);
+		     bool for_facet);
 
   /** Create b2v mapping (pane connectivity) for nodes or edges and store
    *  the results into a vector of vectors (with the same format as above).
    */
   void create_b2map( std::vector< std::vector<int> > &b2,
-		     bool for_facet) throw(int);
+		     bool for_facet);
 
   /// Obtains the IDs and coordinates of boundary nodes of all local panes.
   /// Also returns a tolerance for window query.
   double get_local_boundary_nodes( std::vector<int> &nodes, 
 				   std::vector<Point_3> &pnts,
-				   bool for_facet) throw(int);
+				   bool for_facet);
   
   /// Collect the boundary nodes of all panes that are coincident with
   /// the boundary nodes of local panes. 
   /// Also returns an estimated tolerance for window query.
   double collect_boundary_nodes( std::vector<int>     &nodes, 
 				 std::vector<Point_3> &pnts,
-				 bool for_facet) throw(int);
+				 bool for_facet);
 
   // Determine the nodes that coincide with given isolated points.
   // If the last argument is present, then it is mapped to KD_tree.
@@ -112,7 +112,7 @@ protected:
 				   std::vector<Point_3> &pnts,
 				   const double tol, 
 				   std::vector<bool> &is_co,
-				   KD_tree_3 *tree=NULL) throw(int);
+				   KD_tree_3 *tree=NULL);
 private:
   void collect_nodes( const std::vector<std::vector<int> > &ns,
 		      std::vector<int> &nodes, 

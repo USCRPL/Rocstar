@@ -82,7 +82,7 @@ Pane::~Pane() {
 }
 
 
-void Pane::init_done() throw(COM_exception) {
+void Pane::init_done() {
   _attr_set.resize( _window->last_attribute_id()); // Shrink the array.
 
   // Loop through the attributes to initialize the unitialized ones to NULL
@@ -96,7 +96,7 @@ void Pane::init_done() throw(COM_exception) {
   }
 }
 
-Connectivity *Pane::connectivity( Size i)  throw( COM_exception)
+Connectivity *Pane::connectivity( Size i)
 {
   if ( i>size_of_elements()) {
     // if i is not a valid element ID, it must be one past the last ID
@@ -118,7 +118,7 @@ Connectivity *Pane::connectivity( Size i)  throw( COM_exception)
 
 
 Connectivity *Pane::connectivity(  const std::string &a, 
-				   bool insert) throw( COM_exception)
+				   bool insert)
 {
   if ( _id == 0) {
     throw COM_exception( COM_ERR_PANE_NOTEXIST, append_frame
@@ -177,7 +177,6 @@ void Pane::attributes( std::vector<Attribute*> &as) {
 Attribute *Pane::
 new_attribute( const std::string &aname, int aid, const char loc, 
 	       const int type, int ncomp, const std::string &unit) 
-  throw(COM_exception) 
 {
 
   if ( loc == 'c' && id() != 0) {
@@ -221,7 +220,7 @@ new_attribute( const std::string &aname, int aid, const char loc,
   return a;
 }
 
-void Pane::insert( Attribute *attr) throw(COM_exception) {
+void Pane::insert( Attribute *attr) {
   COM_assertion( attr->pane()==this);
 
   // Determine id of the new attribute
@@ -237,7 +236,7 @@ void Pane::insert( Attribute *attr) throw(COM_exception) {
   else COM_assertion( attr == _attr_set[id]);
 }
 
-void Pane::delete_attribute( int id) throw(COM_exception) {
+void Pane::delete_attribute( int id) {
   if ( id == COM_ATTS) { // Delete all user-defined attributes.
     for ( Size i=COM_NUM_KEYWORDS,n=_attr_set.size(); i<n; ++i) {
       Attribute *a=_attr_set[i];
@@ -263,7 +262,7 @@ void Pane::delete_attribute( int id) throw(COM_exception) {
 
 void Pane::
 reinit_attr( int aid, OP_Init op, void **addr, 
-	     int strd, int cap) throw (COM_exception)
+	     int strd, int cap)
 {
   switch ( aid) {
   case COM_CONN: {
@@ -398,7 +397,7 @@ reinit_attr( int aid, OP_Init op, void **addr,
 
 void Pane::
 reinit_conn( Connectivity *con, OP_Init op, int **addr, 
-	     int strd, int cap) throw (COM_exception)
+	     int strd, int cap)
 {
   // Assign default value for cap and strd
   if ( op!=OP_DEALLOC) {
@@ -449,7 +448,7 @@ reinit_conn( Connectivity *con, OP_Init op, int **addr,
 }
 
 Attribute *Pane::inherit( Attribute *from, const std::string &aname,
-			  int mode, bool withghost) throw(COM_exception) 
+			  int mode, bool withghost) 
 {
   if ( from==NULL) 
     throw COM_exception( COM_ERR_ATTRIBUTE_NOTEXIST, append_frame
@@ -628,7 +627,7 @@ Attribute *Pane::inherit( Attribute *from, const std::string &aname,
 }
 
 void Pane::set_size( Attribute *a, 
-		     int nitems, int ng) throw( COM_exception) {
+		     int nitems, int ng) {
   if ( nitems<ng)
     throw COM_exception( COM_ERR_INVALID_SIZE, 
 			 append_frame(a->fullname(),Pane::set_size));
@@ -657,14 +656,14 @@ void Pane::set_size( Attribute *a,
 }
 
 void Pane::set_size( Connectivity *con, 
-		     int nitems, int ng) throw( COM_exception) {
+		     int nitems, int ng) {
   if ( !con->is_structured() && nitems<ng)
     throw COM_exception( COM_ERR_INVALID_SIZE, 
 			 append_frame(con->fullname(),Pane::set_size));
   con->set_size( nitems, ng);
 }
 
-void Pane::refresh_connectivity() throw(COM_exception) {
+void Pane::refresh_connectivity() {
   int nelems = 0, ngelems = 0;
 
   // Set the number of elements

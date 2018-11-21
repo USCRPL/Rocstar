@@ -82,7 +82,7 @@ const Window *Attribute::window()  const { return _pane->window(); }
 std::string Attribute::fullname() const 
 { return window()->name()+"."+name(); }
 
-const void *Attribute::get_addr( int i, int j) const throw(COM_exception) {
+const void *Attribute::get_addr( int i, int j) const {
   if ( _parent) return root()->get_addr( i,j);
 
   if ( j>=_ncomp) throw COM_exception( COM_ERR_INVALID_DIMENSION);
@@ -188,7 +188,7 @@ int Attribute::maxsize_of_real_items() const
     return _nitems<=0 ? 0 : _nitems - _ngitems;
 }
 
-void Attribute::set_size( int nitems, int ngitems) throw(COM_exception)
+void Attribute::set_size( int nitems, int ngitems)
 {
   if ( _parent)
     throw COM_exception( COM_ERR_CHANGE_INHERITED,
@@ -206,7 +206,7 @@ void Attribute::set_size( int nitems, int ngitems) throw(COM_exception)
 }
 
 void Attribute::set_pointer( void *p, int strd, int cap, 
-			     int offset, bool is_const) throw(COM_exception)
+			     int offset, bool is_const)
 {
   int nitems=size_of_items(), ncomp=size_of_components();
 
@@ -247,7 +247,7 @@ void Attribute::set_pointer( void *p, int strd, int cap,
 
 void Attribute::
 copy_array( void *buf, int strd, int n, 
-	    int offset, int direction) throw (COM_exception) 
+	    int offset, int direction) 
 {
   if (direction==COPY_IN) {
     if ( is_const())
@@ -331,7 +331,7 @@ copy_array( void *buf, int strd, int n,
 
 // Append n _ncomp-vectors from "from" to the array.
 void Attribute::
-append_array( const void *from, int strd, int nitem) throw(COM_exception)
+append_array( const void *from, int strd, int nitem)
 {
   if ( (!is_panel() && !is_windowed()) || size_of_ghost_items())
     throw COM_exception( COM_ERR_APPEND_ARRAY,
@@ -342,7 +342,7 @@ append_array( const void *from, int strd, int nitem) throw(COM_exception)
   set_size( offset+nitem);
 }
 
-void *Attribute::allocate( int strd, int cap, bool force) throw( COM_exception)
+void *Attribute::allocate( int strd, int cap, bool force)
 {
   int nitems=size_of_items(), ncomp=size_of_components();
   
@@ -423,7 +423,7 @@ void *Attribute::allocate( int strd, int cap, bool force) throw( COM_exception)
 }
 
 void Attribute::
-inherit( Attribute *parent, bool clone, bool withghost, int depth) throw(COM_exception) 
+inherit( Attribute *parent, bool clone, bool withghost, int depth) 
 {
   Attribute *root = parent->root();
   _loc=root->_loc; _ncomp=root->_ncomp; _type=root->_type; 
@@ -470,7 +470,7 @@ inherit( Attribute *parent, bool clone, bool withghost, int depth) throw(COM_exc
   }
 }
 
-int Attribute::deallocate() throw( COM_exception) {
+int Attribute::deallocate() {
   try {
     // Deallocate attribute and set individual components to not initialized.
     if ( _status != STATUS_ALLOCATED) return -1; // failed

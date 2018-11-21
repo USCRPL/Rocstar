@@ -4,6 +4,10 @@ IF(cgns_ENABLED)
   add_definitions ( -DUSE_CGNS )
 ENDIF()
 
+if(pthread_ENABLED)
+  add_definitions(-DUSE_PTHREADS)
+endif()
+
 IF(cgns_ENABLED)
    set (ROCOUT_SRCS src/Rocout.C src/Rocout_hdf4.C src/write_parameter_file.C src/Rocout_cgns.C)
 ELSE()
@@ -21,6 +25,9 @@ IF(cgns_ENABLED)
   target_link_libraries(Rocout cgns)
 ENDIF()
 target_link_libraries(Rocout Rocin mpi_cxx)
+if(pthread_ENABLED)
+  target_link_libraries(Rocout Threads::Threads)
+endif()
 
 target_include_directories(Rocout PUBLIC include)
 

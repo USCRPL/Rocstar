@@ -115,7 +115,7 @@ public:
   { return (const Connectivity*)(Attribute::root()); }
 
   /// Inherit a connectivity table.
-  void inherit( Connectivity *parent, bool clone, bool withghost) throw(COM_exception) 
+  void inherit( Connectivity *parent, bool clone, bool withghost) 
   { Attribute::inherit( parent, clone, withghost); }
 
   /// Obtain element type ID.
@@ -211,9 +211,9 @@ public:
   /// Obtain the address of the jth component of the ith item, where
   /// 0<=i<size_of_items. This function is recursive and relatively expensive, 
   /// and hence should be used only for performance-insenstive tasks. 
-  const int *get_addr( int i, int j=0) const throw(COM_exception);
+  const int *get_addr( int i, int j=0) const;
 
-  int *get_addr( int i, int j=0) throw(COM_exception) {
+  int *get_addr( int i, int j=0) {
     if ( is_const()) throw COM_exception( COM_ERR_ATTRIBUTE_CONST);
     return (int*)(((const Connectivity*)this)->get_addr(i,j));
   }
@@ -233,23 +233,23 @@ public:
   static const int*get_size_info( const std::string &aname);
 
   /// Allocate memory for unstructured mesh
-  void *allocate( int strd, int cap, bool force) throw(COM_exception) {
+  void *allocate( int strd, int cap, bool force) {
     if ( !is_structured()) return Attribute::allocate( strd, cap, force);
     else throw COM_exception(COM_ERR_ALLOC_STRUCTURED);
   }
 
   /// Set the size of items and ghost items. Can be changed only if the 
   /// attribute is a root.
-  void set_size( int nitems, int ngitems=0) throw(COM_exception);
+  void set_size( int nitems, int ngitems=0);
   //\}
 
 protected:
   /// Set pointer of connectivity table 
   void set_pointer( void *p, int strd, int cap, 
-		    bool is_const) throw(COM_exception);
+		    bool is_const);
 
   /// Set the index of the first element.
-  void set_offset( Size offset) throw(COM_exception);
+  void set_offset( Size offset);
 
 protected:
   int   _offset;     ///< Offset of the first element.

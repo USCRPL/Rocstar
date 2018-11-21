@@ -59,7 +59,7 @@
 #endif
 //#include "Matcher.h"
 //#include "Pattern.h"
-#include <fnmatch.h>
+#include <internal_fnmatch.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <dirent.h>

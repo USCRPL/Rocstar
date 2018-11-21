@@ -81,7 +81,7 @@ public:
    *  \{
    */
   /// Finalize the initialization of a pane.
-  void init_done() throw(COM_exception);
+  void init_done();
   //\}
 
   /** \name Identification
@@ -259,8 +259,8 @@ public:
       ( (std::vector<Connectivity*> &)es); }
 
   /// Obtain the connectivity table containing the element with the given ID.
-  Connectivity *connectivity( Size i) throw(COM_exception);
-  const Connectivity *connectivity( Size i) const throw(COM_exception)
+  Connectivity *connectivity( Size i);
+  const Connectivity *connectivity( Size i) const
   { return const_cast<Pane*>(this)->connectivity( i); }
 
   /// Obtain all the element connectivities of the pane.
@@ -270,44 +270,44 @@ public:
   { connectivities(es); }
 
   /// Update offsets and sizes of connectivity of an unstructured mesh.
-  void refresh_connectivity() throw(COM_exception);
+  void refresh_connectivity();
   //\}
 
 protected: // The following functions to be called by the Window class.
   // Add a new attribute into the pane.
   Attribute *new_attribute( const std::string &aname, int aid, 
 			    const char loc, const int type, int ncomp, 
-			    const std::string &unit) throw(COM_exception);
+			    const std::string &unit);
 
   /** Insert an attribute onto the pane */
-  void insert( Attribute *attr) throw(COM_exception);
+  void insert( Attribute *attr);
 
   /// Delete an existing attribute with given id. 
-  void delete_attribute( int id) throw (COM_exception);
+  void delete_attribute( int id);
 
   void reinit_attr( int aid, OP_Init op, void **addr, 
-		    int strd, int cap) throw(COM_exception);
+		    int strd, int cap);
 
   /// Obtain the connectivity with the given name.
   const Connectivity *connectivity( const std::string &a) 
-    const throw(COM_exception)
+    const
   { return const_cast<Pane*>(this)->connectivity( a); }
 
   Connectivity *connectivity( const std::string &a, 
-			      bool insert=false) throw(COM_exception);
+			      bool insert=false);
 
   void reinit_conn( Connectivity *con, OP_Init op, int **addr, 
-		    int strd, int cap) throw (COM_exception);
+		    int strd, int cap);
 
   /// Inherit an attribute from another pane onto the current pane:
   Attribute *inherit( Attribute *from, const std::string &aname,
-		      int mode, bool withghost) throw(COM_exception);
+		      int mode, bool withghost);
 
   /// Set the size of an attribute 
-  void set_size( Attribute *a, int nitems, int ng) throw( COM_exception);
+  void set_size( Attribute *a, int nitems, int ng);
 
   /// Set the size of a connectivity table. 
-  void set_size( Connectivity *con, int nitems, int ng) throw( COM_exception);
+  void set_size( Connectivity *con, int nitems, int ng);
 
 protected:
   Window*     _window;     ///< Point to the parent window.

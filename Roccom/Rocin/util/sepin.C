@@ -9,33 +9,7 @@
 #include <sstream>
 #include <iomanip>
 
-std::string 
-CWD()
-{
-  char buf[1024];
-  return(std::string(getcwd(buf,1024)));
-}
-
-int
-ChangeDirectory(const std::string &path)
-{
-  return(chdir(path.c_str()));
-}
-
-int
-CreateDirectory(const std::string &fname)
-{
-  return(mkdir(fname.c_str(),S_IRGRP | S_IXGRP  | S_IRWXU));  
-}
-
-bool
-FILEEXISTS(const std::string &fname)
-{
-  struct stat fstat;
-  if(lstat(fname.c_str(),&fstat))
-    return false;
-  return true;
-}
+#include <UnixUtils.H>
 
 int main(int argc,char *argv[])
 {
@@ -84,8 +58,8 @@ int main(int argc,char *argv[])
 		  << "@Panes: " << surfpanes << std::endl << std::endl;
     RocinVolFile  << "@Files: " << Ostr.str() << "/" << volfiles << std::endl
 		  << "@Panes: " << volpanes << std::endl << std::endl;
-    CreateDirectory(Ostr.str());
-    ChangeDirectory(Ostr.str());
+    IRAD::Sys::ChDir(Ostr.str());
+    IRAD::Sys::ChDir(Ostr.str());
     Ostr2.clear();
     Ostr2.str("");
     Ostr2 << fileid;
@@ -99,16 +73,16 @@ int main(int argc,char *argv[])
     std::ostringstream FNout2;
     FNout << "fluid_" << Ostr.str() << ".hdf";
     FNout2 << "../fluid_" << Ostr.str() << ".hdf";
-    symlink(FNout2.str().c_str(),FNout.str().c_str());
+    IRAD::Sys::SymLink(FNout2.str().c_str(),FNout.str().c_str());
     FNout.clear();
     FNout2.clear();
     FNout.str("");
     FNout2.str("");
     FNout << "ifluid_" << Ostr.str() << ".hdf";
     FNout2 << "../ifluid_" << Ostr.str() << ".hdf";
-    if(FILEEXISTS(FNout2.str()))
-      symlink(FNout2.str().c_str(),FNout.str().c_str());
-    ChangeDirectory(std::string(".."));
+    if(IRAD::Sys::FILEEXISTS(FNout2.str()))
+      IRAD::Sys::SymLink(FNout2.str().c_str(),FNout.str().c_str());
+    IRAD::Sys::ChDir(std::string(".."));
   }
   RocinSurfFile.close();
   RocinVolFile.close();

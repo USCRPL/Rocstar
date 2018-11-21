@@ -379,6 +379,9 @@ endif()
 #------------------------------------------------------------------------------ 
 if(libm_EXTERNAL)	
 	import_library(libm ${LIBM})
+else()
+	# create blank interface library
+	add_library(libm INTERFACE)
 endif()
 
 #------------------------------------------------------------------------------

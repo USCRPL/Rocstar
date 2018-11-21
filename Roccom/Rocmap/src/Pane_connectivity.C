@@ -179,7 +179,7 @@ determine_coisolated_nodes( const COM::Pane &pn,
 			    std::vector<Point_3> &pnts,
 			    const double tol, 
 			    std::vector<bool> &is_co,
-			    KD_tree_3 *tree) throw(int) {
+			    KD_tree_3 *tree) {
 
   int n=pn.size_of_real_nodes();
   is_co.clear(); is_co.resize( n, false);
@@ -220,7 +220,7 @@ determine_coisolated_nodes( const COM::Pane &pn,
 double Pane_connectivity::
 get_local_boundary_nodes( std::vector<int> &nodes, 
 			  std::vector<Point_3> &pnts, 
-			  bool for_facet) throw(int) {
+			  bool for_facet) {
 
   std::vector< std::vector<int> >   ns(_panes.size());
   std::vector< std::vector<int> >   iso_ns(_panes.size());
@@ -432,7 +432,7 @@ collect_coincident_nodes( const std::vector<int> &r_nodes,
 double Pane_connectivity::
 collect_boundary_nodes( std::vector<int>     &nodes,
 			std::vector<Point_3> &pnts,
-			bool for_facet) throw(int) {
+			bool for_facet) {
 
   double tol = get_local_boundary_nodes( nodes, pnts, for_facet);
   if ( _comm == MPI_COMM_NULL) return tol;
@@ -511,7 +511,7 @@ collect_boundary_nodes( std::vector<int>     &nodes,
  */
 void Pane_connectivity::
 create_b2map( std::vector< std::vector<int> > &b2v, 
-	      bool for_facet) throw(int) {
+	      bool for_facet) {
   
   typedef std::map< int, std::map< int, std::vector<pair_int> > >  B2v_map;
   B2v_map b2v_map;
@@ -674,7 +674,7 @@ create_b2map( std::vector< std::vector<int> > &b2v,
 
 /// Create b2v mapping for nodes.
 void Pane_connectivity::create_b2map( COM::Attribute *pconn, 
-				      bool for_facet) throw(int)
+				      bool for_facet)
 { 
   std::vector< std::vector<int> > b2v;
 
@@ -715,7 +715,7 @@ void Pane_connectivity::create_b2map( COM::Attribute *pconn,
 }
 
 void Pane_connectivity::compute_pconn( COM::Attribute *pconn_n,
-				       COM::Attribute *pconn_f) throw(int) { 
+				       COM::Attribute *pconn_f) { 
   if ( pconn_n) create_b2map( pconn_n, false); 
   if ( pconn_f) create_b2map( pconn_f, true); 
 }
