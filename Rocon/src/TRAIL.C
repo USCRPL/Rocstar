@@ -33,7 +33,7 @@
 #include <cstring>
 #include <algorithm>
 
-#include "TRAIL_UnixUtils.H"
+#include "UnixUtils.H"
 
 //#ifdef _TRAIL_MPI_
 #include "mpi.h"
@@ -56,6 +56,19 @@ COM_EXTERN_MODULE( Rocsurf);
 COM_EXTERN_MODULE( Rocmop);
 COM_EXTERN_MODULE( Rocprop);
 
+int
+TRAIL_CD(const std::string &path,std::ostream *ouf)
+{
+  if(ouf)
+    *ouf << "TRAIL_CD: Switching directory from " 
+	 << IRAD::Sys::CWD() << " to " << path << std::endl;
+  int result = chdir(path.c_str());
+  if(ouf)
+    *ouf << "TRAIL_CD: CWD(" << IRAD::Sys::CWD() << ")" << std::endl;
+  return(result);
+
+}
+
 void
 TRAIL_Debug(GEM_Partition &gp)
 {
@@ -64,7 +77,7 @@ TRAIL_Debug(GEM_Partition &gp)
   MPI_Comm_rank(gp._comm,&rank);
   //#endif
   if(!rank)
-    TRAIL_CreateDirectory("Roctrail");
+    IRAD::Sys::CreateDirectory("Roctrail");
   //#ifdef _TRAIL_MPI_
   MPI_Barrier(gp._comm);
   //#endif
@@ -1304,7 +1317,7 @@ TRAIL_FD2FE_Transfer(const std::string &srcwin,const std::string &destwin,
 		       << flat_global_extent[2] << "," << flat_global_extent[3] << "],["
 		       << flat_global_extent[4] << "," << flat_global_extent[5] << "])"
 		       << std::endl;
-		  for(int iii = 0;iii < flat_shared_extents.size()/6;iii++){
+		  for(unsigned int iii = 0;iii < flat_shared_extents.size()/6;iii++){
 		    unsigned int index = iii*6;
 		    *ouf << "shared_extents (" << shared_panes[iii] << "): (["
 			 << flat_shared_extents[index+0] << "," << flat_shared_extents[index+1] << "],[" 
@@ -2479,14 +2492,14 @@ TRAIL_MergeRocinFiles(const std::string &srcname,
 		     double t,unsigned int np,
 		     std::ostream *ouf)
 {
-  std::string homedir(TRAIL_CWD());
+  std::string homedir(IRAD::Sys::CWD());
   std::string timestring(TRAIL_TimeString(t));
   std::string filepre(srcname+"_"+timestring+"_");
   std::ostringstream Ofstr;
   unsigned int id = 0;
   if(ouf)
     *ouf << "TRAIL_MergeRocinFiles: Entry" << std::endl;
-  TRAIL_CD(path,ouf);
+  IRAD::Sys::CD(path,ouf);
   if(ouf)
     *ouf << "Searching for files with prefix: " << filepre << std::endl;
   while(id <= np){
@@ -2550,7 +2563,7 @@ TRAIL_AutoSurfer(const std::string &src, const std::string &trg,
   std::string srcfile(src + "_in_" + timestring + ".txt");
   std::string trgfile(trg + "_in_" + timestring + ".txt");
   std::string trailwin(src+"_trail");
-  std::string homedir(TRAIL_CWD());
+  std::string homedir(IRAD::Sys::CWD());
   std::string format("HDF");
   std::string newpath;
   COM_LOAD_MODULE_STATIC_DYNAMIC( Rocface, "RFC");
@@ -2566,7 +2579,7 @@ TRAIL_AutoSurfer(const std::string &src, const std::string &trg,
   TRAIL_CD(srcpath,ouf);
   if(ouf)
     *ouf << "TRAIL_AutoSurfer:: homedir = " << homedir << std::endl
-	 << "TRAIL_AutoSurfer:: CWD = " << TRAIL_CWD() << std::endl
+	 << "TRAIL_AutoSurfer:: CWD = " << IRAD::Sys::CWD() << std::endl
 	 << "TRAIL_AutoSurfer:: Creating common refinement." << std::endl
 	 << "TRAIL_AutoSurfer:: Reading in source surface from " << srcpath
 	 << std::endl;
@@ -2603,7 +2616,7 @@ TRAIL_AutoSurfer(const std::string &src, const std::string &trg,
 		     trailwin.c_str(), trg.c_str(), format.c_str());
   TRAIL_CD(homedir,ouf);
   if(ouf)
-    *ouf << "TRAIL_AutoSurfer: Done. CWD = " << TRAIL_CWD() << std::endl;
+    *ouf << "TRAIL_AutoSurfer: Done. CWD = " << IRAD::Sys::CWD() << std::endl;
   COM_delete_window(trg);
   COM_delete_window(trailwin);
   COM_set_default_communicator(comm);
@@ -2635,7 +2648,7 @@ TRAIL_TransferSurfDataFILE
   std::string trgfile(trg + suffix);
   std::string r_trg(dest);
   std::string trailwin(src+"_trail");
-  std::string homedir(TRAIL_CWD());
+  std::string homedir(IRAD::Sys::CWD());
   std::string format("HDF");
   std::string newpath;
   int rank = 0;
@@ -2678,7 +2691,7 @@ TRAIL_TransferSurfDataFILE
   std::vector<int> pane_id;
   if(ouf)
     *ouf << "TRAIL_AutoSurfer: Reading mesh overlay for all surfaces."
-	 << "TRAIL_AutoSurfer: CR DIR: " << TRAIL_CWD() << std::endl;
+	 << "TRAIL_AutoSurfer: CR DIR: " << IRAD::Sys::CWD() << std::endl;
   COM_call_function( RFC_read, &srcmesh, &trgmesh, &comm,
 		     trailwin.c_str(),trg.c_str(),format.c_str());
   if(ouf)
@@ -2814,7 +2827,7 @@ TRAIL_WriteWindow(const std::string &wname,const std::string &winpath,
 {
 
   std::string timestring(TRAIL_TimeString(t));
-  std::string homedir(TRAIL_CWD());
+  std::string homedir(IRAD::Sys::CWD());
   int rank = 0;
   int nproc = 1;
   if(comm != MPI_COMM_NULL){
@@ -2875,8 +2888,8 @@ TRAIL_FindSourceTime(const std::string &dirpre,
 		    const std::string &relpath)
 {
   double targ_time = -1;
-  Directory sd(relpath);
-  Directory::iterator dfi = sd.begin();
+  IRAD::Sys::Directory sd(relpath);
+  IRAD::Sys::Directory::iterator dfi = sd.begin();
   while(dfi != sd.end()){
     std::string cdir(*dfi++);
     std::string::size_type x = cdir.find(dirpre);

@@ -3,7 +3,7 @@ project(Rocon)
 set (LIB_SRCS src/Rocon.C src/ray-triangle.C src/GEM.C
               src/GeoPartFunctions.C src/Partition.C
               src/RemeshFunctions.C src/RocfluFunctions.C
-              src/TRAIL.C src/TRAIL_UnixUtils.C src/TransferFunctions.C
+              src/TRAIL.C src/TransferFunctions.C
               src/PMesh.C src/BSMesh.C src/Mesh.C src/GeoPrimitives.C)
 set (UTIL_SRCS src/flotsam.C src/genflu.C src/wrl2hdf.C)
 set (ALL_SRCS ${LIB_SRCS} ${UTIL_SRCS})

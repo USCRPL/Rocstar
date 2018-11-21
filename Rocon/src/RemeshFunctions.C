@@ -31,9 +31,8 @@
 #include <cstdio>
 #include <cassert>
 
-#include "TRAIL_UnixUtils.H"
-
-#include "mpi.h"
+#include <UnixUtils.h>
+#include "commpi.h"
 
 #include "GEM.H"
 #include "TRAIL.H"
@@ -59,7 +58,7 @@ TRAIL_RemeshRunDirSetup(const std::string &path,double t,MPI_Comm comm,
   int rank = 0;
   MPI_Comm_rank(comm,&rank);
 
-  std::string rocstarrundir(TRAIL_CWD());
+  std::string rocstarrundir(IRAD::Sys::CWD());
   std::string rocremdir("Rocrem");
 
   // For now, only these two are needed
@@ -77,22 +76,22 @@ TRAIL_RemeshRunDirSetup(const std::string &path,double t,MPI_Comm comm,
       exit(1);
     }
     if(stat(rocremdir.c_str(),&fstat))
-      mkdir(rocremdir.c_str(),S_IRWXU | S_IRWXG);
+      IRAD::Sys::CreateDirectory(rocremdir.c_str());
   }
   chdir(rocremdir.c_str());
   if(!rank){
     unlink(solver.c_str());
-    symlink(ddsolver.c_str(),solver.c_str());
+    IRAD::Sys::SymLink(ddsolver.c_str(),solver.c_str());
     if(!stat(ddrocm.c_str(),&fstat)){
       unlink(rocman.c_str());
-      symlink(ddrocm.c_str(),rocman.c_str());
+      IRAD::Sys::SymLink(ddrocm.c_str(),rocman.c_str());
     }
     if(!stat(ddrocb.c_str(),&fstat)){
       unlink(rocburnapn.c_str());
-      symlink(ddrocb.c_str(),rocburnapn.c_str());
+      IRAD::Sys::SymLink(ddrocb.c_str(),rocburnapn.c_str());
     }
     unlink("rocstardir");
-    symlink(rocstarrundir.c_str(),"rocstardir");
+    IRAD::Sys::SymLink(rocstarrundir.c_str(),"rocstardir");
     //    if(shuffle)
     //      TRAIL_RemeshShuffle(solver,t);
   }
@@ -348,7 +347,7 @@ TRAIL_RemeshAutoSurfer(GEM_Partition &gp,
   std::string srcwin(src);
   std::string trailwin(src+"_trail");
   std::string trgwin(gp.surface_window);
-  std::string homedir(TRAIL_CWD());
+  std::string homedir(IRAD::Sys::CWD());
   std::string format("HDF");
   std::string crpath(trgpath+"/AutoSurf");
   struct stat fstat;
@@ -361,7 +360,7 @@ TRAIL_RemeshAutoSurfer(GEM_Partition &gp,
       std::cerr << "TRAIL_RemeshAutoSurfer: WARNING: " << crpath << " already "
 		<< "existed.  Renaming to " << crpath << "_save." << std::endl;
     }
-    TRAIL_CreateDirectory(crpath);
+    IRAD::Sys::CreateDirectory(crpath);
   }
   MPI_Barrier(comm);
   // Serial step to create the common refinement
@@ -422,7 +421,7 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
   std::string solverlast(solver+"/Modin.remesh_last");
   struct stat fstat0;
   struct stat fstat1;
-  if(lstat(rocstarsrc.c_str(),&fstat0)){
+  if(stat(rocstarsrc.c_str(),&fstat0)){
     std::cerr << "TRAIL_Remesh::DirectoryShuffling: ERROR: " << rocstarsrc 
 	      << " does not exist.  Exiting." << std::endl;
     exit(1);
@@ -444,14 +443,14 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 		<< std::endl;
     }
     rename(rocstarsrc.c_str(),rocstartrg0.c_str());
-    symlink(rtrg0.c_str(),rocstarsrc.c_str());
+    IRAD::Sys::SymLink(rtrg0.c_str(),rocstarsrc.c_str());
   }
   // <solver>/Rocout is not a directory, it is a link, that's okay unless it's
   // already pointing at <solver>/Rocout.remesh_<timestamp>.  In this case, the
   // most likely scenario is the one where you are remeshing the same timestamp
   // multiple times without running rocstar.
   else{
-    std::string pointsto(ResolveLink(rocstarsrc.c_str()));
+    std::string pointsto(IRAD::Sys::ResolveLink(rocstarsrc.c_str()));
     if(debug)
       std::cout << "TRAIL_RemeshShuffle: " << rocstarsrc 
 		<< " is a link to " << pointsto << "." << std::endl;
@@ -484,9 +483,9 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 	      << " already existed.  Saving it as " << savepath << "." 
 	      << std::endl;
   }
-  mkdir(rocstartrg.c_str(),S_IRWXG | S_IRWXU);
-  symlink(ResolveLink(rocstarsrc.c_str()).c_str(),rocstarlast.c_str());
-  if(lstat(solversrc.c_str(),&fstat0)){
+  IRAD::Sys::CreateDirectory(rocstartrg.c_str());
+  IRAD::Sys::SymLink(IRAD::Sys::ResolveLink(rocstarsrc.c_str()).c_str(),rocstarlast.c_str());
+  if(stat(solversrc.c_str(),&fstat0)){
     std::cerr << "TRAIL_Remesh::DirectoryShuffling: ERROR: " << solversrc 
 	      << " does not exist.  Exiting." << std::endl;
     exit(1);
@@ -505,7 +504,7 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 		<< std::endl;
     }
     rename(solversrc.c_str(),solvertrg0.c_str());
-    symlink(strg0.c_str(),solversrc.c_str());
+    IRAD::Sys::SymLink(strg0.c_str(),solversrc.c_str());
   }
   // If solvertrg already exists, warn and back it up 
   if(!stat(solvertrg.c_str(),&fstat0)){
@@ -515,14 +514,14 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 	      << " already existed.  Saving it as " << savepath << "." 
 	      << std::endl;
   }
-  mkdir(solvertrg.c_str(),S_IRWXG | S_IRWXU);
-  symlink(ResolveLink(solversrc.c_str()).c_str(),solverlast.c_str());
+  IRAD::Sys::CreateDirectory(solvertrg.c_str());
+  IRAD::Sys::SymLink(IRAD::Sys::ResolveLink(solversrc.c_str()).c_str(),solverlast.c_str());
   // Deal with RocburnAPN
   std::string rocburnapn("RocburnAPN");
   std::string rocburnapnsrc(rocburnapn+"/"+rsd);
   std::string rocburnapntrg0(rocburnapn+"/"+rtrg0);
   std::string rocburnapntrg(rocburnapn+"/"+rtrg);
-  if(!lstat(rocburnapnsrc.c_str(),&fstat0)){
+  if(!stat(rocburnapnsrc.c_str(),&fstat0)){
     if(S_ISDIR(fstat0.st_mode)){
       if(!stat(rocburnapntrg0.c_str(),&fstat1)){
 	// RocburnAPN/Rocout is a directory, but RocburnAPN/Rocout.remesh_0 
@@ -534,7 +533,7 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 		  << savepath << "." << std::endl;
       }
       rename(rocburnapnsrc.c_str(),rocburnapntrg0.c_str());
-      symlink(rtrg0.c_str(),rocburnapnsrc.c_str());
+      IRAD::Sys::SymLink(rtrg0.c_str(),rocburnapnsrc.c_str());
     }
     if(!stat(rocburnapntrg.c_str(),&fstat1)){
       // RocburnAPN/Rocout.remesh_<timestamp> already exists, warn and back it
@@ -545,9 +544,9 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 		<< rocburnapntrg << " already existed, backup it up as "
 		<< savepath << "." << std::endl;
     }
-    mkdir(rocburnapntrg.c_str(), S_IRWXG | S_IRWXU);
+    IRAD::Sys::CreateDirectory(rocburnapntrg.c_str());
     unlink(rocburnapnsrc.c_str());
-    symlink(rtrg.c_str(),rocburnapnsrc.c_str());
+    IRAD::Sys::SymLink(rtrg.c_str(),rocburnapnsrc.c_str());
   }
 }
 
@@ -729,9 +728,9 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 //     if(!rank){
 //       //      rename(rocstarsrc.c_str(),(solver+"/Rocout_old").c_str());
 //       unlink(rocstarsrc.c_str());
-//       symlink(rtrg.c_str(),rocstarsrc.c_str());
+//       IRAD::Sys::SymLink(rtrg.c_str(),rocstarsrc.c_str());
 //       unlink(solversrc.c_str());
-//       symlink(strg.c_str(),solversrc.c_str());
+//       IRAD::Sys::SymLink(strg.c_str(),solversrc.c_str());
 //     };
 //     if(gp._debug && gp._out)
 //       *gp._out << " done writing" << std::endl;
@@ -747,8 +746,8 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 //       *gp._out << "TRAIL_RemeshWrite: Rocin files merged." << std::endl;
 //     MPI_Barrier(comm);
 //     if(!rank){
-//       symlink(volcntl.c_str(),fluvolcntl.c_str());
-//       symlink(surfcntl.c_str(),flusurfcntl.c_str());
+//       IRAD::Sys::SymLink(volcntl.c_str(),fluvolcntl.c_str());
+//       IRAD::Sys::SymLink(surfcntl.c_str(),flusurfcntl.c_str());
 //     }
 //     if(transfer_surface_data){
 //       if(!rank)
@@ -762,7 +761,7 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 //       if(!rank){
 // 	unlink(flusurfcntl.c_str());
 // 	surfcntl.assign("new_surf_in_"+timestring+".txt");
-// 	symlink(surfcntl.c_str(),flusurfcntl.c_str());
+// 	IRAD::Sys::SymLink(surfcntl.c_str(),flusurfcntl.c_str());
 //       }
 //       if(gp._debug && gp._out)
 // 	*gp._out << "TRAIL_RemeshWrite: Surface transfer complete." 
@@ -808,7 +807,7 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
     source_directory = rocstarrunsrc;
   if(target_directory.empty())
     target_directory = defaultrocstartrg;
-  std::string homedir(TRAIL_CWD());
+  std::string homedir(IRAD::Sys::CWD());
   std::string timestring(TRAIL_TimeString(t));
   std::string solversrc(solver+"/Modin");
   std::string strg("Modin.remesh_"+timestring);
@@ -831,12 +830,12 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
   MPI_Barrier(comm);
   std::string rocstardir("..");
   if(!rank){
-    TRAIL_CD(rocstardir,gp._out);
-    rocstardir.assign(TRAIL_CWD());
-    TRAIL_CD(homedir,gp._out);
+    IRAD::Sys::CD(rocstardir,gp._out);
+    rocstardir.assign(IRAD::Sys::CWD());
+    IRAD::Sys::CD(homedir,gp._out);
   } 
   std::string solverdir(rocstardir+"/"+solver);
-  if(!TRAIL_FILEEXISTS(rocstarsrc)){
+  if(!IRAD::Sys::FILEEXISTS(rocstarsrc)){
     if(!rank)
       std::cerr << "TRAIL_RemeshWrite: Fatal Error: Source directory, " 
 		<< rocstarsrc << " does not exist.  Exiting." << std::endl;
@@ -845,7 +844,7 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
 	       << rocstarsrc << " does not exist.  Exiting." << std::endl;
     exit(1);
   } 
-  if(!TRAIL_FILEEXISTS(solversrc)){
+  if(!IRAD::Sys::FILEEXISTS(solversrc)){
     if(!rank)
       std::cerr << "TRAIL_RemeshWrite: Fatal Error: Source directory, " 
 		<< solversrc << " does not exist.  Exiting." << std::endl;
@@ -854,10 +853,10 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
 	       << solversrc << " does not exist.  Exiting." << std::endl;
     exit(1);
   }   
-  if(!TRAIL_FILEEXISTS(rocstartrg))
-    TRAIL_CreateDirectory(rocstartrg);
-  if(!TRAIL_FILEEXISTS(solvertrg))
-    TRAIL_CreateDirectory(solvertrg);
+  if(!IRAD::Sys::FILEEXISTS(rocstartrg))
+    IRAD::Sys::CreateDirectory(rocstartrg);
+  if(!IRAD::Sys::FILEEXISTS(solvertrg))
+    IRAD::Sys::CreateDirectory(solvertrg);
   if(comm != MPI_COMM_WORLD && gp._out)
     *gp._out << "TRAIL_RemeshWrite: WARNING: communicator is "
 	     << (comm == MPI_COMM_NULL ? "null." : "not worldly.") 
@@ -999,7 +998,7 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
     if(!gp.WriteRocstar(rocstartrg,t))
       return(false);
     MPI_Barrier(comm);
-    TRAIL_CD(homedir,gp._out);
+    IRAD::Sys::CD(homedir,gp._out);
     gp.DestroyWindows();
     if(gp._debug && gp._out)
       *gp._out << " done writing" << std::endl;
@@ -1010,13 +1009,13 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
       if(!rank){
 	std::cout << "Roctrail> Setting up Rocin control files for Rocstar" 
 		  << std::endl;
-	if(!TRAIL_FILEEXISTS(fluvolcntl+".orig") && TRAIL_FILEEXISTS(fluvolcntl))
+	if(!IRAD::Sys::FILEEXISTS(fluvolcntl+".orig") && IRAD::Sys::FILEEXISTS(fluvolcntl))
 	  rename(fluvolcntl.c_str(),(fluvolcntl+".orig").c_str());
-	if(!TRAIL_FILEEXISTS(flusurfcntl+".orig") && 
-	   TRAIL_FILEEXISTS(flusurfcntl))
+	if(!IRAD::Sys::FILEEXISTS(flusurfcntl+".orig") && 
+	   IRAD::Sys::FILEEXISTS(flusurfcntl))
 	  rename(flusurfcntl.c_str(),(flusurfcntl+".orig").c_str());
-	symlink(volcntl.c_str(),fluvolcntl.c_str());
-	symlink(surfcntl.c_str(),flusurfcntl.c_str());
+	IRAD::Sys::SymLink(volcntl.c_str(),fluvolcntl.c_str());
+	IRAD::Sys::SymLink(surfcntl.c_str(),flusurfcntl.c_str());
       }
     }
     if(surftrans){
@@ -1036,7 +1035,7 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
 		    << std::endl;
 	  unlink(flusurfcntl.c_str());
 	  surfcntl.assign("new_surf_in_"+timestring+".txt");
-	  symlink(surfcntl.c_str(),flusurfcntl.c_str());
+	  IRAD::Sys::SymLink(surfcntl.c_str(),flusurfcntl.c_str());
 	}
       }
       if(!rank)
@@ -1047,7 +1046,7 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
       MPI_Barrier(comm);
     }
     MPI_Barrier(comm);
-    TRAIL_CD(homedir,gp._out);
+    IRAD::Sys::CD(homedir,gp._out);
     // Prepare Rocstar restart files
     if(rocstarshuffle){
       if(!rank){
@@ -1058,32 +1057,32 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
 	if(rocstartrg != rocstarrunsrc){
 	  // <solver>/Rocout is an actual directory, back it up as 
 	  // Rocout.remesh_00.000000
-	  if(TRAIL_ISDIR(solverdir+"/"+rocstarrunsrc) && 
-	     !TRAIL_ISLINK(solverdir+"/"+rocstarrunsrc)){
-	    TRAIL_SafeRemove(rocstarbackup0,".save");
+	  if(IRAD::Sys::ISDIR(solverdir+"/"+rocstarrunsrc) && 
+	     !IRAD::Sys::ISLINK(solverdir+"/"+rocstarrunsrc)){
+	    IRAD::Sys::SafeRemove(rocstarbackup0,".save");
 	    rename((solverdir+"/"+rocstarrunsrc).c_str(),
 		   rocstarbackup0.c_str());
 	  }
-	  else if(TRAIL_ISLINK(solverdir+"/"+rocstarrunsrc))
+	  else if(IRAD::Sys::ISLINK(solverdir+"/"+rocstarrunsrc))
 	    unlink((solverdir+"/"+rocstarrunsrc).c_str());
 	  if(gp._debug)
 	    std::cout << "Roctrail> Attempting to link " << rocstarrunsrc 
 		      << " to " << rtrg << "." << std::endl;
-	  symlink(rtrg.c_str(),(solverdir+"/"+rocstarrunsrc).c_str());
+	  IRAD::Sys::SymLink(rtrg.c_str(),(solverdir+"/"+rocstarrunsrc).c_str());
 	  // Modin is a directory, act accordingly
 	  std::string solverbackup0(rocstardir+"/"+solver+
 				    "/Modin.remesh_00.000000");
-	  if(TRAIL_ISDIR(rocstardir+"/"+solversrc) && 
-	     !TRAIL_ISLINK(rocstardir+"/"+solversrc)){
-	    TRAIL_SafeRemove(solverbackup0,".save");
+	  if(IRAD::Sys::ISDIR(rocstardir+"/"+solversrc) && 
+	     !IRAD::Sys::ISLINK(rocstardir+"/"+solversrc)){
+	    IRAD::Sys::SafeRemove(solverbackup0,".save");
 	    rename((rocstardir+"/"+solversrc).c_str(),solverbackup0.c_str());
 	  }
-	  else if(TRAIL_ISLINK(solversrc))
+	  else if(IRAD::Sys::ISLINK(solversrc))
 	    unlink((rocstardir+"/"+solversrc).c_str());
 	  if(gp._debug)
 	    std::cout << "Roctrail> Attempting to link " << solversrc << " to "
 		      << strg << "." << std::endl;
-	  symlink(strg.c_str(),(rocstardir+"/"+solversrc).c_str());
+	  IRAD::Sys::SymLink(strg.c_str(),(rocstardir+"/"+solversrc).c_str());
 	}
       }
       if(!rank)

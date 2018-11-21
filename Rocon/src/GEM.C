@@ -29,8 +29,7 @@
 #include <map>
 #include <list>
 #include <cassert>
-
-#include "TRAIL_UnixUtils.H"
+#include <UnixUtils.H>
 
 //#ifdef _TRAIL_MPI_
 #include "mpi.h"
@@ -607,7 +606,7 @@ GEM_Partition::WriteRocstar(const std::string &prefix,double t)
     return false;
   if(_debug && _out)
     *_out << "GEM_Partition(" << _id << ")::WriteRocstar: Writing volume window"
-	  << " in " << prefix << ". CWD = " << TRAIL_CWD() << std::endl;
+	  << " in " << prefix << ". CWD = " << IRAD::Sys::CWD() << std::endl;
   if(!TRAIL_WriteWindow(volume_window,pre,volume_window,pre,t,_id,_comm))
     return false;
 //   COM_LOAD_MODULE_STATIC_DYNAMIC(Rocout,"Rocout");
