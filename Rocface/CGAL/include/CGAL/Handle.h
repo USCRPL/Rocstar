@@ -105,7 +105,7 @@ class Leda_like_handle
 inline
 unsigned long
 id(const Leda_like_handle& x)
-{ return (unsigned long)x.PTR; }
+{ return static_cast<unsigned long>(reinterpret_cast<ptrdiff_t>(x.PTR)); }
 
 template < class T >
 inline

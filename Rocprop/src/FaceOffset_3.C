@@ -296,7 +296,7 @@ time_stepping( const COM::Attribute *spds, double dt,
       if ( !with_nodal_velo || _smoother == SMOOTHER_LAPLACIAN) break;
       // If nodal velocity
       Rocblas::mul_scalar( spds, &dt_sub, disps_buf);
-      if ( smoothed) smoothed=false;
+      if ( smoothed) *smoothed=false;
     }
   }
   else if ( dt==0) {

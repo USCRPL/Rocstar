@@ -794,7 +794,7 @@ std::string Rocout::get_fname(const std::string& prefix,
   int result = 0;
   std::string::size_type s = pre.find('/', 1);
   while (s != std::string::npos) {
-    result = IRAD::Sys::CreateDirectory(pre.substr(0, s).c_str(), 0755);
+    result = IRAD::Sys::MakeDirectory(pre.substr(0, s).c_str());
     s = pre.find('/', s + 1);
   }
   if (result < 0 && errno != EEXIST) {

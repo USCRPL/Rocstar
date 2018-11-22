@@ -1,13 +1,13 @@
 project(Rocprep)
 
-FILE(GLOB perfiles ./*.pm)
+FILE(GLOB perlfiles ./*.pm)
 
-foreach(PERL_FILE ${perlfiles} rocprep)
+foreach(PERL_FILE ${perlfiles})
 	file(COPY ${PERL_FILE} DESTINATION ${CMAKE_BINARY_DIR}/bin 
 		FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
 		GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endforeach()
 
-INSTALL(FILES ${perfiles} DESTINATION bin)
-INSTALL(PROGRAMS rocprep DESTINATION bin)
+INSTALL(FILES ${perlfiles} DESTINATION bin)
+INSTALL(PROGRAMS Rocprep.pm DESTINATION bin RENAME rocprep)
 

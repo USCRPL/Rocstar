@@ -26,6 +26,22 @@
 #include <vector>
 #include <cstring>
 
+#ifdef WIN32
+
+# include <Windows.h>
+
+// Windows headers define constants called IN and OUT, which
+// get included from roccom.h. So, we have to get rid of them here.
+# ifdef IN
+#   undef IN
+# endif
+# ifdef OUT
+#   undef OUT
+# endif
+
+#endif
+
+
 class Scheduler;
 class UserScheduler;
 

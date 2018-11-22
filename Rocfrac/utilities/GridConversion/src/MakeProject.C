@@ -125,7 +125,7 @@ namespace GridConversion
     if(!IRAD::Sys::FILEEXISTS(NewName)){
       if(verb > 1)
         std::cout << "   Creating directory " << dirname << "...";
-      syserr = IRAD::Sys::CreateDirectory(dirname);
+      syserr = IRAD::Sys::MakeDirectory(dirname);
       if(syserr){
         std::cout << "Unable to create directory " << dirname << "."
                   << std::endl;
@@ -138,7 +138,7 @@ namespace GridConversion
     if(!IRAD::Sys::FILEEXISTS(dirname)){
       if(verb > 1)
         std::cout << "   Creating directory " << dirname << "...";
-      syserr = IRAD::Sys::CreateDirectory(dirname);
+      syserr = IRAD::Sys::MakeDirectory(dirname);
       if(syserr){
         std::cout << "Unable to create directory " << dirname << "."
                   << std::endl;
@@ -151,7 +151,7 @@ namespace GridConversion
     if(!IRAD::Sys::FILEEXISTS(dirname)){
       if(verb > 1)
         std::cout << "   Creating directory " << dirname << "...";
-      syserr = IRAD::Sys::CreateDirectory(dirname);
+      syserr = IRAD::Sys::MakeDirectory(dirname);
       if(syserr){
         std::cout << "Unable to create directory " << dirname << "."
                   << std::endl;
@@ -164,7 +164,7 @@ namespace GridConversion
     if(!IRAD::Sys::FILEEXISTS(dirname)){
       if(verb > 1)
         std::cout << "   Creating directory " << dirname << "...";
-      syserr = IRAD::Sys::CreateDirectory(dirname);
+      syserr = IRAD::Sys::MakeDirectory(dirname);
       if(syserr){
         std::cout << "Unable to create directory " << dirname << "."
                   << std::endl;

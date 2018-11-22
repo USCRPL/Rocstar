@@ -150,7 +150,8 @@ public:
   }
 
   Self& operator*=( Real t) {
-    for ( Real *p=_start; p!=_end; ++p) *p *= t;    return *this;
+    for ( Real *p=_start; p!=_end; ++p) *p *= t;    
+	return *this;
   }
 
   Self& operator*=( const Array_n_const &v1) {

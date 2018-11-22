@@ -42,7 +42,7 @@ project(Rocstar)
 #spot if you have edited and used the regression test script
 #ADD_TEST(RegressionTest:Works ${TESTRESULT} YouRegressionTestNameHere rocstar_testresults.txt)
 
-IF(MPI_CXX_COMPILER)
+IF(MPI)
 
   set(IRAD_EXEPATH $<TARGET_FILE_DIR:runtest>)
 

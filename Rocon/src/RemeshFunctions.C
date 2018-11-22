@@ -76,7 +76,7 @@ TRAIL_RemeshRunDirSetup(const std::string &path,double t,MPI_Comm comm,
       exit(1);
     }
     if(stat(rocremdir.c_str(),&fstat))
-      IRAD::Sys::CreateDirectory(rocremdir.c_str());
+      IRAD::Sys::MakeDirectory(rocremdir.c_str());
   }
   chdir(rocremdir.c_str());
   if(!rank){
@@ -360,7 +360,7 @@ TRAIL_RemeshAutoSurfer(GEM_Partition &gp,
       std::cerr << "TRAIL_RemeshAutoSurfer: WARNING: " << crpath << " already "
 		<< "existed.  Renaming to " << crpath << "_save." << std::endl;
     }
-    IRAD::Sys::CreateDirectory(crpath);
+    IRAD::Sys::MakeDirectory(crpath);
   }
   MPI_Barrier(comm);
   // Serial step to create the common refinement
@@ -483,7 +483,7 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 	      << " already existed.  Saving it as " << savepath << "." 
 	      << std::endl;
   }
-  IRAD::Sys::CreateDirectory(rocstartrg.c_str());
+  IRAD::Sys::MakeDirectory(rocstartrg.c_str());
   IRAD::Sys::SymLink(IRAD::Sys::ResolveLink(rocstarsrc.c_str()).c_str(),rocstarlast.c_str());
   if(stat(solversrc.c_str(),&fstat0)){
     std::cerr << "TRAIL_Remesh::DirectoryShuffling: ERROR: " << solversrc 
@@ -514,7 +514,7 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 	      << " already existed.  Saving it as " << savepath << "." 
 	      << std::endl;
   }
-  IRAD::Sys::CreateDirectory(solvertrg.c_str());
+  IRAD::Sys::MakeDirectory(solvertrg.c_str());
   IRAD::Sys::SymLink(IRAD::Sys::ResolveLink(solversrc.c_str()).c_str(),solverlast.c_str());
   // Deal with RocburnAPN
   std::string rocburnapn("RocburnAPN");
@@ -544,7 +544,7 @@ TRAIL_RemeshShuffle(const std::string &solver,double t,bool debug)
 		<< rocburnapntrg << " already existed, backup it up as "
 		<< savepath << "." << std::endl;
     }
-    IRAD::Sys::CreateDirectory(rocburnapntrg.c_str());
+    IRAD::Sys::MakeDirectory(rocburnapntrg.c_str());
     unlink(rocburnapnsrc.c_str());
     IRAD::Sys::SymLink(rtrg.c_str(),rocburnapnsrc.c_str());
   }
@@ -830,9 +830,9 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
   MPI_Barrier(comm);
   std::string rocstardir("..");
   if(!rank){
-    IRAD::Sys::CD(rocstardir,gp._out);
+    TRAIL_CD(rocstardir,gp._out);
     rocstardir.assign(IRAD::Sys::CWD());
-    IRAD::Sys::CD(homedir,gp._out);
+    TRAIL_CD(homedir,gp._out);
   } 
   std::string solverdir(rocstardir+"/"+solver);
   if(!IRAD::Sys::FILEEXISTS(rocstarsrc)){
@@ -854,9 +854,9 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
     exit(1);
   }   
   if(!IRAD::Sys::FILEEXISTS(rocstartrg))
-    IRAD::Sys::CreateDirectory(rocstartrg);
+    IRAD::Sys::MakeDirectory(rocstartrg);
   if(!IRAD::Sys::FILEEXISTS(solvertrg))
-    IRAD::Sys::CreateDirectory(solvertrg);
+    IRAD::Sys::MakeDirectory(solvertrg);
   if(comm != MPI_COMM_WORLD && gp._out)
     *gp._out << "TRAIL_RemeshWrite: WARNING: communicator is "
 	     << (comm == MPI_COMM_NULL ? "null." : "not worldly.") 
@@ -998,7 +998,7 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
     if(!gp.WriteRocstar(rocstartrg,t))
       return(false);
     MPI_Barrier(comm);
-    IRAD::Sys::CD(homedir,gp._out);
+    TRAIL_CD(homedir,gp._out);
     gp.DestroyWindows();
     if(gp._debug && gp._out)
       *gp._out << " done writing" << std::endl;
@@ -1046,7 +1046,7 @@ TRAIL_RemeshWrite(GEM_Partition &gp,
       MPI_Barrier(comm);
     }
     MPI_Barrier(comm);
-    IRAD::Sys::CD(homedir,gp._out);
+    TRAIL_CD(homedir,gp._out);
     // Prepare Rocstar restart files
     if(rocstarshuffle){
       if(!rank){

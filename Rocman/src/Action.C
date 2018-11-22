@@ -77,9 +77,9 @@ void Action::set_attr(int n, const std::string at[], int *id)
 void Action::declare(Scheduler& sched) {
   //CmiAssert(count>0);
   for ( int i=0; i<count; ++i) {
-    if ( inout[i] & IN) 
+    if ( inout[i] & Action::IN) 
       sched.reads(this, attr[i], idx[i]); 
-    if ( inout[i] & OUT)
+    if ( inout[i] & Action::OUT)
       sched.writes(this, attr[i], idx[i]);
   }  
 }

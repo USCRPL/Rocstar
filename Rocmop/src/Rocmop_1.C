@@ -23,8 +23,6 @@
 // $Id: Rocmop_1.C,v 1.8 2008/12/06 08:45:24 mtcampbe Exp $
 
 #ifdef MESQUITE
-#define USE_STD_INCLUDES 1
-#define USE_C_PREFIX_INCLUDES 1
 #include "Mesquite.hpp"
 #include "MeshImpl.hpp"
 #include "MsqError.hpp"

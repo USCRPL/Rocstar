@@ -77,7 +77,7 @@ TRAIL_Debug(GEM_Partition &gp)
   MPI_Comm_rank(gp._comm,&rank);
   //#endif
   if(!rank)
-    IRAD::Sys::CreateDirectory("Roctrail");
+    IRAD::Sys::MakeDirectory("Roctrail");
   //#ifdef _TRAIL_MPI_
   MPI_Barrier(gp._comm);
   //#endif
@@ -2499,7 +2499,7 @@ TRAIL_MergeRocinFiles(const std::string &srcname,
   unsigned int id = 0;
   if(ouf)
     *ouf << "TRAIL_MergeRocinFiles: Entry" << std::endl;
-  IRAD::Sys::CD(path,ouf);
+  TRAIL_CD(path,ouf);
   if(ouf)
     *ouf << "Searching for files with prefix: " << filepre << std::endl;
   while(id <= np){

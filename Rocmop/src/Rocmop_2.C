@@ -42,8 +42,7 @@
  ****************************************************************/
 
 #ifdef MESQUITE
-#define USE_STD_INCLUDES 1
-#define USE_C_PREFIX_INCLUDES 1
+
 #include "Mesquite.hpp"
 #include "MeshImpl.hpp"
 #include "MsqError.hpp"

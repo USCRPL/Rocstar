@@ -38,14 +38,6 @@
 #ifndef MESQPANE_H
 #define MESQPANE_H
 
-#ifndef USE_STD_INCLUDES
-#define USE_STD_INCLUDES 1
-#endif
-
-#ifndef USE_C_PREFIX_INCLUDES 
-#define USE_C_PREFIX_INCLUDES 1
-#endif
-
 // MESQUITE INCLUDES
 #include "Mesquite.hpp"
 #include "TopologyInfo.hpp"

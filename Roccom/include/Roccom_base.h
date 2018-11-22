@@ -34,6 +34,7 @@
 #include "roccom_devel.h"
 #include "maps.h"
 #include <set>
+#include <iradsys/DynamicLoader.hxx>
 
 #ifdef __CHARMC__
 #include "tcharm.h"
@@ -48,7 +49,7 @@ COM_BEGIN_NAME_SPACE
  */
 class Roccom_base {
   typedef Roccom_map<Window*>                                    Window_map;
-  typedef Roccom_map<std::pair<void *, std::set<std::string> > > Module_map;
+  typedef Roccom_map<std::pair<iradsys::DynamicLoader::LibraryHandle, std::set<std::string> > > Module_map;
   typedef Roccom_map<Attribute*>                                 Attribute_map;
 public:
   typedef Window::Pointer_descriptor Pointer_descriptor;

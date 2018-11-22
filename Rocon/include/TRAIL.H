@@ -28,6 +28,8 @@
 #include <algorithm>
 #include "roccom.h"
 
+int TRAIL_CD(const std::string &path,std::ostream *ouf);
+
 int TRAIL_FD2FE_WinCreate(const std::string &wname,const std::string &outwname,std::ostream *ouf=NULL);
 int TRAIL_FD2FE_WinCreate2(const std::string &wname,const std::string &outwname,std::ostream *ouf=NULL);
 int TRAIL_FD2FE_Transfer(const std::string &,const std::string &,const std::string &,std::ostream *ouf=NULL);

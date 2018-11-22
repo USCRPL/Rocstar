@@ -34,9 +34,6 @@
 #include <iostream>
 #include <sys/time.h>
 #include <algorithm>
-#ifndef STATIC_LINK 
-#include <dlfcn.h>
-#endif
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
@@ -44,7 +41,6 @@
 #include <sstream>
 #include "Roccom_base.h"
 #include "commpi.h"
-#include "dl-config.h"
 
 COM_BEGIN_NAME_SPACE
 
@@ -101,7 +97,13 @@ Roccom_base::Roccom_base( int *argc, char ***argv)
     if ( comhome) _libdir = comhome;
   }
 
-  if ( !_libdir.empty()) _libdir.append( "/lib/");
+#if WIN32
+# define LIBDIR "bin"
+#else
+# define LIBDIR "lib"
+#endif
+  
+  if ( !_libdir.empty()) _libdir.append( "\\" LIBDIR "\\");
 
   // Parse command-line options
   std::map<int,int> verb_maps; // Process-specific verbose level
@@ -216,36 +218,38 @@ Roccom_base::load_module( const std::string &lname,
     std::cerr << "Roccom: Loading module " << lname 
 	      << " with arguments " << wname << "..." << std::endl;
 
-  void *handle;
+  iradsys::DynamicLoader::LibraryHandle handle;
   std::string lname_found;
 
   // Obtain a reference to the library.
   int index = _module_map.find(lname).first;
   if ( index<0) { // Load the library
-    std::string lname_short = std::string(SHARED_LIB_PREFIX) + lname + std::string(SHARED_LIB_SUFFIX);
+    std::string lname_short = iradsys::DynamicLoader::LibPrefix() + lname + iradsys::DynamicLoader::LibExtension();
     std::string lname_full = _libdir + lname_short;
 
     // Open the library
-    handle = dlopen( lname_full.c_str(), RTLD_LAZY);
+	handle = iradsys::DynamicLoader::OpenLibrary(lname_full);
+	
     if (handle == NULL)
-      std::cerr << "dlopen error: " << dlerror() << std::endl;
+      std::cerr << "dlopen error: " << iradsys::DynamicLoader::LastError() << std::endl;
 
     if ( handle == NULL && !_libdir.empty()) {
-      handle = dlopen( lname_short.c_str(), RTLD_LAZY);
+      handle = iradsys::DynamicLoader::OpenLibrary(lname_short);
       if (handle == NULL)
-        std::cerr << "dlopen error: " << dlerror() << std::endl;
+        std::cerr << "dlopen error: " << iradsys::DynamicLoader::LastError() << std::endl;
       lname_found = lname_short;
     }
     else 
       lname_found = lname_full;
     
 
-    if ( handle == NULL) {
+    if ( handle == NULL) 
+	{
       std::string libs;
       if ( _libdir.empty()) libs = lname_full;
-      else libs = lname_full+" or "+lname_short;
+      else libs = lname_full+" and "+lname_short;
 
-      proc_exception( COM_exception(COM_ERR_COULD_OPENLIB, libs),
+      proc_exception( COM_exception(COM_ERR_COULD_OPENLIB, "Looked for " + libs),
 		      "Roccom_base::load_module");
     }
 
@@ -266,7 +270,7 @@ Roccom_base::load_module( const std::string &lname,
   MPI_Comm comm = MPI_COMM_SELF; 
   std::swap(_comm, comm);
 
-  void *fptr = dlsym( handle, fname.c_str());
+  iradsys::DynamicLoader::SymbolPointer fptr = iradsys::DynamicLoader::GetSymbolAddress(handle, fname);
   if ( fptr != NULL) {
     // This is a C/C++ module
     typedef void(*Func1)(const char*);
@@ -291,7 +295,7 @@ Roccom_base::load_module( const std::string &lname,
       if ( i==2 || (i==3&&i==ibegin)) fname.append( "_");
       if (i==4) { fname.append( "_"); if (ibegin == 4) fname.append( "_"); }
 
-      fptr = dlsym( handle, fname.c_str());
+      fptr = iradsys::DynamicLoader::GetSymbolAddress( handle, fname.c_str());
       if ( fptr) { _f90_mangling = i; break; }
     }
 
@@ -306,7 +310,7 @@ Roccom_base::load_module( const std::string &lname,
       else msg = fname + " or any its lowercase w/o underscore in " + lname;
 
       msg.append( "\nError message from libdl is: ");
-      msg.append( dlerror());
+      msg.append( iradsys::DynamicLoader::LastError());
       proc_exception( COM_exception(COM_ERR_COULD_FINDSYM, msg),
 		      "Roccom_base::load_module");
     }
@@ -353,8 +357,8 @@ Roccom_base::unload_module( const std::string &lname,
   std::string fname = lname + "_unload_module";
   std::string wname_str=wname.size()?wname:*obj.begin();
 
-  void *handle = _module_map[index].first;
-  void *fptr = dlsym( handle, fname.c_str());
+  iradsys::DynamicLoader::LibraryHandle handle = _module_map[index].first;
+  iradsys::DynamicLoader::SymbolPointer fptr = iradsys::DynamicLoader::GetSymbolAddress(handle, fname);
   if ( fptr != NULL) {
     // This is a C/C++ module
     typedef void(*Func1)(const char*);
@@ -369,7 +373,7 @@ Roccom_base::unload_module( const std::string &lname,
 
       if ( _f90_mangling ==2 || _f90_mangling == 3) fname.append( "_");
 
-      fptr = dlsym( handle, fname.c_str());
+      fptr = iradsys::DynamicLoader::GetSymbolAddress(handle, fname);
     }
 
     if ( fptr != NULL) {
@@ -386,7 +390,7 @@ Roccom_base::unload_module( const std::string &lname,
   obj.erase( wname);
 
   if ( dodl && obj.size()==0) { // Unload module if all instances removed.
-    dlclose( handle);
+    iradsys::DynamicLoader::CloseLibrary( handle);
     _module_map.remove_object( lname);
   }
 
