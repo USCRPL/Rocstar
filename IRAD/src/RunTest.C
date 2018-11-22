@@ -219,7 +219,7 @@ namespace IRAD
       if(verblevel > 1)
         std::cout << "IRAD::RunTest> Running " << TestName << "." << std::endl;
       std::string TmpComOut(IRAD::Sys::TempFileName(OutFileName));
-      std::string Command(LocalTest+" "+TmpComOut);
+      std::string Command("tcsh " + LocalTest+" "+TmpComOut);
       if(!SourceDirectory.empty())
         Command = Command + " " + SourceDirectory;
       if(!BinaryDirectory.empty())

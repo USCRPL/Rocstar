@@ -95,7 +95,7 @@ namespace IRAD {
       return iradsys::SystemTools::FileIsSymlink(fname);
     }
 	
-    int CreateDirectory(const std::string &fname)
+    int MakeDirectory(const std::string &fname)
     {
 	  return iradsys::SystemTools::MakeDirectory(fname) ? 0 : -1;
     }

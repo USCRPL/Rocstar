@@ -2,7 +2,7 @@
 project(IRAD)
 
 if(TARGET_WINDOWS)
-	add_definitions(-D_WIN32_WINNT=0x0600)
+	add_definitions(-D_WIN32_WINNT=0x0A00 -DWIN32_LEAN_AND_MEAN)
 endif()
 
 # include kwsys
@@ -10,6 +10,9 @@ SET(KWSYS_NAMESPACE iradsys)
 set(KWSYS_USE_SystemInformation TRUE)
 set(KWSYS_USE_SystemTools TRUE)
 set(KWSYS_USE_RegularExpression TRUE)
+set(KWSYS_USE_DynamicLoader TRUE)
+set(KWSYS_INSTALL_LIB_DIR ${LIBDIR})
+set(KWSYS_INSTALL_BIN_DIR ${BINDIR})
 add_subdirectory(kwsys)
 
 set (LIB_SOURCES src/ComLine.C src/Parameters.C src/Configuration.C src/Profiler.C src/UnixUtils.C)
@@ -27,7 +30,7 @@ FILE(GLOB INC_FILES include/*.H)
 
 add_library(IRAD SHARED ${LIB_SOURCES})
 target_link_libraries(IRAD iradsys mpi_cxx)
-target_include_directories(IRAD PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR}/kwsys)
+target_include_directories(IRAD PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/kwsys)
 
 add_executable(iradutil_test src/TestUtil.C)
 add_executable(tcpinterface_test src/TestTCPInterface.C)
@@ -51,21 +54,24 @@ INSTALL(TARGETS IRAD checkresults testresults profane runtest diffdatafiles RUNT
 # Add target to build the documentation
 IF(BUILD_DOCUMENTATION)
 
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs)
+
   
   SET( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/doc/IRAD.cfg.in )
   SET( doxyfile             ${CMAKE_CURRENT_BINARY_DIR}/IRAD.cfg )
-  SET( documentation        ${CMAKE_CURRENT_BINARY_DIR}/docs )
+  SET( documentation_stamp        ${CMAKE_CURRENT_BINARY_DIR}/docs.stamp )
 
   CONFIGURE_FILE( ${doxyfile_in} ${doxyfile} @ONLY )
 
-  ADD_CUSTOM_COMMAND( OUTPUT ${documentation}
+  ADD_CUSTOM_COMMAND( OUTPUT ${documentation_stamp}
                       COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+					  COMMAND ${CMAKE_COMMAND} -E touch ${documentation_stamp}
                       MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
                       DEPENDS IRAD ${doxyfile} ${doxy_extra_files}
                       COMMENT "IRAD: Generating documentation")
 
-  ADD_CUSTOM_TARGET( docs DEPENDS ${documentation} )
-  INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc DESTINATION share/IRAD )
+  ADD_CUSTOM_TARGET( docs DEPENDS ${documentation_stamp} )
+  INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION share/IRAD )
 else()
   message(STATUS "IRAD: not building Doxygen documentation")
 ENDIF()

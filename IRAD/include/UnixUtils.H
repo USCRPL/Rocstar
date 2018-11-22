@@ -21,16 +21,6 @@
 #include <cstdlib>
 #include <errno.h>
 
-// On Windows, CreateDirectory is #define-d to CreateDirectory{A,W} in Windows.h
-// Explicitly undef it here.
-#ifdef WIN32
-# include <winsock2.h>
-# include <Windows.h>
-# ifdef CreateDirectory
-#   undef CreateDirectory
-# endif
-#endif
-
 
 namespace IRAD {
 
@@ -49,7 +39,7 @@ namespace IRAD {
     bool FILEEXISTS(const std::string &fname);
     bool ISDIR(const std::string &fname);
     bool ISLINK(const std::string &fname);
-    int CreateDirectory(const std::string &fname);
+    int MakeDirectory(const std::string &fname);
     const std::string ResolveLink(const std::string &path);
     int Remove(const std::string &fname);
     int Rename(const std::string &source_file,const std::string &target_file);
