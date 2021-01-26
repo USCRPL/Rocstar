@@ -7,7 +7,7 @@
 
 find_path(HDF4_INCLUDE_DIR NAMES hdf.h PATH_SUFFIXES hdf DOC "directory containing hdf.h")
 
-find_library(HDF4_MFHDF_LIBRARY NAMES mfhdf-static DOC "Path to hdf4's mfhdf library.")
+find_library(HDF4_MFHDF_LIBRARY NAMES mfhdf mfhdf-static DOC "Path to hdf4's mfhdf library.")
 find_library(HDF4_DF_LIBRARY NAMES df df-static hdf hdf-static DOC "Path to hdf4's hdf library.")
 
 set(HDF4_INCLUDE_DIRS ${HDF4_INCLUDE_DIR})
