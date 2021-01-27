@@ -10,8 +10,8 @@ add_library(Roccomf ${FLIB_SRCS})
 target_link_libraries(Roccom ${DL_LIB} mpi_cxx IRAD)
 target_link_libraries(Roccomf Roccom mpi_fortran)
 
-target_include_directories(Roccom PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/include)
-target_include_directories(Roccomf PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/include)
+target_include_directories(Roccom PUBLIC include ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(Roccomf PUBLIC include ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_subdirectory(Rocblas)
 add_subdirectory(Rocin)

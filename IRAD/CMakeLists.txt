@@ -7,12 +7,17 @@ endif()
 
 # include kwsys
 SET(KWSYS_NAMESPACE iradsys)
+set(KWSYS_USE_System TRUE)
 set(KWSYS_USE_SystemInformation TRUE)
 set(KWSYS_USE_SystemTools TRUE)
 set(KWSYS_USE_RegularExpression TRUE)
 set(KWSYS_USE_DynamicLoader TRUE)
 set(KWSYS_INSTALL_LIB_DIR ${LIBDIR})
 set(KWSYS_INSTALL_BIN_DIR ${BINDIR})
+
+# setup header path
+set(KWSYS_HEADER_ROOT ${CMAKE_CURRENT_BINARY_DIR})
+
 add_subdirectory(kwsys)
 
 set (LIB_SOURCES src/ComLine.C src/Parameters.C src/Configuration.C src/Profiler.C src/UnixUtils.C)

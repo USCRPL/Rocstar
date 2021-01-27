@@ -9,5 +9,13 @@ foreach(PERL_FILE ${perlfiles})
 endforeach()
 
 INSTALL(FILES ${perlfiles} DESTINATION bin)
+
+# Install rocprep
 INSTALL(PROGRAMS Rocprep.pm DESTINATION bin RENAME rocprep)
+
+# Also copy to build directory bin so tests can use it
+file(COPY Rocprep.pm DESTINATION ${CMAKE_BINARY_DIR}/bin 
+	FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+	GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+file(RENAME ${CMAKE_BINARY_DIR}/bin/Rocprep.pm ${CMAKE_BINARY_DIR}/bin/rocprep)
 

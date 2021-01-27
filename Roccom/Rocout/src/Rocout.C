@@ -36,7 +36,7 @@
 #include <algorithm>
 #include <errno.h>
 
-#include <UnixUtils.h>
+#include <UnixUtils.H>
 
 #include "Rocout.h"
 #include "Rocout_hdf4.h"

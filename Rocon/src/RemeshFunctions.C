@@ -31,7 +31,7 @@
 #include <cstdio>
 #include <cassert>
 
-#include <UnixUtils.h>
+#include <UnixUtils.H>
 #include "commpi.h"
 
 #include "GEM.H"
